@@ -1,65 +1,153 @@
-import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <main className="min-h-screen bg-white">
+      {/* Hero */}
+      <section className="max-w-3xl mx-auto px-6 pt-20 pb-16">
+        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+          We&apos;re looking for
+          <br />
+          <span className="text-indigo-600">interesting people.</span>
+        </h1>
+        <p className="mt-6 text-xl text-gray-600 leading-relaxed">
+          Not impressive people. Not successful people. Not people who look good on paper.
+          Just genuinely interesting humans who make conversations better.
+        </p>
+      </section>
+
+      {/* What we value */}
+      <section className="bg-gray-50 py-16">
+        <div className="max-w-3xl mx-auto px-6">
+          <h2 className="text-sm font-semibold text-indigo-600 uppercase tracking-wide mb-8">
+            What we&apos;re looking for
+          </h2>
+
+          <div className="space-y-8">
+            <div>
+              <h3 className="text-xl font-semibold text-gray-900">Curiosity</h3>
+              <p className="mt-2 text-gray-600">
+                People who ask questions they don&apos;t know the answers to. Who go down rabbit holes
+                for the joy of it. Who are more interested in learning than being right.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-semibold text-gray-900">Participation</h3>
+              <p className="mt-2 text-gray-600">
+                People who show up fully. Who contribute to conversations rather than spectate.
+                Who make things happen instead of waiting for permission.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-semibold text-gray-900">Emotional Intelligence</h3>
+              <p className="mt-2 text-gray-600">
+                People who read rooms. Who make others feel heard. Who can disagree without
+                making it personal and connect without performing.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* What we don't value */}
+      <section className="py-16">
+        <div className="max-w-3xl mx-auto px-6">
+          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-8">
+            What won&apos;t help your application
+          </h2>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="p-5 bg-gray-50 rounded-lg">
+              <h3 className="font-medium text-gray-700">Your Resume</h3>
+              <p className="mt-2 text-sm text-gray-500">
+                We don&apos;t care where you went to school or where you work.
+                Credentials are not a proxy for interesting.
+              </p>
+            </div>
+
+            <div className="p-5 bg-gray-50 rounded-lg">
+              <h3 className="font-medium text-gray-700">Your Wealth</h3>
+              <p className="mt-2 text-sm text-gray-500">
+                Money doesn&apos;t make you interesting. Neither does the appearance of it.
+              </p>
+            </div>
+
+            <div className="p-5 bg-gray-50 rounded-lg">
+              <h3 className="font-medium text-gray-700">Your Volume</h3>
+              <p className="mt-2 text-sm text-gray-500">
+                Being loud isn&apos;t the same as being interesting.
+                We value depth over performance.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* The process */}
+      <section className="bg-indigo-600 py-16">
+        <div className="max-w-3xl mx-auto px-6 text-white">
+          <h2 className="text-2xl font-bold mb-8">How to apply</h2>
+
+          <div className="space-y-6">
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm font-semibold">
+                1
+              </div>
+              <div>
+                <h3 className="font-semibold">Tell us who you are</h3>
+                <p className="mt-1 text-indigo-100">
+                  Basic info and a short bio. No resume, no LinkedIn.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm font-semibold">
+                2
+              </div>
+              <div>
+                <h3 className="font-semibold">Answer a prompt on video</h3>
+                <p className="mt-1 text-indigo-100">
+                  You&apos;ll get one randomly assigned prompt. 90 seconds. One take. No do-overs.
+                  We want to see the real you, not the polished you.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm font-semibold">
+                3
+              </div>
+              <div>
+                <h3 className="font-semibold">We review and respond</h3>
+                <p className="mt-1 text-indigo-100">
+                  Every application is watched by a human. We&apos;ll email you either way.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-10">
+            <Link
+              href="/apply"
+              className="inline-block px-8 py-4 bg-white text-indigo-600 rounded-lg font-semibold hover:bg-indigo-50 transition-colors"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+              Start Application
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer note */}
+      <section className="py-12">
+        <div className="max-w-3xl mx-auto px-6 text-center">
+          <p className="text-gray-500 text-sm">
+            Applications are reviewed on a rolling basis. We read every single one.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </section>
+    </main>
   );
 }

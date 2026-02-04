@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================================
+// ADMIN / REVIEWER
+// ============================================================================
+
+model Reviewer {
+  id        String       @id @default(cuid())
+  email     String       @unique
+  name      String?
+  role      ReviewerRole @default(REVIEWER)
+  createdAt DateTime     @default(now())
+  reviews   Review[]
+
+  @@index([email])
+  @@index([role])
+}
+
+enum ReviewerRole {
+  ADMIN
+  REVIEWER
+}
+
+// ============================================================================
+// PROMPTS
+// ============================================================================
+
+model Prompt {
+  id                  String               @id @default(cuid())
+  text                String
+  active              Boolean              @default(true)
+  createdAt           DateTime             @default(now())
+  submissions         Submission[]
+  pendingApplications PendingApplication[]
+
+  @@index([active])
+}
+
+// ============================================================================
+// PENDING APPLICATIONS (before video upload)
+// ============================================================================
+
+model PendingApplication {
+  id            String   @id @default(cuid())
+  token         String   @unique @default(cuid()) // URL token for upload page
+  name          String
+  email         String   @unique
+  location      String
+  timezone      String
+  bio           String
+  links         Json?
+  prompt        Prompt   @relation(fields: [promptId], references: [id])
+  promptId      String
+  emailVerified Boolean  @default(false)
+  expiresAt     DateTime // Application expires if video not uploaded
+  createdAt     DateTime @default(now())
+
+  @@index([token])
+  @@index([email])
+  @@index([expiresAt])
+}
+
+// ============================================================================
+// APPLICANTS
+// ============================================================================
+
+model Applicant {
+  id         String      @id @default(cuid())
+  name       String
+  email      String      @unique
+  location   String
+  timezone   String
+  bio        String
+  links      Json?       // Array of URLs: ["https://...", "https://..."]
+  createdAt  DateTime    @default(now())
+  submission Submission?
+
+  @@index([email])
+  @@index([createdAt(sort: Desc)])
+}
+
+// ============================================================================
+// SUBMISSIONS
+// ============================================================================
+
+model Submission {
+  id               String           @id @default(cuid())
+  applicant        Applicant        @relation(fields: [applicantId], references: [id], onDelete: Cascade)
+  applicantId      String           @unique
+  prompt           Prompt           @relation(fields: [promptId], references: [id])
+  promptId         String
+  videoUrl         String
+  videoDurationSec Int
+  status           SubmissionStatus @default(SUBMITTED)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  reviews          Review[]
+
+  @@index([status])
+  @@index([createdAt(sort: Desc)])
+  @@index([status, createdAt(sort: Desc)])
+}
+
+enum SubmissionStatus {
+  SUBMITTED
+  ACCEPTED
+  WAITLIST
+  REJECTED
+}
+
+// ============================================================================
+// REVIEWS
+// ============================================================================
+
+model Review {
+  id           String     @id @default(cuid())
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  submissionId String
+  reviewer     Reviewer   @relation(fields: [reviewerId], references: [id])
+  reviewerId   String
+
+  // Scoring dimensions (1-5 scale each)
+  curiosityVsEgo             Int // 1 = ego-driven, 5 = genuine curiosity
+  participationVsSpectatorship Int // 1 = passive observer, 5 = active participant
+  emotionalIntelligence      Int // 1 = low EQ, 5 = high EQ
+
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([submissionId, reviewerId]) // One review per reviewer per submission
+  @@index([submissionId])
+  @@index([reviewerId])
+  @@index([createdAt(sort: Desc)])
+}
