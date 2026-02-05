@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 const testimonials = [
   {
@@ -42,27 +43,27 @@ const testimonials = [
 const faqs = [
   {
     q: "What actually happens at the event?",
-    a: "Three days of structured and unstructured time together. Shared meals, facilitated conversations, collaborative activities, and plenty of space to just be. No keynotes. No pitch competitions. No expo halls.",
+    a: "Three days of structured and unstructured time together. Shared meals, facilitated conversations, collaborative activities, and plenty of space to just be. Instead of the usual conference format of 80% listening and 20% talking, we flipped it on its head. IP is all about the attendees and their stories.",
   },
   {
     q: "Where and when is IP4?",
-    a: "Details on location and dates are shared with accepted applicants. We keep it intimate—expect somewhere beautiful, walkable, and away from the noise.",
+    a: "Details on location and dates are shared with accepted applicants. We keep it intimate\u2014expect somewhere beautiful, walkable, and away from the noise.",
   },
   {
     q: "How many people attend?",
-    a: "Around 150. Small enough to meet everyone, large enough to be surprised. We're deliberate about the mix—ages, backgrounds, geographies, industries.",
+    a: "Around 150. Small enough to meet everyone, large enough to be surprised. We\u2019re deliberate about the mix\u2014ages, backgrounds, geographies, industries.",
   },
   {
     q: "What does it cost?",
-    a: "Pricing details are shared upon acceptance. We offer need-based scholarships because interesting isn't correlated with wealth.",
+    a: "Pricing details are shared upon acceptance. We offer need-based scholarships because interesting isn\u2019t correlated with wealth.",
   },
   {
     q: "Why do I have to record a video?",
-    a: "Because resumes lie and bios are performative. A 90-second unedited video tells us more about who you actually are than any written application ever could.",
+    a: "Because resumes lie and bios are performative. A 90-second unedited video tells us more about who you actually are than any written application ever could. It filters for people willing to be real\u2014and that vulnerability set the tone for the whole weekend.",
   },
   {
     q: "What if I'm not a founder or executive?",
-    a: "Good. We're not selecting for titles. Teachers, artists, scientists, writers, community organizers—some of the most interesting people at IP3 had nothing to do with startups.",
+    a: "Good. We\u2019re not selecting for titles. Teachers, artists, scientists, writers, community organizers\u2014some of the most interesting people at IP3 had nothing to do with startups.",
   },
 ];
 
@@ -166,6 +167,21 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Hero Image */}
+      <section className="pb-24 md:pb-32">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="relative w-full aspect-[21/9] rounded-2xl overflow-hidden shadow-2xl">
+            <Image
+              src="/images/ip3/sunset-panorama.jpg"
+              alt="IP3 venue at golden hour — attendees gathered lakeside"
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+        </div>
+      </section>
+
       {/* The Big Idea — editorial section */}
       <section className="bg-slate-950 py-24 md:py-32" id="about">
         <div className="max-w-6xl mx-auto px-6">
@@ -181,20 +197,72 @@ export default function Home() {
               <span className="text-violet-400 italic">interestingness</span>.
             </h2>
             <p className="text-lg md:text-xl text-white/90 leading-relaxed mb-6">
-              Conferences are about sitting. Making awkward small talk. Bragging at the bar.
-              Collecting business cards from people you&apos;ll never email. We&apos;ve all been there.
-              We&apos;ve all left feeling emptier than when we arrived.
+              It started at a VC conference in 2010. The guy across the table found out
+              our founder&apos;s business was bootstrapped&mdash;no venture money&mdash;and literally
+              turned his back to talk to someone else. That moment crystallized everything
+              wrong with how we gather: we sort people by status, not substance.
             </p>
             <p className="text-lg md:text-xl text-white/90 leading-relaxed">
-              Interesting People is the opposite. It&apos;s what happens when you put 150 genuinely
-              curious humans in a room together and get out of their way. No agenda to network.
-              No pressure to perform. Just the space and permission to connect like actual human beings.
+              So we built the opposite. Like Harvard, but instead of needing a trust
+              fund and a last name that&apos;s on a building somewhere, you just need to
+              be interesting and nice. No agenda to network. No pressure to perform.
+              Just 150 genuinely curious humans and the space to connect like actual
+              human beings.
             </p>
           </div>
         </div>
       </section>
 
-      {/* The IP Difference — comparison grid inspired by Carta/Tiny */}
+      {/* Photo Grid */}
+      <section className="py-16 md:py-24">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+            <div className="relative col-span-2 h-56 md:h-80 rounded-xl overflow-hidden">
+              <Image
+                src="/images/ip3/indoor-session.jpg"
+                alt="Indoor session at IP3 with floor-to-ceiling windows"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="relative h-56 md:h-80 rounded-xl overflow-hidden">
+              <Image
+                src="/images/ip3/ballroom-talk.jpg"
+                alt="Speaker addressing the room at IP3"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="relative h-44 md:h-56 rounded-xl overflow-hidden">
+              <Image
+                src="/images/ip3/dinner-scene.jpg"
+                alt="Shared dinner at IP3"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="relative h-44 md:h-56 rounded-xl overflow-hidden">
+              <Image
+                src="/images/ip3/lake-paddleboards.jpg"
+                alt="Paddleboarding at golden hour"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="relative h-44 md:h-56 col-span-2 md:col-span-1 rounded-xl overflow-hidden">
+              <Image
+                src="/images/ip3/workshop.jpg"
+                alt="Workshop session at IP3"
+                fill
+                className="object-cover"
+              />
+            </div>
+          </div>
+          <p className="text-center text-sm text-slate-400 mt-6">Scenes from IP3 &mdash; Victoria, BC</p>
+        </div>
+      </section>
+
+      {/* The IP Difference — comparison grid */}
       <section className="py-24 md:py-32 bg-slate-50">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
@@ -238,7 +306,7 @@ export default function Home() {
                 <ul className="space-y-4">
                   {[
                     "Curated by curiosity, depth, and emotional intelligence",
-                    "Conversations where everyone participates",
+                    "80% talking, 20% listening \u2014 we flipped the script",
                     "Shared meals, walks, and activities that create real bonds",
                     "No badges. We learn names the old-fashioned way",
                     "You leave with 5 people you'll actually stay in touch with",
@@ -268,8 +336,8 @@ export default function Home() {
             What gets you in.
           </h2>
           <p className="text-lg text-slate-500 max-w-2xl mb-16">
-            We don&apos;t look at your resume, your follower count, or your net worth.
-            We look for three things.
+            When we review applications, we ask one question: did this person make us
+            feel warm and gooey inside? That usually comes down to three things.
           </p>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -277,19 +345,19 @@ export default function Home() {
               <span className="number-accent text-5xl md:text-6xl font-bold">01</span>
               <h3 className="text-2xl font-semibold text-slate-900 mt-4 mb-4">Curiosity</h3>
               <p className="text-slate-500 leading-relaxed">
-                People who ask questions they don&apos;t know the answers to. Who go
-                down rabbit holes for the joy of it. Who are more interested in
-                learning than in being right.
+                The kind of person who makes you lean in at dinner. Who asks surprising
+                questions. Who has depth, not just credentials. Who goes down rabbit
+                holes for the joy of it.
               </p>
             </div>
 
             <div className="group">
               <span className="number-accent text-5xl md:text-6xl font-bold">02</span>
-              <h3 className="text-2xl font-semibold text-slate-900 mt-4 mb-4">Participation</h3>
+              <h3 className="text-2xl font-semibold text-slate-900 mt-4 mb-4">Generosity</h3>
               <p className="text-slate-500 leading-relaxed">
-                People who show up fully. Who contribute to conversations rather
-                than spectate. Who make things happen instead of waiting for
-                permission.
+                Interesting people make others feel interesting too. They remember
+                the small detail you mentioned in passing. They show up fully and
+                contribute rather than spectate.
               </p>
             </div>
 
@@ -297,9 +365,9 @@ export default function Home() {
               <span className="number-accent text-5xl md:text-6xl font-bold">03</span>
               <h3 className="text-2xl font-semibold text-slate-900 mt-4 mb-4">Emotional Intelligence</h3>
               <p className="text-slate-500 leading-relaxed">
-                People who read rooms. Who make others feel heard. Who can
-                disagree without making it personal and connect without
-                performing.
+                People who read rooms. Who can disagree without making it personal.
+                Who connect without performing. Who make the space better just by
+                being in it.
               </p>
             </div>
           </div>
@@ -325,10 +393,11 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <h3 className="font-semibold text-slate-900 text-lg mb-3">Your Image</h3>
+              <h3 className="font-semibold text-slate-900 text-lg mb-3">Your Title</h3>
               <p className="text-slate-500 leading-relaxed">
-                We don&apos;t care about your personal brand, your follower count,
-                or the story you tell at dinner parties. Curated isn&apos;t interesting.
+                &ldquo;Chief Innovation Officer.&rdquo; &ldquo;Futurist.&rdquo; &ldquo;Catalyst.&rdquo;
+                &ldquo;Change Maker.&rdquo; These are red flags, not selling points.
+                We don&apos;t care what&apos;s on your business card.
               </p>
             </div>
 
@@ -338,10 +407,11 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="font-semibold text-slate-900 text-lg mb-3">Your Wealth</h3>
+              <h3 className="font-semibold text-slate-900 text-lg mb-3">Your Credentials</h3>
               <p className="text-slate-500 leading-relaxed">
-                Money doesn&apos;t make you interesting. Neither does the appearance
-                of it. We offer scholarships for a reason.
+                Forbes lists, TED stages, viral tweets&mdash;none of it matters here.
+                We offer scholarships for a reason: interesting isn&apos;t correlated
+                with status or wealth.
               </p>
             </div>
 
@@ -351,14 +421,25 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
                 </svg>
               </div>
-              <h3 className="font-semibold text-slate-900 text-lg mb-3">Your Volume</h3>
+              <h3 className="font-semibold text-slate-900 text-lg mb-3">Your Performance</h3>
               <p className="text-slate-500 leading-relaxed">
-                Being loud isn&apos;t the same as being interesting. We value depth
-                over performance. Listeners thrive here.
+                Being loud isn&apos;t the same as being interesting. We&apos;re not looking
+                for the best personal brand. We&apos;re looking for the most genuine
+                human. Listeners thrive here.
               </p>
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Cinematic Photo Break */}
+      <section className="relative h-72 md:h-[28rem]">
+        <Image
+          src="/images/ip3/twilight-lakefront.jpg"
+          alt="Lakefront at twilight with string lights at IP3"
+          fill
+          className="object-cover"
+        />
       </section>
 
       {/* Featured Quote */}
@@ -449,7 +530,7 @@ export default function Home() {
                 <h3 className="text-xl font-semibold text-white mb-3">Record a 90-second video</h3>
                 <p className="text-slate-400 leading-relaxed">
                   Two prompts. 45 seconds each. One take. No do-overs. We want to
-                  see the real you—how you think on your feet, not how well you
+                  see the real you&mdash;how you think on your feet, not how well you
                   rehearse.
                 </p>
               </div>
@@ -461,7 +542,7 @@ export default function Home() {
                 <h3 className="text-xl font-semibold text-white mb-3">We watch. We respond.</h3>
                 <p className="text-slate-400 leading-relaxed">
                   A real human watches every single video. No AI screening. No keyword filters.
-                  We&apos;ll email you either way—yes, no, or waitlist.
+                  We&apos;ll email you either way&mdash;yes, no, or waitlist.
                 </p>
               </div>
             </div>
@@ -477,6 +558,38 @@ export default function Home() {
             <p className="text-sm text-slate-500">
               Applications reviewed on a rolling basis. Apply early.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Photo Strip */}
+      <section className="py-16 md:py-24">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid grid-cols-3 gap-3 md:gap-4">
+            <div className="relative h-44 md:h-64 rounded-xl overflow-hidden">
+              <Image
+                src="/images/ip3/group-photo.jpg"
+                alt="IP3 attendees smiling together"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="relative h-44 md:h-64 rounded-xl overflow-hidden">
+              <Image
+                src="/images/ip3/beach-conversation.jpg"
+                alt="Lakeside conversation at sunset"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="relative h-44 md:h-64 rounded-xl overflow-hidden">
+              <Image
+                src="/images/ip3/stage-performance.jpg"
+                alt="Evening performance at IP3"
+                fill
+                className="object-cover"
+              />
+            </div>
           </div>
         </div>
       </section>
