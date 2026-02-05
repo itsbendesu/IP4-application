@@ -10,17 +10,45 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-serif: var(--font-playfair);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Serif display headings */
+.font-serif {
+  font-family: var(--font-serif), Georgia, serif;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Testimonial card hover */
+.testimonial-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.testimonial-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* Gradient text utility */
+.gradient-text {
+  background: linear-gradient(135deg, #0f172a 0%, #334155 50%, #0f172a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Number accent styling */
+.number-accent {
+  font-family: var(--font-serif), Georgia, serif;
+  font-style: italic;
+  color: #94a3b8;
 }

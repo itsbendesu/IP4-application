@@ -4,18 +4,19 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 
+interface Prompt {
+  id: string;
+  text: string;
+}
+
 interface ApplicationData {
   id: string;
   name: string;
   email: string;
-  prompt: {
-    id: string;
-    text: string;
-  };
+  prompts: Prompt[];
   expiresAt: string;
 }
 
-type VideoSource = "record" | "upload";
 
 export default function UploadPage() {
   const router = useRouter();
@@ -27,7 +28,6 @@ export default function UploadPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [videoSource, setVideoSource] = useState<VideoSource>("record");
   const [hasStarted, setHasStarted] = useState(false);
 
   // Recording state
@@ -35,19 +35,20 @@ export default function UploadPage() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const isRecordingRef = useRef(false);
 
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
   const [duration, setDuration] = useState(0);
+  const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
 
   // Upload state
-  const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [videoDuration, setVideoDuration] = useState(0);
 
   const MAX_DURATION = 90;
-  const MAX_FILE_SIZE = 500 * 1024 * 1024; // 500MB
+  const PROMPT_DURATION = 45; // Each prompt shown for 45 seconds
 
   // Fetch application data
   useEffect(() => {
@@ -58,7 +59,6 @@ export default function UploadPage() {
 
         if (!res.ok) {
           if (data.requiresVerification) {
-            // Redirect back to apply with verification needed
             router.push("/apply");
             return;
           }
@@ -88,6 +88,13 @@ export default function UploadPage() {
     };
   }, [stream]);
 
+  // Attach stream to video element when stream changes
+  useEffect(() => {
+    if (stream && videoRef.current) {
+      videoRef.current.srcObject = stream;
+    }
+  }, [stream]);
+
   const startCamera = useCallback(async () => {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
@@ -95,9 +102,6 @@ export default function UploadPage() {
         audio: true,
       });
       setStream(mediaStream);
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
-      }
       setError(null);
       setHasStarted(true);
     } catch (err) {
@@ -118,6 +122,7 @@ export default function UploadPage() {
 
     chunksRef.current = [];
     setDuration(0);
+    setCurrentPromptIndex(0);
     setRecordedBlob(null);
 
     const mediaRecorder = new MediaRecorder(stream, {
@@ -139,128 +144,55 @@ export default function UploadPage() {
     mediaRecorderRef.current = mediaRecorder;
     mediaRecorder.start(1000);
     setIsRecording(true);
+    isRecordingRef.current = true;
 
     let elapsed = 0;
     timerRef.current = setInterval(() => {
       elapsed++;
       setDuration(elapsed);
+
+      // Cycle to next prompt every PROMPT_DURATION seconds
+      const newPromptIndex = Math.min(
+        Math.floor(elapsed / PROMPT_DURATION),
+        (application?.prompts.length || 1) - 1
+      );
+      setCurrentPromptIndex(newPromptIndex);
+
       if (elapsed >= MAX_DURATION) {
-        stopRecording();
+        // Stop recording - use refs to avoid stale closure
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
+        setVideoDuration(elapsed);
+        if (mediaRecorderRef.current && isRecordingRef.current) {
+          mediaRecorderRef.current.stop();
+          setIsRecording(false);
+          isRecordingRef.current = false;
+        }
       }
     }, 1000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stream, stopCamera]);
+  }, [stream, stopCamera, application?.prompts.length]);
 
   const stopRecording = useCallback(() => {
-    if (mediaRecorderRef.current && isRecording) {
+    if (mediaRecorderRef.current && isRecordingRef.current) {
       setVideoDuration(duration);
       mediaRecorderRef.current.stop();
       setIsRecording(false);
+      isRecordingRef.current = false;
       if (timerRef.current) {
         clearInterval(timerRef.current);
         timerRef.current = null;
       }
     }
-  }, [isRecording, duration]);
-
-  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Validate file type
-    const validTypes = ["video/mp4", "video/quicktime", "video/webm"];
-    if (!validTypes.includes(file.type)) {
-      setError("Please upload a video file (MP4, MOV, or WebM)");
-      return;
-    }
-
-    // Validate file size
-    if (file.size > MAX_FILE_SIZE) {
-      setError("File too large. Maximum size is 500MB.");
-      return;
-    }
-
-    // Get video duration
-    const video = document.createElement("video");
-    video.preload = "metadata";
-
-    video.onloadedmetadata = () => {
-      URL.revokeObjectURL(video.src);
-      if (video.duration > 120) {
-        setError("Video must be 2 minutes or less.");
-        return;
-      }
-      setVideoDuration(Math.round(video.duration));
-      setUploadFile(file);
-      setError(null);
-      setHasStarted(true);
-    };
-
-    video.onerror = () => {
-      setError("Could not read video file");
-    };
-
-    video.src = URL.createObjectURL(file);
-  };
-
-  const uploadVideo = async (): Promise<{ key: string; url: string } | null> => {
-    if (!uploadFile) return null;
-
-    try {
-      // Get presigned URL
-      const presignRes = await fetch("/api/upload/presign", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          filename: uploadFile.name,
-          contentType: uploadFile.type,
-          size: uploadFile.size,
-        }),
-      });
-
-      if (!presignRes.ok) {
-        const data = await presignRes.json();
-        throw new Error(data.error || "Failed to get upload URL");
-      }
-
-      const { uploadUrl, key, publicUrl } = await presignRes.json();
-
-      // Upload to R2
-      const xhr = new XMLHttpRequest();
-
-      await new Promise<void>((resolve, reject) => {
-        xhr.upload.onprogress = (e) => {
-          if (e.lengthComputable) {
-            setUploadProgress(Math.round((e.loaded / e.total) * 100));
-          }
-        };
-
-        xhr.onload = () => {
-          if (xhr.status >= 200 && xhr.status < 300) {
-            resolve();
-          } else {
-            reject(new Error("Upload failed"));
-          }
-        };
-
-        xhr.onerror = () => reject(new Error("Upload failed"));
-
-        xhr.open("PUT", uploadUrl);
-        xhr.setRequestHeader("Content-Type", uploadFile.type);
-        xhr.send(uploadFile);
-      });
-
-      return { key, url: publicUrl };
-    } catch (err) {
-      throw err;
-    }
-  };
+  }, [duration]);
 
   const uploadRecordedVideo = async (): Promise<{ key: string; url: string } | null> => {
     if (!recordedBlob) return null;
 
     try {
-      // Get presigned URL
+      // Check if we should use local mode
       const presignRes = await fetch("/api/upload/presign", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -276,9 +208,31 @@ export default function UploadPage() {
         throw new Error(data.error || "Failed to get upload URL");
       }
 
-      const { uploadUrl, key, publicUrl } = await presignRes.json();
+      const presignData = await presignRes.json();
 
-      // Upload to R2
+      // Handle local upload mode (development)
+      if (presignData.localMode) {
+        const formData = new FormData();
+        formData.append("file", new File([recordedBlob], "recording.webm", { type: "video/webm" }));
+
+        const localRes = await fetch("/api/upload/local", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!localRes.ok) {
+          const data = await localRes.json();
+          throw new Error(data.error || "Local upload failed");
+        }
+
+        setUploadProgress(100);
+        const { key, url } = await localRes.json();
+        return { key, url };
+      }
+
+      // Handle R2 upload
+      const { uploadUrl, key, publicUrl } = presignData;
+
       const xhr = new XMLHttpRequest();
 
       await new Promise<void>((resolve, reject) => {
@@ -310,8 +264,8 @@ export default function UploadPage() {
   };
 
   const handleSubmit = async () => {
-    if (!recordedBlob && !uploadFile) {
-      setError("Please record or upload a video first");
+    if (!recordedBlob) {
+      setError("Please record a video first");
       return;
     }
 
@@ -320,20 +274,12 @@ export default function UploadPage() {
     setUploadProgress(0);
 
     try {
-      // Upload the video first
-      let videoData: { key: string; url: string } | null = null;
-
-      if (recordedBlob) {
-        videoData = await uploadRecordedVideo();
-      } else if (uploadFile) {
-        videoData = await uploadVideo();
-      }
+      const videoData = await uploadRecordedVideo();
 
       if (!videoData) {
         throw new Error("Failed to upload video");
       }
 
-      // Complete the application
       const res = await fetch("/api/apply/complete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -367,7 +313,6 @@ export default function UploadPage() {
 
   const clearVideo = () => {
     setRecordedBlob(null);
-    setUploadFile(null);
     setUploadProgress(0);
     setVideoDuration(0);
     setDuration(0);
@@ -376,152 +321,202 @@ export default function UploadPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-500">Loading...</div>
+      <main className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-slate-400">Loading...</div>
       </main>
     );
   }
 
   if (!application) {
     return (
-      <main className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <div className="max-w-md text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Application Not Found</h1>
-          <p className="text-gray-600 mb-6">{error || "This application may have expired or already been submitted."}</p>
-          <Link
-            href="/apply"
-            className="inline-block px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
-          >
-            Start New Application
-          </Link>
+      <main className="min-h-screen bg-white">
+        <nav className="border-b border-slate-100">
+          <div className="max-w-6xl mx-auto px-6 h-16 flex items-center">
+            <Link href="/" className="font-serif text-xl font-bold text-slate-900 tracking-tight">
+              IP4
+            </Link>
+          </div>
+        </nav>
+        <div className="flex items-center justify-center px-6 py-32">
+          <div className="max-w-md text-center">
+            <h1 className="font-serif text-3xl font-bold text-slate-900 mb-4">Application Not Found</h1>
+            <p className="text-slate-500 mb-8">{error || "This application may have expired or already been submitted."}</p>
+            <Link
+              href="/apply"
+              className="inline-block px-6 py-3 bg-slate-900 text-white rounded-full font-medium hover:bg-slate-800 transition-colors"
+            >
+              Start New Application
+            </Link>
+          </div>
         </div>
       </main>
     );
   }
 
-  const hasVideo = recordedBlob !== null || uploadFile !== null;
+  const hasVideo = recordedBlob !== null;
 
   return (
-    <main className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-3xl mx-auto px-4">
+    <main className="min-h-screen bg-white">
+      {/* Nav */}
+      <nav className="border-b border-slate-100">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+          <Link href="/" className="font-serif text-xl font-bold text-slate-900 tracking-tight">
+            IP4
+          </Link>
+          <div className="flex items-center gap-3 text-sm text-slate-500">
+            <span className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-emerald-100 text-xs flex items-center justify-center text-emerald-600 font-medium">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                </svg>
+              </span>
+              <span className="hidden sm:inline text-slate-400">Info</span>
+            </span>
+            <div className="w-8 h-px bg-slate-200" />
+            <span className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-emerald-100 text-xs flex items-center justify-center text-emerald-600 font-medium">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                </svg>
+              </span>
+              <span className="hidden sm:inline text-slate-400">Verify</span>
+            </span>
+            <div className="w-8 h-px bg-slate-200" />
+            <span className="flex items-center gap-2 text-slate-900 font-medium">
+              <span className="w-6 h-6 rounded-full bg-slate-900 text-white text-xs flex items-center justify-center font-medium">
+                3
+              </span>
+              <span className="hidden sm:inline">Record</span>
+            </span>
+          </div>
+        </div>
+      </nav>
+
+      <div className="max-w-3xl mx-auto px-6 py-8 md:py-12">
         {/* Header */}
         <div className="mb-8">
-          <p className="text-sm text-gray-500 mb-2">Hi {application.name},</p>
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Record Your Response</h1>
+          <p className="text-sm text-slate-400 mb-2">Hi {application.name},</p>
+          <h1 className="font-serif text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">Record your response.</h1>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
             {error}
           </div>
         )}
 
         {/* Prompt */}
-        <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-6 mb-8">
-          <p className="text-sm text-indigo-600 font-medium mb-2">Your prompt:</p>
-          <p className="text-xl text-gray-900 font-medium">{application.prompt.text}</p>
+        <div className="bg-slate-900 rounded-2xl p-8 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-sm text-slate-400 font-medium">
+              {isRecording ? `Question ${currentPromptIndex + 1} of ${application.prompts.length}` : "Your prompts"}
+            </p>
+            {isRecording && (
+              <div className="flex gap-2">
+                {application.prompts.map((_, idx) => (
+                  <div
+                    key={idx}
+                    className={`w-2 h-2 rounded-full transition-all ${
+                      idx === currentPromptIndex
+                        ? "bg-white scale-125"
+                        : idx < currentPromptIndex
+                        ? "bg-slate-500"
+                        : "bg-slate-700"
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {isRecording ? (
+            <>
+              <p className="text-xl md:text-2xl text-white font-medium leading-relaxed">
+                {application.prompts[currentPromptIndex]?.text}
+              </p>
+              <div className="mt-4 h-1 bg-slate-700 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-white/50 transition-all duration-1000"
+                  style={{
+                    width: `${((duration % PROMPT_DURATION) / PROMPT_DURATION) * 100}%`,
+                  }}
+                />
+              </div>
+              <p className="text-xs text-slate-500 mt-2">
+                {PROMPT_DURATION - (duration % PROMPT_DURATION)}s until next question
+              </p>
+            </>
+          ) : (
+            <div className="space-y-4">
+              {application.prompts.map((prompt, idx) => (
+                <div key={prompt.id} className="flex gap-3">
+                  <span className="text-slate-500 font-mono text-sm">{idx + 1}.</span>
+                  <p className="text-white/80 leading-relaxed">{prompt.text}</p>
+                </div>
+              ))}
+              <p className="text-sm text-slate-500 mt-4">
+                Each question will be shown for {PROMPT_DURATION} seconds during recording.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Rules - only show before starting */}
         {!hasStarted && (
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-6 mb-8">
-            <h2 className="font-semibold text-amber-900 mb-3 flex items-center gap-2">
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 mb-8">
+            <h2 className="font-semibold text-amber-900 mb-4 flex items-center gap-2">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
-              The rules
+              How it works
             </h2>
-            <ul className="space-y-2 text-amber-800">
-              <li className="flex items-start gap-2">
-                <span className="font-bold">90 seconds max.</span>
-                <span className="text-amber-700">We&apos;ll cut you off automatically.</span>
+            <ul className="space-y-3 text-amber-800">
+              <li className="flex items-start gap-3">
+                <span className="font-semibold">{application.prompts.length} questions, {PROMPT_DURATION} seconds each.</span>
+                <span className="text-amber-700">Questions will cycle automatically.</span>
               </li>
-              <li className="flex items-start gap-2">
-                <span className="font-bold">One take only.</span>
+              <li className="flex items-start gap-3">
+                <span className="font-semibold">One take only.</span>
                 <span className="text-amber-700">No re-recording after you submit.</span>
               </li>
-              <li className="flex items-start gap-2">
-                <span className="font-bold">No editing.</span>
+              <li className="flex items-start gap-3">
+                <span className="font-semibold">No editing.</span>
                 <span className="text-amber-700">We want the real you, not the polished you.</span>
               </li>
             </ul>
-            <p className="mt-4 text-sm text-amber-700 italic">
-              Tip: Take a breath. Think for a second. Then just talk.
+            <p className="mt-5 text-sm text-amber-700 italic">
+              Tip: Don&apos;t overthink it. When the question changes, just start talking.
               Authenticity beats polish every time.
             </p>
           </div>
         )}
 
         {/* Video area */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 mb-6">
           {!hasStarted && !hasVideo && (
-            <>
-              {/* Source toggle */}
-              <div className="flex gap-2 p-1 bg-gray-100 rounded-lg mb-6">
-                <button
-                  onClick={() => setVideoSource("record")}
-                  className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                    videoSource === "record"
-                      ? "bg-white text-gray-900 shadow-sm"
-                      : "text-gray-600 hover:text-gray-900"
-                  }`}
-                >
-                  Record Now
-                </button>
-                <button
-                  onClick={() => setVideoSource("upload")}
-                  className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                    videoSource === "upload"
-                      ? "bg-white text-gray-900 shadow-sm"
-                      : "text-gray-600 hover:text-gray-900"
-                  }`}
-                >
-                  Upload Video
-                </button>
+            <div className="text-center py-12">
+              <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-5">
+                <svg className="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
               </div>
-
-              {videoSource === "record" ? (
-                <div className="text-center py-12">
-                  <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <p className="text-gray-600 mb-4">Record your {MAX_DURATION}-second response</p>
-                  <button
-                    onClick={startCamera}
-                    className="px-8 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium"
-                  >
-                    Enable Camera
-                  </button>
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                    </svg>
-                  </div>
-                  <p className="text-gray-600 mb-2">Upload a pre-recorded video</p>
-                  <p className="text-sm text-gray-500 mb-4">MP4, MOV, or WebM up to 500MB (max 2 min)</p>
-                  <label className="inline-block px-8 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium cursor-pointer">
-                    Choose File
-                    <input
-                      type="file"
-                      accept="video/mp4,video/quicktime,video/webm"
-                      onChange={handleFileSelect}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
-              )}
-            </>
+              <p className="text-slate-600 mb-2">Record your {MAX_DURATION}-second response</p>
+              <p className="text-sm text-slate-500 mb-5">
+                Take a breath, read through the prompts above, then hit record when you&apos;re ready.
+              </p>
+              <button
+                onClick={startCamera}
+                className="px-8 py-4 bg-slate-900 text-white rounded-full font-medium hover:bg-slate-800 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Enable Camera
+              </button>
+            </div>
           )}
 
           {/* Recording view */}
           {stream && !recordedBlob && (
-            <div className="space-y-4">
-              <div className="relative bg-black rounded-lg overflow-hidden aspect-video">
+            <div className="space-y-6">
+              <div className="relative bg-black rounded-xl overflow-hidden aspect-video">
                 <video
                   ref={videoRef}
                   autoPlay
@@ -531,11 +526,11 @@ export default function UploadPage() {
                 />
                 {isRecording && (
                   <>
-                    <div className="absolute top-4 left-4 flex items-center gap-2 bg-red-600 text-white px-3 py-1 rounded-full">
+                    <div className="absolute top-4 left-4 flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-full">
                       <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                      <span className="font-mono">{formatTime(duration)} / {formatTime(MAX_DURATION)}</span>
+                      <span className="font-mono text-sm">{formatTime(duration)} / {formatTime(MAX_DURATION)}</span>
                     </div>
-                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-700">
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-700">
                       <div
                         className="h-full bg-red-500 transition-all duration-1000"
                         style={{ width: `${(duration / MAX_DURATION) * 100}%` }}
@@ -549,7 +544,7 @@ export default function UploadPage() {
                 {!isRecording && (
                   <button
                     onClick={startRecording}
-                    className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium flex items-center gap-2"
+                    className="px-8 py-4 bg-red-600 text-white rounded-full font-medium hover:bg-red-700 transition-all flex items-center gap-3"
                   >
                     <span className="w-3 h-3 bg-white rounded-full" />
                     Start Recording
@@ -559,7 +554,7 @@ export default function UploadPage() {
                 {isRecording && (
                   <button
                     onClick={stopRecording}
-                    className="px-6 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-900 font-medium"
+                    className="px-8 py-4 bg-slate-900 text-white rounded-full font-medium hover:bg-slate-800 transition-all"
                   >
                     Stop Recording
                   </button>
@@ -570,70 +565,45 @@ export default function UploadPage() {
 
           {/* Preview recorded video */}
           {recordedBlob && (
-            <div className="space-y-4">
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
-                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+            <div className="space-y-6">
+              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-center gap-4">
+                <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
+                  <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
                 <div>
-                  <p className="font-medium text-green-800">Video recorded!</p>
-                  <p className="text-sm text-green-600">{formatTime(videoDuration || duration)}</p>
+                  <p className="font-medium text-emerald-800">Video recorded!</p>
+                  <p className="text-sm text-emerald-600">{formatTime(videoDuration || duration)}</p>
                 </div>
               </div>
 
               <video
                 src={URL.createObjectURL(recordedBlob)}
                 controls
-                className="w-full rounded-lg"
+                className="w-full rounded-xl"
               />
 
               <button
                 onClick={clearVideo}
-                className="text-sm text-gray-600 hover:text-gray-900"
+                className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
               >
                 Record a different video
               </button>
             </div>
           )}
 
-          {/* Preview uploaded video */}
-          {uploadFile && !recordedBlob && (
-            <div className="space-y-4">
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3">
-                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                <div>
-                  <p className="font-medium text-green-800">Video ready!</p>
-                  <p className="text-sm text-green-600">{uploadFile.name} ({formatTime(videoDuration)})</p>
-                </div>
-              </div>
-
-              <video
-                src={URL.createObjectURL(uploadFile)}
-                controls
-                className="w-full rounded-lg"
-              />
-
-              <button
-                onClick={clearVideo}
-                className="text-sm text-gray-600 hover:text-gray-900"
-              >
-                Choose a different video
-              </button>
-            </div>
-          )}
 
           {/* Upload progress */}
           {submitting && uploadProgress > 0 && uploadProgress < 100 && (
-            <div className="mt-4">
-              <div className="flex justify-between text-sm text-gray-600 mb-1">
+            <div className="mt-6">
+              <div className="flex justify-between text-sm text-slate-600 mb-2">
                 <span>Uploading...</span>
                 <span>{uploadProgress}%</span>
               </div>
-              <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-indigo-600 transition-all"
+                  className="h-full bg-slate-900 transition-all"
                   style={{ width: `${uploadProgress}%` }}
                 />
               </div>
@@ -647,18 +617,18 @@ export default function UploadPage() {
             <button
               onClick={handleSubmit}
               disabled={submitting}
-              className="w-full px-6 py-4 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-6 py-4 bg-emerald-600 text-white rounded-full font-medium text-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.01] active:scale-[0.99]"
             >
               {submitting ? "Submitting..." : "Submit Application"}
             </button>
-            <p className="text-center text-sm text-gray-500">
+            <p className="text-center text-sm text-slate-500">
               By submitting, you confirm this is your final take.
             </p>
           </div>
         )}
 
         {/* Expiration notice */}
-        <div className="mt-8 text-center text-sm text-gray-500">
+        <div className="mt-10 text-center text-sm text-slate-400">
           Application expires: {new Date(application.expiresAt).toLocaleString()}
         </div>
       </div>

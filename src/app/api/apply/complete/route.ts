@@ -7,7 +7,7 @@ import { isEmailVerificationEnabled } from "@/lib/email-verification";
 const completeSchema = z.object({
   token: z.string().min(1),
   videoKey: z.string().min(1),
-  videoUrl: z.string().url(),
+  videoUrl: z.string().min(1), // Accepts both full URLs and local paths like /uploads/x.webm
   videoDurationSec: z.number().min(1).max(120),
 });
 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -12,9 +13,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
-  title: "Interesting People",
-  description: "Apply to join our community of interesting people",
+  title: "Interesting People 4 — A Gathering for the Genuinely Curious",
+  description:
+    "Not a conference. Not a networking event. A curated gathering of 150 people selected for curiosity, depth, and emotional intelligence. Apply now.",
 };
 
 export default function RootLayout({
@@ -25,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} antialiased`}
       >
         {children}
       </body>

@@ -24,8 +24,20 @@ const presignSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    // Check if R2 is configured
+    // Check if R2 is configured - if not, return local mode flag
     if (!isR2Configured()) {
+      // In development, allow local uploads
+      if (process.env.NODE_ENV !== "production") {
+        return NextResponse.json({
+          localMode: true,
+          uploadUrl: "/api/upload/local",
+          constraints: {
+            maxSizeMB: MAX_FILE_SIZE / 1024 / 1024,
+            maxDurationSec: MAX_DURATION_SEC,
+            allowedTypes: ALLOWED_TYPES,
+          },
+        });
+      }
       return NextResponse.json(
         { error: "Storage not configured. Please contact support." },
         { status: 503 }

@@ -47,11 +47,21 @@ export async function GET(
       );
     }
 
+    // Fetch 3 random prompts for the interview
+    const allPrompts = await prisma.prompt.findMany({
+      where: { active: true },
+      select: { id: true, text: true },
+    });
+
+    // Shuffle and take 2 (or all if fewer than 2)
+    const shuffled = allPrompts.sort(() => Math.random() - 0.5);
+    const prompts = shuffled.slice(0, 2);
+
     return NextResponse.json({
       id: pending.id,
       name: pending.name,
       email: pending.email,
-      prompt: pending.prompt,
+      prompts, // Now returns array of prompts
       expiresAt: pending.expiresAt.toISOString(),
     });
   } catch (error) {

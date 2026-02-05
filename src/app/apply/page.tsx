@@ -193,266 +193,353 @@ export default function ApplyPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-2xl mx-auto px-4">
-        <Link
-          href="/"
-          className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-6"
-        >
-          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Back
-        </Link>
-
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Apply to Join</h1>
-          <p className="text-gray-600">
-            {step === "info"
-              ? "Tell us about yourself. No resume, no LinkedIn - just you."
-              : "Check your email for a verification code."}
-          </p>
-        </div>
-
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-            {error}
+    <main className="min-h-screen bg-white">
+      {/* Nav */}
+      <nav className="border-b border-slate-100">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+          <Link href="/" className="font-serif text-xl font-bold text-slate-900 tracking-tight">
+            IP4
+          </Link>
+          <div className="flex items-center gap-3 text-sm text-slate-500">
+            <span className={`flex items-center gap-2 ${step === "info" ? "text-slate-900 font-medium" : ""}`}>
+              <span className={`w-6 h-6 rounded-full text-xs flex items-center justify-center font-medium ${step === "info" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-400"}`}>
+                1
+              </span>
+              <span className="hidden sm:inline">Your Info</span>
+            </span>
+            <div className="w-8 h-px bg-slate-200" />
+            <span className={`flex items-center gap-2 ${step === "verification" ? "text-slate-900 font-medium" : ""}`}>
+              <span className={`w-6 h-6 rounded-full text-xs flex items-center justify-center font-medium ${step === "verification" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-400"}`}>
+                2
+              </span>
+              <span className="hidden sm:inline">Verify</span>
+            </span>
+            <div className="w-8 h-px bg-slate-200" />
+            <span className="flex items-center gap-2">
+              <span className="w-6 h-6 rounded-full bg-slate-100 text-xs flex items-center justify-center text-slate-400 font-medium">
+                3
+              </span>
+              <span className="hidden sm:inline">Record</span>
+            </span>
           </div>
-        )}
+        </div>
+      </nav>
 
-        <div className="bg-white rounded-xl shadow-sm p-6 md:p-8">
-          {step === "info" && (
-            <form onSubmit={handleSubmitInfo} className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Full Name *
-                </label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => updateField("name", e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="Jane Smith"
-                  required
-                />
+      <div className="max-w-4xl mx-auto px-6 py-12 md:py-20">
+        <div className="grid md:grid-cols-[1fr,320px] gap-12 md:gap-16">
+          {/* Main form column */}
+          <div>
+            <div className="mb-10">
+              <h1 className="font-serif text-3xl md:text-4xl font-bold text-slate-900 tracking-tight mb-3">
+                {step === "info" ? "Tell us about yourself." : "Verify your email."}
+              </h1>
+              <p className="text-slate-500 text-lg">
+                {step === "info"
+                  ? "No resume, no LinkedIn. We want to know what makes you interesting."
+                  : "Check your inbox for a 6-digit code."}
+              </p>
+            </div>
+
+            {error && (
+              <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+                {error}
               </div>
+            )}
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email *
-                </label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => updateField("email", e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="jane@example.com"
-                  required
-                />
-              </div>
+            <div className="bg-white">
+              {step === "info" && (
+                <form onSubmit={handleSubmitInfo} className="space-y-8">
+                  <div className="space-y-6">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-900 mb-2">
+                        Full Name
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.name}
+                        onChange={(e) => updateField("name", e.target.value)}
+                        className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 outline-none transition-shadow bg-white"
+                        placeholder="Jane Smith"
+                        required
+                      />
+                    </div>
 
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Location *
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.location}
-                    onChange={(e) => updateField("location", e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                    placeholder="San Francisco, CA"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Timezone
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.timezone}
-                    readOnly
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-600"
-                  />
-                </div>
-              </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-900 mb-2">
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => updateField("email", e.target.value)}
+                        className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 outline-none transition-shadow bg-white"
+                        placeholder="jane@example.com"
+                        required
+                      />
+                    </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Short Bio * <span className="text-gray-400 font-normal">({formData.bio.length}/500)</span>
-                </label>
-                <p className="text-sm text-gray-500 mb-2">
-                  What makes you tick? What are you curious about? Skip the job title.
-                </p>
-                <textarea
-                  value={formData.bio}
-                  onChange={(e) => updateField("bio", e.target.value)}
-                  rows={4}
-                  maxLength={500}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="I spend my weekends building mechanical keyboards and arguing about which pizza style is best..."
-                  required
-                />
-              </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-slate-900 mb-2">
+                          Location
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.location}
+                          onChange={(e) => updateField("location", e.target.value)}
+                          className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 outline-none transition-shadow bg-white"
+                          placeholder="San Francisco, CA"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-slate-900 mb-2">
+                          Timezone
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.timezone}
+                          readOnly
+                          className="w-full px-4 py-3.5 border border-slate-100 rounded-xl bg-slate-50 text-slate-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Links <span className="text-gray-400 font-normal">(optional)</span>
-                </label>
-                <p className="text-sm text-gray-500 mb-2">
-                  Personal site, blog, projects - not LinkedIn.
-                </p>
-                {formData.links.map((link, i) => (
-                  <div key={i} className="flex gap-2 mb-2">
-                    <input
-                      type="url"
-                      value={link}
-                      onChange={(e) => updateLink(i, e.target.value)}
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                      placeholder="https://..."
+                  <div className="h-px bg-slate-100" />
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-900 mb-1">
+                      Short Bio
+                    </label>
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="text-sm text-slate-500">
+                        What makes you tick? What are you curious about? Skip the job title.
+                      </p>
+                      <span className="text-xs text-slate-400 font-mono ml-4 flex-shrink-0">
+                        {formData.bio.length}/500
+                      </span>
+                    </div>
+                    <textarea
+                      value={formData.bio}
+                      onChange={(e) => updateField("bio", e.target.value)}
+                      rows={4}
+                      maxLength={500}
+                      className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 outline-none transition-shadow resize-none bg-white"
+                      placeholder="I spend my weekends building mechanical keyboards and arguing about which pizza style is best..."
+                      required
                     />
-                    {formData.links.length > 1 && (
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-900 mb-1">
+                      Links
+                      <span className="text-slate-400 font-normal ml-2">(optional)</span>
+                    </label>
+                    <p className="text-sm text-slate-500 mb-3">
+                      Personal site, blog, projects&mdash;not LinkedIn.
+                    </p>
+                    {formData.links.map((link, i) => (
+                      <div key={i} className="flex gap-2 mb-2">
+                        <input
+                          type="url"
+                          value={link}
+                          onChange={(e) => updateLink(i, e.target.value)}
+                          className="flex-1 px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 outline-none transition-shadow bg-white"
+                          placeholder="https://..."
+                        />
+                        {formData.links.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => removeLink(i)}
+                            className="px-3 py-2 text-slate-400 hover:text-red-500 transition-colors"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                    {formData.links.length < 5 && (
                       <button
                         type="button"
-                        onClick={() => removeLink(i)}
-                        className="px-3 py-2 text-gray-400 hover:text-red-500"
+                        onClick={addLink}
+                        className="text-sm text-slate-500 hover:text-slate-900 transition-colors mt-1"
                       >
-                        &times;
+                        + Add another link
                       </button>
                     )}
                   </div>
-                ))}
-                {formData.links.length < 5 && (
+
+                  {/* Honeypot field - hidden from users, bots will fill it */}
+                  <div className="hidden" aria-hidden="true">
+                    <label htmlFor="website">Website</label>
+                    <input
+                      type="text"
+                      id="website"
+                      name="website"
+                      value={formData.website}
+                      onChange={(e) => updateField("website", e.target.value)}
+                      tabIndex={-1}
+                      autoComplete="off"
+                    />
+                  </div>
+
+                  <div className="h-px bg-slate-100" />
+
+                  {/* Privacy consent checkbox */}
+                  <label className="flex items-start gap-4 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={consentGiven}
+                      onChange={(e) => setConsentGiven(e.target.checked)}
+                      className="mt-0.5 h-5 w-5 text-slate-900 border-slate-300 rounded focus:ring-slate-900"
+                    />
+                    <span className="text-sm text-slate-500 leading-relaxed">
+                      I understand that my video will be reviewed by the selection team and agree to the{" "}
+                      <Link
+                        href="/privacy"
+                        target="_blank"
+                        className="text-slate-900 hover:underline font-medium"
+                      >
+                        Privacy Policy
+                      </Link>
+                      , including how my data and video submission will be handled.
+                    </span>
+                  </label>
+
                   <button
-                    type="button"
-                    onClick={addLink}
-                    className="text-sm text-indigo-600 hover:text-indigo-700"
+                    type="submit"
+                    disabled={loading}
+                    className="w-full px-6 py-4 bg-slate-900 text-white rounded-full font-medium text-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.01] active:scale-[0.99]"
                   >
-                    + Add another link
+                    {loading ? "Submitting..." : "Continue to Video"}
                   </button>
-                )}
-              </div>
+                </form>
+              )}
 
-              {/* Honeypot field - hidden from users, bots will fill it */}
-              <div className="hidden" aria-hidden="true">
-                <label htmlFor="website">Website</label>
-                <input
-                  type="text"
-                  id="website"
-                  name="website"
-                  value={formData.website}
-                  onChange={(e) => updateField("website", e.target.value)}
-                  tabIndex={-1}
-                  autoComplete="off"
-                />
-              </div>
+              {step === "verification" && (
+                <form onSubmit={handleVerify} className="space-y-6">
+                  <div className="text-center mb-8">
+                    <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-5">
+                      <svg className="w-8 h-8 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <p className="text-slate-600">
+                      We sent a 6-digit code to <strong className="text-slate-900">{email}</strong>
+                    </p>
+                  </div>
 
-              {/* Privacy consent checkbox */}
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                <label className="flex items-start gap-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={consentGiven}
-                    onChange={(e) => setConsentGiven(e.target.checked)}
-                    className="mt-1 h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-                  />
-                  <span className="text-sm text-gray-700">
-                    I understand that my video will be reviewed by the selection team and agree to the{" "}
-                    <Link
-                      href="/privacy"
-                      target="_blank"
-                      className="text-indigo-600 hover:text-indigo-700 underline"
+                  <div>
+                    <label className="block text-sm font-medium text-slate-900 mb-2">
+                      Verification Code
+                    </label>
+                    <input
+                      type="text"
+                      value={verificationCode}
+                      onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                      className="w-full px-4 py-4 text-center text-2xl tracking-[0.5em] border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 outline-none font-mono"
+                      placeholder="000000"
+                      maxLength={6}
+                      autoFocus
+                      required
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={loading || verificationCode.length !== 6}
+                    className="w-full px-6 py-4 bg-slate-900 text-white rounded-full font-medium text-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  >
+                    {loading ? "Verifying..." : "Verify Email"}
+                  </button>
+
+                  <div className="text-center">
+                    <button
+                      type="button"
+                      onClick={handleResend}
+                      disabled={loading || resendCooldown > 0}
+                      className="text-sm text-slate-500 hover:text-slate-900 disabled:text-slate-400 disabled:cursor-not-allowed transition-colors"
                     >
-                      Privacy Policy
-                    </Link>
-                    , including how my data and video submission will be handled.
-                  </span>
-                </label>
+                      {resendCooldown > 0
+                        ? `Resend code in ${resendCooldown}s`
+                        : "Didn't receive a code? Resend"}
+                    </button>
+                  </div>
+
+                  <div className="pt-6 border-t border-slate-100">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setStep("info");
+                        setToken(null);
+                        setVerificationCode("");
+                        setError(null);
+                      }}
+                      className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
+                    >
+                      &larr; Go back and edit your info
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+
+          {/* Sidebar */}
+          <aside className="hidden md:block">
+            <div className="sticky top-24 space-y-8">
+              {/* What to expect */}
+              <div className="bg-slate-50 rounded-2xl p-6">
+                <h3 className="font-semibold text-slate-900 text-sm mb-4">What happens next</h3>
+                <ol className="space-y-4 text-sm">
+                  <li className="flex gap-3">
+                    <span className="flex-shrink-0 w-5 h-5 bg-slate-900 text-white rounded-full flex items-center justify-center text-xs font-medium">1</span>
+                    <span className="text-slate-600">Fill out this form</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="flex-shrink-0 w-5 h-5 bg-slate-200 text-slate-500 rounded-full flex items-center justify-center text-xs font-medium">2</span>
+                    <span className="text-slate-500">Verify your email</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="flex-shrink-0 w-5 h-5 bg-slate-200 text-slate-500 rounded-full flex items-center justify-center text-xs font-medium">3</span>
+                    <span className="text-slate-500">Record a 90-second video</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="flex-shrink-0 w-5 h-5 bg-slate-200 text-slate-500 rounded-full flex items-center justify-center text-xs font-medium">4</span>
+                    <span className="text-slate-500">We review &amp; respond</span>
+                  </li>
+                </ol>
               </div>
 
-              <div className="pt-4">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? "Submitting..." : "Continue to Video"}
-                </button>
-                <p className="text-center text-sm text-gray-500 mt-3">
-                  You&apos;ll record a 90-second video response next
+              {/* Tip */}
+              <div className="border border-slate-200 rounded-2xl p-6">
+                <h3 className="font-semibold text-slate-900 text-sm mb-3">A word of advice</h3>
+                <p className="text-sm text-slate-500 leading-relaxed">
+                  Write your bio like you&apos;re telling a friend what you&apos;re into right now&mdash;not
+                  like you&apos;re updating a professional profile. We care about what
+                  lights you up.
                 </p>
               </div>
-            </form>
-          )}
 
-          {step === "verification" && (
-            <form onSubmit={handleVerify} className="space-y-6">
-              <div className="text-center mb-6">
-                <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <h2 className="text-xl font-semibold text-gray-900 mb-2">Check your email</h2>
-                <p className="text-gray-600">
-                  We sent a 6-digit code to <strong>{email}</strong>
+              {/* Quote */}
+              <div className="relative">
+                <svg className="w-6 h-6 text-slate-200 mb-3" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+                </svg>
+                <p className="text-sm text-slate-500 leading-relaxed italic">
+                  &ldquo;The application process itself told me this wasn&apos;t going to be
+                  another boring conference. I was nervous recording my video, and
+                  that&apos;s exactly why it worked.&rdquo;
+                </p>
+                <p className="text-xs text-slate-400 mt-3">
+                  &mdash; Priya R., IP3 Attendee
                 </p>
               </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Verification Code
-                </label>
-                <input
-                  type="text"
-                  value={verificationCode}
-                  onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                  className="w-full px-4 py-3 text-center text-2xl tracking-widest border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-mono"
-                  placeholder="000000"
-                  maxLength={6}
-                  autoFocus
-                  required
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading || verificationCode.length !== 6}
-                className="w-full px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? "Verifying..." : "Verify Email"}
-              </button>
-
-              <div className="text-center">
-                <button
-                  type="button"
-                  onClick={handleResend}
-                  disabled={loading || resendCooldown > 0}
-                  className="text-sm text-indigo-600 hover:text-indigo-700 disabled:text-gray-400 disabled:cursor-not-allowed"
-                >
-                  {resendCooldown > 0
-                    ? `Resend code in ${resendCooldown}s`
-                    : "Didn't receive a code? Resend"}
-                </button>
-              </div>
-
-              <div className="pt-4 border-t">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setStep("info");
-                    setToken(null);
-                    setVerificationCode("");
-                    setError(null);
-                  }}
-                  className="text-sm text-gray-600 hover:text-gray-900"
-                >
-                  &larr; Go back and edit your info
-                </button>
-              </div>
-            </form>
-          )}
+            </div>
+          </aside>
         </div>
       </div>
     </main>
