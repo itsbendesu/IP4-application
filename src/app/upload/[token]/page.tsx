@@ -463,28 +463,28 @@ export default function UploadPage() {
 
         {/* Rules - only show before starting */}
         {!hasStarted && (
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 mb-8">
-            <h2 className="font-semibold text-amber-900 mb-4 flex items-center gap-2">
+          <div className="bg-violet-50 border border-violet-200 rounded-2xl p-6 mb-8">
+            <h2 className="font-semibold text-violet-900 mb-4 flex items-center gap-2">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
               How it works
             </h2>
-            <ul className="space-y-3 text-amber-800">
+            <ul className="space-y-3 text-violet-800">
               <li className="flex items-start gap-3">
                 <span className="font-semibold">{application.prompts.length} questions, {PROMPT_DURATION} seconds each.</span>
-                <span className="text-amber-700">Questions will cycle automatically.</span>
+                <span className="text-violet-600">Questions will cycle automatically.</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="font-semibold">One take only.</span>
-                <span className="text-amber-700">No re-recording after you submit.</span>
+                <span className="text-violet-600">No re-recording after you submit.</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="font-semibold">No editing.</span>
-                <span className="text-amber-700">We want the real you, not the polished you.</span>
+                <span className="text-violet-600">We want the real you, not the polished you.</span>
               </li>
             </ul>
-            <p className="mt-5 text-sm text-amber-700 italic">
+            <p className="mt-5 text-sm text-violet-600 italic">
               Tip: Don&apos;t overthink it. When the question changes, just start talking.
               Authenticity beats polish every time.
             </p>
@@ -617,7 +617,7 @@ export default function UploadPage() {
             <button
               onClick={handleSubmit}
               disabled={submitting}
-              className="w-full px-6 py-4 bg-emerald-600 text-white rounded-full font-medium text-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.01] active:scale-[0.99]"
+              className="w-full px-6 py-4 bg-violet-600 text-white rounded-full font-medium text-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.01] active:scale-[0.99]"
             >
               {submitting ? "Submitting..." : "Submit Application"}
             </button>

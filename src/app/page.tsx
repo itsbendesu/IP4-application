@@ -102,7 +102,7 @@ export default function Home() {
             </Link>
             <Link
               href="/apply"
-              className="px-5 py-2.5 bg-slate-900 text-white text-sm rounded-full font-medium hover:bg-slate-800 transition-all"
+              className="px-5 py-2.5 bg-violet-600 text-white text-sm rounded-full font-medium hover:bg-violet-700 transition-all"
             >
               Apply Now
             </Link>
@@ -113,25 +113,25 @@ export default function Home() {
       {/* Hero */}
       <section className="pt-32 pb-20 md:pt-44 md:pb-32">
         <div className="max-w-6xl mx-auto px-6">
-          <p className="text-sm font-medium tracking-[0.2em] text-slate-400 uppercase mb-8">
+          <p className="text-sm font-medium tracking-[0.2em] text-violet-500 uppercase mb-8">
             Interesting People 4 &mdash; Applications Open
           </p>
           <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl font-bold text-slate-900 leading-[1.05] tracking-tight max-w-4xl">
-            We hate
+            We used to hate
             <br />
-            networking events.
+            conferences.
           </h1>
           <p className="mt-8 text-xl md:text-2xl text-slate-500 leading-relaxed max-w-2xl">
             So we built something different. A three-day gathering for 150 people
             selected not for their titles, but for their{" "}
-            <span className="text-slate-900 font-medium">curiosity</span>,{" "}
-            <span className="text-slate-900 font-medium">depth</span>, and{" "}
-            <span className="text-slate-900 font-medium">willingness to be real</span>.
+            <span className="text-violet-600 font-medium">curiosity</span>,{" "}
+            <span className="text-violet-600 font-medium">depth</span>, and{" "}
+            <span className="text-violet-600 font-medium">willingness to be real</span>.
           </p>
           <div className="mt-12 flex flex-col sm:flex-row gap-4">
             <Link
               href="/apply"
-              className="inline-flex items-center justify-center px-8 py-4 bg-slate-900 text-white rounded-full font-medium text-lg hover:bg-slate-800 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="inline-flex items-center justify-center px-8 py-4 bg-violet-600 text-white rounded-full font-medium text-lg hover:bg-violet-700 transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               Apply for IP4
             </Link>
@@ -148,17 +148,17 @@ export default function Home() {
             <p className="text-sm text-slate-400 mb-4">From previous gatherings</p>
             <div className="flex flex-wrap gap-x-8 gap-y-3">
               <div className="flex items-center gap-2">
-                <span className="font-serif text-2xl font-bold text-slate-900">400+</span>
+                <span className="font-serif text-2xl font-bold text-violet-600">400+</span>
                 <span className="text-sm text-slate-500">attendees across<br />three events</span>
               </div>
               <div className="hidden sm:block w-px h-10 bg-slate-200" />
               <div className="flex items-center gap-2">
-                <span className="font-serif text-2xl font-bold text-slate-900">32</span>
+                <span className="font-serif text-2xl font-bold text-violet-600">32</span>
                 <span className="text-sm text-slate-500">countries<br />represented</span>
               </div>
               <div className="hidden sm:block w-px h-10 bg-slate-200" />
               <div className="flex items-center gap-2">
-                <span className="font-serif text-2xl font-bold text-slate-900">94%</span>
+                <span className="font-serif text-2xl font-bold text-violet-600">94%</span>
                 <span className="text-sm text-slate-500">said they&apos;d<br />come back</span>
               </div>
             </div>
@@ -178,14 +178,14 @@ export default function Home() {
               <span className="text-slate-500 italic">impressiveness</span>.
               <br />
               We optimize for{" "}
-              <span className="text-white italic">interestingness</span>.
+              <span className="text-violet-400 italic">interestingness</span>.
             </h2>
-            <p className="text-lg md:text-xl text-slate-400 leading-relaxed mb-6">
+            <p className="text-lg md:text-xl text-white/90 leading-relaxed mb-6">
               Conferences are about sitting. Making awkward small talk. Bragging at the bar.
               Collecting business cards from people you&apos;ll never email. We&apos;ve all been there.
               We&apos;ve all left feeling emptier than when we arrived.
             </p>
-            <p className="text-lg md:text-xl text-slate-400 leading-relaxed">
+            <p className="text-lg md:text-xl text-white/90 leading-relaxed">
               Interesting People is the opposite. It&apos;s what happens when you put 150 genuinely
               curious humans in a room together and get out of their way. No agenda to network.
               No pressure to perform. Just the space and permission to connect like actual human beings.
@@ -245,7 +245,7 @@ export default function Home() {
                     "Optimized for genuine human connection",
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-3 text-slate-300">
-                      <svg className="w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-5 h-5 text-violet-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                       <span>{item}</span>
@@ -320,20 +320,20 @@ export default function Home() {
 
           <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
             <div className="p-8 bg-white rounded-2xl border border-slate-200/80 hover:border-slate-300 transition-colors">
-              <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center mb-5">
+              <div className="w-10 h-10 bg-violet-50 rounded-xl flex items-center justify-center mb-5">
                 <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <h3 className="font-semibold text-slate-900 text-lg mb-3">Your Resume</h3>
+              <h3 className="font-semibold text-slate-900 text-lg mb-3">Your Image</h3>
               <p className="text-slate-500 leading-relaxed">
-                We don&apos;t care where you went to school or where you work.
-                Credentials are not a proxy for interesting.
+                We don&apos;t care about your personal brand, your follower count,
+                or the story you tell at dinner parties. Curated isn&apos;t interesting.
               </p>
             </div>
 
             <div className="p-8 bg-white rounded-2xl border border-slate-200/80 hover:border-slate-300 transition-colors">
-              <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center mb-5">
+              <div className="w-10 h-10 bg-violet-50 rounded-xl flex items-center justify-center mb-5">
                 <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -346,7 +346,7 @@ export default function Home() {
             </div>
 
             <div className="p-8 bg-white rounded-2xl border border-slate-200/80 hover:border-slate-300 transition-colors">
-              <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center mb-5">
+              <div className="w-10 h-10 bg-violet-50 rounded-xl flex items-center justify-center mb-5">
                 <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
                 </svg>
@@ -364,7 +364,7 @@ export default function Home() {
       {/* Featured Quote */}
       <section className="py-24 md:py-32">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <svg className="w-12 h-12 text-slate-200 mx-auto mb-8" fill="currentColor" viewBox="0 0 24 24">
+          <svg className="w-12 h-12 text-violet-200 mx-auto mb-8" fill="currentColor" viewBox="0 0 24 24">
             <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
           </svg>
           <blockquote className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 leading-[1.2] tracking-tight">
@@ -401,7 +401,7 @@ export default function Home() {
                 key={i}
                 className="testimonial-card bg-white rounded-2xl border border-slate-200/80 p-8 flex flex-col"
               >
-                <svg className="w-8 h-8 text-slate-200 mb-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="w-8 h-8 text-violet-200 mb-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                 </svg>
                 <p className="text-slate-600 leading-relaxed flex-grow mb-6">
@@ -433,7 +433,7 @@ export default function Home() {
 
           <div className="grid md:grid-cols-3 gap-8 md:gap-12">
             <div className="relative">
-              <span className="font-serif text-6xl md:text-7xl font-bold text-white/10 absolute -top-4 -left-2">1</span>
+              <span className="font-serif text-6xl md:text-7xl font-bold text-violet-300/30 absolute -top-4 -left-2">1</span>
               <div className="relative pt-12">
                 <h3 className="text-xl font-semibold text-white mb-3">Tell us who you are</h3>
                 <p className="text-slate-400 leading-relaxed">
@@ -444,7 +444,7 @@ export default function Home() {
             </div>
 
             <div className="relative">
-              <span className="font-serif text-6xl md:text-7xl font-bold text-white/10 absolute -top-4 -left-2">2</span>
+              <span className="font-serif text-6xl md:text-7xl font-bold text-violet-300/30 absolute -top-4 -left-2">2</span>
               <div className="relative pt-12">
                 <h3 className="text-xl font-semibold text-white mb-3">Record a 90-second video</h3>
                 <p className="text-slate-400 leading-relaxed">
@@ -456,7 +456,7 @@ export default function Home() {
             </div>
 
             <div className="relative">
-              <span className="font-serif text-6xl md:text-7xl font-bold text-white/10 absolute -top-4 -left-2">3</span>
+              <span className="font-serif text-6xl md:text-7xl font-bold text-violet-300/30 absolute -top-4 -left-2">3</span>
               <div className="relative pt-12">
                 <h3 className="text-xl font-semibold text-white mb-3">We watch. We respond.</h3>
                 <p className="text-slate-400 leading-relaxed">
@@ -486,19 +486,19 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
             <div className="text-center">
-              <p className="font-serif text-4xl md:text-5xl font-bold text-slate-900">3</p>
+              <p className="font-serif text-4xl md:text-5xl font-bold text-violet-600">3</p>
               <p className="text-sm text-slate-500 mt-2">days together</p>
             </div>
             <div className="text-center">
-              <p className="font-serif text-4xl md:text-5xl font-bold text-slate-900">150</p>
+              <p className="font-serif text-4xl md:text-5xl font-bold text-violet-600">150</p>
               <p className="text-sm text-slate-500 mt-2">attendees max</p>
             </div>
             <div className="text-center">
-              <p className="font-serif text-4xl md:text-5xl font-bold text-slate-900">0</p>
+              <p className="font-serif text-4xl md:text-5xl font-bold text-violet-600">0</p>
               <p className="text-sm text-slate-500 mt-2">panels or keynotes</p>
             </div>
             <div className="text-center">
-              <p className="font-serif text-4xl md:text-5xl font-bold text-slate-900">100%</p>
+              <p className="font-serif text-4xl md:text-5xl font-bold text-violet-600">100%</p>
               <p className="text-sm text-slate-500 mt-2">human-reviewed</p>
             </div>
           </div>
@@ -521,7 +521,7 @@ export default function Home() {
                 <summary className="flex items-center justify-between py-6 cursor-pointer list-none">
                   <h3 className="text-lg font-medium text-slate-900 pr-8">{faq.q}</h3>
                   <svg
-                    className="w-5 h-5 text-slate-400 flex-shrink-0 transition-transform group-open:rotate-45"
+                    className="w-5 h-5 text-violet-400 flex-shrink-0 transition-transform group-open:rotate-45"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -542,7 +542,7 @@ export default function Home() {
           <h2 className="font-serif text-4xl md:text-6xl font-bold text-white leading-[1.1] tracking-tight mb-6">
             Still reading?
             <br />
-            <span className="text-slate-500">That&apos;s a good sign.</span>
+            <span className="text-violet-400">That&apos;s a good sign.</span>
           </h2>
           <p className="text-lg text-slate-400 max-w-xl mx-auto mb-12">
             The kind of person who reads this far is usually the kind of person
@@ -550,7 +550,7 @@ export default function Home() {
           </p>
           <Link
             href="/apply"
-            className="inline-flex items-center justify-center px-10 py-5 bg-white text-slate-900 rounded-full font-medium text-lg hover:bg-slate-100 transition-all hover:scale-[1.02] active:scale-[0.98]"
+            className="inline-flex items-center justify-center px-10 py-5 bg-violet-500 text-white rounded-full font-medium text-lg hover:bg-violet-600 transition-all hover:scale-[1.02] active:scale-[0.98]"
           >
             Apply for IP4
           </Link>

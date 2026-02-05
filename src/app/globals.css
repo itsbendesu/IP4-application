@@ -10,18 +10,13 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-serif: var(--font-playfair);
+  --font-serif: var(--font-playfair), Georgia, serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
-}
-
-/* Serif display headings */
-.font-serif {
-  font-family: var(--font-serif), Georgia, serif;
 }
 
 /* Smooth scroll */
@@ -48,7 +43,7 @@ html {
 
 /* Number accent styling */
 .number-accent {
-  font-family: var(--font-serif), Georgia, serif;
+  font-family: var(--font-playfair), Georgia, serif;
   font-style: italic;
-  color: #94a3b8;
+  color: #a78bfa; /* violet-400 */
 }

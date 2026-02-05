@@ -202,14 +202,14 @@ export default function ApplyPage() {
           </Link>
           <div className="flex items-center gap-3 text-sm text-slate-500">
             <span className={`flex items-center gap-2 ${step === "info" ? "text-slate-900 font-medium" : ""}`}>
-              <span className={`w-6 h-6 rounded-full text-xs flex items-center justify-center font-medium ${step === "info" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-400"}`}>
+              <span className={`w-6 h-6 rounded-full text-xs flex items-center justify-center font-medium ${step === "info" ? "bg-violet-600 text-white" : "bg-slate-100 text-slate-400"}`}>
                 1
               </span>
               <span className="hidden sm:inline">Your Info</span>
             </span>
             <div className="w-8 h-px bg-slate-200" />
             <span className={`flex items-center gap-2 ${step === "verification" ? "text-slate-900 font-medium" : ""}`}>
-              <span className={`w-6 h-6 rounded-full text-xs flex items-center justify-center font-medium ${step === "verification" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-400"}`}>
+              <span className={`w-6 h-6 rounded-full text-xs flex items-center justify-center font-medium ${step === "verification" ? "bg-violet-600 text-white" : "bg-slate-100 text-slate-400"}`}>
                 2
               </span>
               <span className="hidden sm:inline">Verify</span>
@@ -258,7 +258,7 @@ export default function ApplyPage() {
                         type="text"
                         value={formData.name}
                         onChange={(e) => updateField("name", e.target.value)}
-                        className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 outline-none transition-shadow bg-white"
+                        className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-shadow bg-white"
                         placeholder="Jane Smith"
                         required
                       />
@@ -272,7 +272,7 @@ export default function ApplyPage() {
                         type="email"
                         value={formData.email}
                         onChange={(e) => updateField("email", e.target.value)}
-                        className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 outline-none transition-shadow bg-white"
+                        className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-shadow bg-white"
                         placeholder="jane@example.com"
                         required
                       />
@@ -287,7 +287,7 @@ export default function ApplyPage() {
                           type="text"
                           value={formData.location}
                           onChange={(e) => updateField("location", e.target.value)}
-                          className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 outline-none transition-shadow bg-white"
+                          className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-shadow bg-white"
                           placeholder="San Francisco, CA"
                           required
                         />
@@ -325,7 +325,7 @@ export default function ApplyPage() {
                       onChange={(e) => updateField("bio", e.target.value)}
                       rows={4}
                       maxLength={500}
-                      className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 outline-none transition-shadow resize-none bg-white"
+                      className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-shadow resize-none bg-white"
                       placeholder="I spend my weekends building mechanical keyboards and arguing about which pizza style is best..."
                       required
                     />
@@ -345,7 +345,7 @@ export default function ApplyPage() {
                           type="url"
                           value={link}
                           onChange={(e) => updateLink(i, e.target.value)}
-                          className="flex-1 px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 outline-none transition-shadow bg-white"
+                          className="flex-1 px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-shadow bg-white"
                           placeholder="https://..."
                         />
                         {formData.links.length > 1 && (
@@ -412,7 +412,7 @@ export default function ApplyPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full px-6 py-4 bg-slate-900 text-white rounded-full font-medium text-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.01] active:scale-[0.99]"
+                    className="w-full px-6 py-4 bg-violet-600 text-white rounded-full font-medium text-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.01] active:scale-[0.99]"
                   >
                     {loading ? "Submitting..." : "Continue to Video"}
                   </button>
@@ -440,7 +440,7 @@ export default function ApplyPage() {
                       type="text"
                       value={verificationCode}
                       onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                      className="w-full px-4 py-4 text-center text-2xl tracking-[0.5em] border border-slate-200 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 outline-none font-mono"
+                      className="w-full px-4 py-4 text-center text-2xl tracking-[0.5em] border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none font-mono"
                       placeholder="000000"
                       maxLength={6}
                       autoFocus
@@ -451,7 +451,7 @@ export default function ApplyPage() {
                   <button
                     type="submit"
                     disabled={loading || verificationCode.length !== 6}
-                    className="w-full px-6 py-4 bg-slate-900 text-white rounded-full font-medium text-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    className="w-full px-6 py-4 bg-violet-600 text-white rounded-full font-medium text-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   >
                     {loading ? "Verifying..." : "Verify Email"}
                   </button>
@@ -496,7 +496,7 @@ export default function ApplyPage() {
                 <h3 className="font-semibold text-slate-900 text-sm mb-4">What happens next</h3>
                 <ol className="space-y-4 text-sm">
                   <li className="flex gap-3">
-                    <span className="flex-shrink-0 w-5 h-5 bg-slate-900 text-white rounded-full flex items-center justify-center text-xs font-medium">1</span>
+                    <span className="flex-shrink-0 w-5 h-5 bg-violet-600 text-white rounded-full flex items-center justify-center text-xs font-medium">1</span>
                     <span className="text-slate-600">Fill out this form</span>
                   </li>
                   <li className="flex gap-3">
@@ -526,7 +526,7 @@ export default function ApplyPage() {
 
               {/* Quote */}
               <div className="relative">
-                <svg className="w-6 h-6 text-slate-200 mb-3" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-violet-200 mb-3" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
                 </svg>
                 <p className="text-sm text-slate-500 leading-relaxed italic">
