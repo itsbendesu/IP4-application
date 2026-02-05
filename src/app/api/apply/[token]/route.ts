@@ -53,9 +53,9 @@ export async function GET(
       select: { id: true, text: true },
     });
 
-    // Shuffle and take 2 (or all if fewer than 2)
+    // Shuffle and take 3 (or all if fewer than 3)
     const shuffled = allPrompts.sort(() => Math.random() - 0.5);
-    const prompts = shuffled.slice(0, 2);
+    const prompts = shuffled.slice(0, 3);
 
     return NextResponse.json({
       id: pending.id,

@@ -19,6 +19,10 @@ export default function ApplyPage() {
     email: "",
     location: "",
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    roleCompany: "",
+    heardAbout: "",
+    priorEvents: "",
+    threeWords: "",
     bio: "",
     links: [""],
     // Honeypot field - bots will fill this
@@ -55,6 +59,9 @@ export default function ApplyPage() {
     if (!formData.name.trim()) return "Name is required";
     if (!formData.email.trim() || !formData.email.includes("@")) return "Valid email is required";
     if (!formData.location.trim()) return "Location is required";
+    if (!formData.roleCompany.trim()) return "Role & company is required";
+    if (!formData.heardAbout.trim()) return "Please tell us how you heard about IP";
+    if (!formData.threeWords.trim()) return "Please describe yourself in 3 words";
     if (!formData.bio.trim() || formData.bio.length < 10) return "Bio must be at least 10 characters";
     if (formData.bio.length > 500) return "Bio must be under 500 characters";
 
@@ -95,6 +102,10 @@ export default function ApplyPage() {
           email: formData.email,
           location: formData.location,
           timezone: formData.timezone,
+          roleCompany: formData.roleCompany,
+          heardAbout: formData.heardAbout,
+          priorEvents: formData.priorEvents || undefined,
+          threeWords: formData.threeWords,
           bio: formData.bio,
           links: validLinks.length ? validLinks : undefined,
           website: formData.website, // Honeypot
@@ -303,6 +314,69 @@ export default function ApplyPage() {
                           className="w-full px-4 py-3.5 border border-slate-100 rounded-xl bg-slate-50 text-slate-500"
                         />
                       </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-slate-900 mb-2">
+                        Role & Company
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.roleCompany}
+                        onChange={(e) => updateField("roleCompany", e.target.value)}
+                        className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-shadow bg-white"
+                        placeholder="Designer at Acme, Founder of Side Project, Retired Teacher..."
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="h-px bg-slate-100" />
+
+                  <div className="space-y-6">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-900 mb-2">
+                        How did you hear about Interesting People?
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.heardAbout}
+                        onChange={(e) => updateField("heardAbout", e.target.value)}
+                        className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-shadow bg-white"
+                        placeholder="Friend, Twitter, newsletter, etc."
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-slate-900 mb-1">
+                        Have you attended any other curated events?
+                        <span className="text-slate-400 font-normal ml-2">(optional)</span>
+                      </label>
+                      <p className="text-sm text-slate-500 mb-2">
+                        e.g., Conglomerateurs, Summit, TED, etc.
+                      </p>
+                      <input
+                        type="text"
+                        value={formData.priorEvents}
+                        onChange={(e) => updateField("priorEvents", e.target.value)}
+                        className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-shadow bg-white"
+                        placeholder="None, or list any events you've attended"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-slate-900 mb-2">
+                        Describe yourself in 3 words
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.threeWords}
+                        onChange={(e) => updateField("threeWords", e.target.value)}
+                        className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-shadow bg-white"
+                        placeholder="Curious, restless, optimistic"
+                        required
+                      />
                     </div>
                   </div>
 

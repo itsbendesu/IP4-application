@@ -54,6 +54,10 @@ model PendingApplication {
   email         String   @unique
   location      String
   timezone      String
+  roleCompany   String   @default("") // Role & company
+  heardAbout    String   @default("") // How they heard about IP
+  priorEvents   String?  // Prior events attended (optional)
+  threeWords    String   @default("") // Describe yourself in 3 words
   bio           String
   links         Json?
   prompt        Prompt   @relation(fields: [promptId], references: [id])
@@ -72,15 +76,19 @@ model PendingApplication {
 // ============================================================================
 
 model Applicant {
-  id         String      @id @default(cuid())
-  name       String
-  email      String      @unique
-  location   String
-  timezone   String
-  bio        String
-  links      Json?       // Array of URLs: ["https://...", "https://..."]
-  createdAt  DateTime    @default(now())
-  submission Submission?
+  id          String      @id @default(cuid())
+  name        String
+  email       String      @unique
+  location    String
+  timezone    String
+  roleCompany String      @default("") // Role & company
+  heardAbout  String      @default("") // How they heard about IP
+  priorEvents String?     // Prior events attended (optional)
+  threeWords  String      @default("") // Describe yourself in 3 words
+  bio         String
+  links       Json?       // Array of URLs: ["https://...", "https://..."]
+  createdAt   DateTime    @default(now())
+  submission  Submission?
 
   @@index([email])
   @@index([createdAt(sort: Desc)])

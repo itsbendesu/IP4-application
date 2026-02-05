@@ -48,7 +48,7 @@ export default function UploadPage() {
   const [videoDuration, setVideoDuration] = useState(0);
 
   const MAX_DURATION = 90;
-  const PROMPT_DURATION = 45; // Each prompt shown for 45 seconds
+  const PROMPT_DURATION = 30; // Each prompt shown for 30 seconds
 
   // Fetch application data
   useEffect(() => {
