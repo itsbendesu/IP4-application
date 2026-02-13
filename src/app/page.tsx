@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import PhotoGallery from "@/components/PhotoGallery";
 
 const testimonials = [
   {
@@ -71,33 +72,33 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-white">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-100">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-lg">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="font-serif text-xl font-bold text-slate-900 tracking-tight">
+          <Link href="/" className="font-serif text-xl font-bold text-white tracking-tight drop-shadow-sm">
             IP4
           </Link>
           <div className="flex items-center gap-8">
             <Link
               href="#about"
-              className="hidden md:block text-sm text-slate-500 hover:text-slate-900 transition-colors"
+              className="hidden md:block text-sm text-white/70 hover:text-white transition-colors"
             >
               About
             </Link>
             <Link
               href="#testimonials"
-              className="hidden md:block text-sm text-slate-500 hover:text-slate-900 transition-colors"
+              className="hidden md:block text-sm text-white/70 hover:text-white transition-colors"
             >
               Stories
             </Link>
             <Link
               href="#process"
-              className="hidden md:block text-sm text-slate-500 hover:text-slate-900 transition-colors"
+              className="hidden md:block text-sm text-white/70 hover:text-white transition-colors"
             >
               Process
             </Link>
             <Link
               href="#faq"
-              className="hidden md:block text-sm text-slate-500 hover:text-slate-900 transition-colors"
+              className="hidden md:block text-sm text-white/70 hover:text-white transition-colors"
             >
               FAQ
             </Link>
@@ -112,22 +113,30 @@ export default function Home() {
       </nav>
 
       {/* Hero */}
-      <section className="pt-32 pb-20 md:pt-44 md:pb-32">
-        <div className="max-w-6xl mx-auto px-6">
-          <p className="text-sm font-medium tracking-[0.2em] text-violet-500 uppercase mb-8">
+      <section className="relative w-full min-h-screen flex items-end">
+        <Image
+          src="/images/ip3/lakefront-sunset.jpeg"
+          alt="Attendees gathered lakeside at golden hour with string lights at IP3"
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+        <div className="relative z-10 max-w-6xl mx-auto px-6 pb-16 md:pb-24 w-full">
+          <p className="text-sm font-medium tracking-[0.2em] text-violet-300 uppercase mb-8">
             Interesting People 4 &mdash; Applications Open
           </p>
-          <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl font-bold text-slate-900 leading-[1.05] tracking-tight max-w-4xl">
+          <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-[1.05] tracking-tight max-w-4xl">
             We used to hate
             <br />
             conferences.
           </h1>
-          <p className="mt-8 text-xl md:text-2xl text-slate-500 leading-relaxed max-w-2xl">
+          <p className="mt-8 text-xl md:text-2xl text-white/80 leading-relaxed max-w-2xl">
             So we built something different. A three-day gathering for 150 people
             selected not for their titles, but for their{" "}
-            <span className="text-violet-600 font-medium">curiosity</span>,{" "}
-            <span className="text-violet-600 font-medium">depth</span>, and{" "}
-            <span className="text-violet-600 font-medium">willingness to be real</span>.
+            <span className="text-violet-300 font-medium">curiosity</span>,{" "}
+            <span className="text-violet-300 font-medium">depth</span>, and{" "}
+            <span className="text-violet-300 font-medium">willingness to be real</span>.
           </p>
           <div className="mt-12 flex flex-col sm:flex-row gap-4">
             <Link
@@ -138,46 +147,31 @@ export default function Home() {
             </Link>
             <Link
               href="#about"
-              className="inline-flex items-center justify-center px-8 py-4 bg-transparent text-slate-600 rounded-full font-medium text-lg border border-slate-200 hover:border-slate-400 hover:text-slate-900 transition-all"
+              className="inline-flex items-center justify-center px-8 py-4 bg-white/10 text-white rounded-full font-medium text-lg border border-white/20 hover:bg-white/20 transition-all backdrop-blur-sm"
             >
               Learn More
             </Link>
           </div>
 
           {/* Social proof strip */}
-          <div className="mt-16 pt-8 border-t border-slate-100">
-            <p className="text-sm text-slate-400 mb-4">From previous gatherings</p>
+          <div className="mt-16 pt-8 border-t border-white/20">
+            <p className="text-sm text-white/50 mb-4">From previous gatherings</p>
             <div className="flex flex-wrap gap-x-8 gap-y-3">
               <div className="flex items-center gap-2">
-                <span className="font-serif text-2xl font-bold text-violet-600">400+</span>
-                <span className="text-sm text-slate-500">attendees across<br />three events</span>
+                <span className="font-serif text-2xl font-bold text-violet-300">400+</span>
+                <span className="text-sm text-white/60">attendees across<br />three events</span>
               </div>
-              <div className="hidden sm:block w-px h-10 bg-slate-200" />
+              <div className="hidden sm:block w-px h-10 bg-white/20" />
               <div className="flex items-center gap-2">
-                <span className="font-serif text-2xl font-bold text-violet-600">32</span>
-                <span className="text-sm text-slate-500">countries<br />represented</span>
+                <span className="font-serif text-2xl font-bold text-violet-300">32</span>
+                <span className="text-sm text-white/60">countries<br />represented</span>
               </div>
-              <div className="hidden sm:block w-px h-10 bg-slate-200" />
+              <div className="hidden sm:block w-px h-10 bg-white/20" />
               <div className="flex items-center gap-2">
-                <span className="font-serif text-2xl font-bold text-violet-600">94%</span>
-                <span className="text-sm text-slate-500">said they&apos;d<br />come back</span>
+                <span className="font-serif text-2xl font-bold text-violet-300">94%</span>
+                <span className="text-sm text-white/60">said they&apos;d<br />come back</span>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Hero Image */}
-      <section className="pb-24 md:pb-32">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="relative w-full aspect-[21/9] rounded-2xl overflow-hidden shadow-2xl">
-            <Image
-              src="/images/ip3/sunset-panorama.jpg"
-              alt="IP3 venue at golden hour — attendees gathered lakeside"
-              fill
-              className="object-cover"
-              priority
-            />
           </div>
         </div>
       </section>
@@ -190,9 +184,6 @@ export default function Home() {
               The idea
             </p>
             <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.1] mb-8">
-              Most events optimize for{" "}
-              <span className="text-slate-500 italic">impressiveness</span>.
-              <br />
               We optimize for{" "}
               <span className="text-violet-400 italic">interestingness</span>.
             </h2>
@@ -215,114 +206,9 @@ export default function Home() {
 
       {/* Photo Grid */}
       <section className="py-16 md:py-24">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-            <div className="relative col-span-2 h-56 md:h-80 rounded-xl overflow-hidden">
-              <Image
-                src="/images/ip3/indoor-session.jpg"
-                alt="Indoor session at IP3 with floor-to-ceiling windows"
-                fill
-                className="object-cover"
-              />
-            </div>
-            <div className="relative h-56 md:h-80 rounded-xl overflow-hidden">
-              <Image
-                src="/images/ip3/ballroom-talk.jpg"
-                alt="Speaker addressing the room at IP3"
-                fill
-                className="object-cover"
-              />
-            </div>
-            <div className="relative h-44 md:h-56 rounded-xl overflow-hidden">
-              <Image
-                src="/images/ip3/dinner-scene.jpg"
-                alt="Shared dinner at IP3"
-                fill
-                className="object-cover"
-              />
-            </div>
-            <div className="relative h-44 md:h-56 rounded-xl overflow-hidden">
-              <Image
-                src="/images/ip3/lake-paddleboards.jpg"
-                alt="Paddleboarding at golden hour"
-                fill
-                className="object-cover"
-              />
-            </div>
-            <div className="relative h-44 md:h-56 col-span-2 md:col-span-1 rounded-xl overflow-hidden">
-              <Image
-                src="/images/ip3/workshop.jpg"
-                alt="Workshop session at IP3"
-                fill
-                className="object-cover"
-              />
-            </div>
-          </div>
+        <div className="px-2 md:px-3">
+          <PhotoGallery />
           <p className="text-center text-sm text-slate-400 mt-6">Scenes from IP3 &mdash; Victoria, BC</p>
-        </div>
-      </section>
-
-      {/* The IP Difference — comparison grid */}
-      <section className="py-24 md:py-32 bg-slate-50">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <p className="text-sm font-medium tracking-[0.2em] text-slate-400 uppercase mb-4">
-              The IP Difference
-            </p>
-            <h2 className="font-serif text-3xl md:text-5xl font-bold text-slate-900 tracking-tight">
-              This is not that.
-            </h2>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {/* Left column: What others do */}
-            <div className="space-y-4">
-              <div className="bg-white rounded-2xl border border-slate-200 p-6">
-                <p className="text-xs font-medium tracking-[0.15em] text-slate-400 uppercase mb-6">Every other event</p>
-                <ul className="space-y-4">
-                  {[
-                    "Curated by status and who you know",
-                    "Panels where one person talks, everyone else scrolls",
-                    "\"Networking breaks\" that feel like speed dating",
-                    "Name badges designed to start with your company",
-                    "You leave with 50 LinkedIn connections you'll ignore",
-                    "Optimized for sponsors and optics",
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-3 text-slate-500">
-                      <svg className="w-5 h-5 text-slate-300 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            {/* Right column: What IP does */}
-            <div className="space-y-4">
-              <div className="bg-slate-900 rounded-2xl border border-slate-800 p-6">
-                <p className="text-xs font-medium tracking-[0.15em] text-slate-500 uppercase mb-6">Interesting People</p>
-                <ul className="space-y-4">
-                  {[
-                    "Curated by curiosity, depth, and emotional intelligence",
-                    "80% talking, 20% listening \u2014 we flipped the script",
-                    "Shared meals, walks, and activities that create real bonds",
-                    "No badges. We learn names the old-fashioned way",
-                    "You leave with 5 people you'll actually stay in touch with",
-                    "Optimized for genuine human connection",
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-3 text-slate-300">
-                      <svg className="w-5 h-5 text-violet-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -374,88 +260,48 @@ export default function Home() {
         </div>
       </section>
 
-      {/* What Won't Help — refined */}
-      <section className="bg-slate-50 border-y border-slate-100 py-24 md:py-32">
+      {/* The IP Difference — side by side comparison */}
+      <section className="py-24 md:py-32 bg-slate-950 overflow-hidden">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="max-w-3xl mx-auto text-center mb-16">
-            <p className="text-sm font-medium tracking-[0.2em] text-slate-400 uppercase mb-4">
-              Fair warning
+          <div className="mb-16">
+            <p className="text-sm font-medium tracking-[0.2em] text-slate-500 uppercase mb-4">
+              The IP Difference
             </p>
-            <h2 className="font-serif text-3xl md:text-5xl font-bold text-slate-900 tracking-tight">
-              What won&apos;t help your application.
+            <h2 className="font-serif text-3xl md:text-5xl font-bold text-white tracking-tight">
+              This is not that.
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-            <div className="p-8 bg-white rounded-2xl border border-slate-200/80 hover:border-slate-300 transition-colors">
-              <div className="w-10 h-10 bg-violet-50 rounded-xl flex items-center justify-center mb-5">
-                <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
+          <div className="space-y-0 divide-y divide-slate-800">
+            {[
+              { theirs: "Curated by status and who you know", ours: "Curated by curiosity, depth, and emotional intelligence" },
+              { theirs: "Panels where one person talks, everyone else scrolls", ours: "80% of the time you're talking, not listening" },
+              { theirs: "\"Networking breaks\" that feel like speed dating", ours: "Shared meals, walks, and activities that create real bonds" },
+              { theirs: "Name badges designed to start with your company", ours: "No badges. We learn names the old-fashioned way" },
+              { theirs: "You leave with 50 LinkedIn connections you'll ignore", ours: "You leave with 5 people you'll actually stay in touch with" },
+              { theirs: "Optimized for sponsors and optics", ours: "Optimized for genuine human connection" },
+            ].map((row, i) => (
+              <div key={i} className="grid md:grid-cols-2 gap-4 md:gap-0">
+                <div className="py-5 md:py-6 md:pr-8 md:border-r md:border-slate-800">
+                  <p className="text-slate-500 line-through decoration-slate-700">{row.theirs}</p>
+                </div>
+                <div className="pb-5 md:py-6 md:pl-8">
+                  <p className="text-white font-medium">{row.ours}</p>
+                </div>
               </div>
-              <h3 className="font-semibold text-slate-900 text-lg mb-3">Your Title</h3>
-              <p className="text-slate-500 leading-relaxed">
-                &ldquo;Chief Innovation Officer.&rdquo; &ldquo;Futurist.&rdquo; &ldquo;Catalyst.&rdquo;
-                &ldquo;Change Maker.&rdquo; These are red flags, not selling points.
-                We don&apos;t care what&apos;s on your business card.
-              </p>
-            </div>
+            ))}
+          </div>
 
-            <div className="p-8 bg-white rounded-2xl border border-slate-200/80 hover:border-slate-300 transition-colors">
-              <div className="w-10 h-10 bg-violet-50 rounded-xl flex items-center justify-center mb-5">
-                <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="font-semibold text-slate-900 text-lg mb-3">Your Credentials</h3>
-              <p className="text-slate-500 leading-relaxed">
-                Forbes lists, TED stages, viral tweets&mdash;none of it matters here.
-                We offer scholarships for a reason: interesting isn&apos;t correlated
-                with status or wealth.
-              </p>
+          <div className="mt-12 flex items-center gap-6 text-sm text-slate-600">
+            <div className="flex items-center gap-2">
+              <span className="w-8 h-px bg-slate-700 line-through" />
+              <span>Every other event</span>
             </div>
-
-            <div className="p-8 bg-white rounded-2xl border border-slate-200/80 hover:border-slate-300 transition-colors">
-              <div className="w-10 h-10 bg-violet-50 rounded-xl flex items-center justify-center mb-5">
-                <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                </svg>
-              </div>
-              <h3 className="font-semibold text-slate-900 text-lg mb-3">Your Performance</h3>
-              <p className="text-slate-500 leading-relaxed">
-                Being loud isn&apos;t the same as being interesting. We&apos;re not looking
-                for the best personal brand. We&apos;re looking for the most genuine
-                human. Listeners thrive here.
-              </p>
+            <div className="flex items-center gap-2">
+              <span className="w-8 h-px bg-white" />
+              <span className="text-slate-400">Interesting People</span>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Cinematic Photo Break */}
-      <section className="relative h-72 md:h-[28rem]">
-        <Image
-          src="/images/ip3/twilight-lakefront.jpg"
-          alt="Lakefront at twilight with string lights at IP3"
-          fill
-          className="object-cover"
-        />
-      </section>
-
-      {/* Featured Quote */}
-      <section className="py-24 md:py-32">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <svg className="w-12 h-12 text-violet-200 mx-auto mb-8" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-          </svg>
-          <blockquote className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 leading-[1.2] tracking-tight">
-            &ldquo;It&apos;s the only event I&apos;ve ever been to where I didn&apos;t once
-            check my phone.&rdquo;
-          </blockquote>
-          <p className="mt-8 text-slate-500">
-            <span className="font-medium text-slate-700">Marco D.</span>{" "}
-            &mdash; IP1, IP2, & IP3 Attendee
-          </p>
         </div>
       </section>
 
@@ -495,6 +341,33 @@ export default function Home() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Cinematic Photo Break */}
+      <section className="relative h-72 md:h-[28rem]">
+        <Image
+          src="/images/ip3/comedy-stage-wide.jpeg"
+          alt="Performer on stage at IP3 comedy night"
+          fill
+          className="object-cover"
+        />
+      </section>
+
+      {/* Featured Quote */}
+      <section className="py-24 md:py-32">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <svg className="w-12 h-12 text-violet-200 mx-auto mb-8" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+          </svg>
+          <blockquote className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 leading-[1.2] tracking-tight">
+            &ldquo;It&apos;s the only event I&apos;ve ever been to where I didn&apos;t once
+            check my phone.&rdquo;
+          </blockquote>
+          <p className="mt-8 text-slate-500">
+            <span className="font-medium text-slate-700">Marco D.</span>{" "}
+            &mdash; IP1, IP2, & IP3 Attendee
+          </p>
         </div>
       </section>
 
@@ -562,58 +435,51 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Photo Strip */}
-      <section className="py-16 md:py-24">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid grid-cols-3 gap-3 md:gap-4">
-            <div className="relative h-44 md:h-64 rounded-xl overflow-hidden">
+      {/* Photos + Stats */}
+      <section className="bg-slate-50 py-24 md:py-32">
+        <div className="max-w-7xl mx-auto px-6">
+          {/* Photo row */}
+          <div className="grid grid-cols-3 gap-3 md:gap-4 mb-16">
+            <div className="relative h-44 md:h-72 rounded-2xl overflow-hidden">
               <Image
-                src="/images/ip3/group-photo.jpg"
-                alt="IP3 attendees smiling together"
+                src="/images/ip3/table-conversations.jpeg"
+                alt="IP3 attendees in animated conversation at the Union Club"
                 fill
                 className="object-cover"
               />
             </div>
-            <div className="relative h-44 md:h-64 rounded-xl overflow-hidden">
+            <div className="relative h-44 md:h-72 rounded-2xl overflow-hidden">
               <Image
-                src="/images/ip3/beach-conversation.jpg"
-                alt="Lakeside conversation at sunset"
+                src="/images/ip3/drinks-conversation.jpeg"
+                alt="Animated conversation over drinks at IP3"
                 fill
                 className="object-cover"
               />
             </div>
-            <div className="relative h-44 md:h-64 rounded-xl overflow-hidden">
+            <div className="relative h-44 md:h-72 rounded-2xl overflow-hidden">
               <Image
-                src="/images/ip3/stage-performance.jpg"
-                alt="Evening performance at IP3"
+                src="/images/ip3/comedy-night.jpeg"
+                alt="Comedy night performance on stage at IP3"
                 fill
                 className="object-cover"
               />
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Stats Band */}
-      <section className="bg-white py-16 border-b border-slate-100">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-            <div className="text-center">
-              <p className="font-serif text-4xl md:text-5xl font-bold text-violet-600">3</p>
-              <p className="text-sm text-slate-500 mt-2">days together</p>
-            </div>
-            <div className="text-center">
-              <p className="font-serif text-4xl md:text-5xl font-bold text-violet-600">150</p>
-              <p className="text-sm text-slate-500 mt-2">attendees max</p>
-            </div>
-            <div className="text-center">
-              <p className="font-serif text-4xl md:text-5xl font-bold text-violet-600">0</p>
-              <p className="text-sm text-slate-500 mt-2">panels or keynotes</p>
-            </div>
-            <div className="text-center">
-              <p className="font-serif text-4xl md:text-5xl font-bold text-violet-600">100%</p>
-              <p className="text-sm text-slate-500 mt-2">human-reviewed</p>
-            </div>
+          {/* Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            {[
+              { value: "3", label: "days together" },
+              { value: "150", label: "attendees max" },
+              { value: "0", label: "panels or keynotes" },
+              { value: "100%", label: "human-reviewed" },
+            ].map((stat, i) => (
+              <div key={i} className="relative group bg-white rounded-2xl border border-slate-200 p-8 md:p-10 overflow-hidden hover:border-violet-200 transition-colors">
+                <div className="absolute inset-0 bg-gradient-to-br from-violet-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <p className="relative font-serif text-5xl md:text-6xl font-bold text-violet-600">{stat.value}</p>
+                <p className="relative text-sm text-slate-500 mt-2">{stat.label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>

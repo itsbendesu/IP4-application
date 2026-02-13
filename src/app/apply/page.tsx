@@ -1,14 +1,26 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
 
-type Step = "info" | "verification";
+type Step = "basics" | "questions" | "story" | "verification" | "record" | "confirmation";
+
+interface Prompt {
+  id: string;
+  text: string;
+}
+
+interface ApplicationData {
+  id: string;
+  name: string;
+  email: string;
+  prompts: Prompt[];
+  expiresAt: string;
+}
 
 export default function ApplyPage() {
-  const router = useRouter();
-  const [step, setStep] = useState<Step>("info");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [step, setStep] = useState<Step>("basics");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
@@ -19,9 +31,9 @@ export default function ApplyPage() {
     email: "",
     location: "",
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    roleCompany: "",
     heardAbout: "",
-    priorEvents: "",
+    priorEvents: false,
+    priorEventsWhich: [] as string[],
     threeWords: "",
     bio: "",
     links: [""],
@@ -33,6 +45,70 @@ export default function ApplyPage() {
 
   const [verificationCode, setVerificationCode] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
+
+  // Recording state
+  const [application, setApplication] = useState<ApplicationData | null>(null);
+  const [hasStarted, setHasStarted] = useState(false);
+  const [stream, setStream] = useState<MediaStream | null>(null);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
+  const [duration, setDuration] = useState(0);
+  const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
+  const [submitting, setSubmitting] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [videoDuration, setVideoDuration] = useState(0);
+
+  // Recording refs
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const isRecordingRef = useRef(false);
+
+  const MAX_DURATION = 90;
+  const PROMPT_DURATION = 30;
+
+  // Lock body scroll and handle Escape key when modal is open
+  useEffect(() => {
+    if (!modalOpen) return;
+
+    document.body.style.overflow = "hidden";
+
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        if (step === "confirmation") {
+          setModalOpen(false);
+        } else if (step === "basics" && !formData.name && !formData.email.trim()) {
+          setModalOpen(false);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKey);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKey);
+    };
+  }, [modalOpen, step, formData.name, formData.email]);
+
+  // Cleanup stream on unmount
+  useEffect(() => {
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, [stream]);
+
+  // Attach stream to video element when stream changes
+  useEffect(() => {
+    if (stream && videoRef.current) {
+      videoRef.current.srcObject = stream;
+    }
+  }, [stream]);
 
   const updateField = (field: string, value: string | string[]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -55,34 +131,70 @@ export default function ApplyPage() {
     setFormData((prev) => ({ ...prev, links: newLinks.length ? newLinks : [""] }));
   };
 
-  const validateForm = () => {
-    if (!formData.name.trim()) return "Name is required";
-    if (!formData.email.trim() || !formData.email.includes("@")) return "Valid email is required";
-    if (!formData.location.trim()) return "Location is required";
-    if (!formData.roleCompany.trim()) return "Role & company is required";
-    if (!formData.heardAbout.trim()) return "Please tell us how you heard about IP";
-    if (!formData.threeWords.trim()) return "Please describe yourself in 3 words";
-    if (!formData.bio.trim() || formData.bio.length < 10) return "Bio must be at least 10 characters";
-    if (formData.bio.length > 500) return "Bio must be under 500 characters";
-
-    // Validate links if provided
-    const nonEmptyLinks = formData.links.filter((l) => l.trim());
-    for (const link of nonEmptyLinks) {
-      try {
-        new URL(link);
-      } catch {
-        return "Please enter valid URLs for all links";
-      }
+  const validateStep = (s: Step) => {
+    if (s === "basics") {
+      if (!formData.name.trim()) return "Name is required";
+      if (!formData.email.trim() || !formData.email.includes("@")) return "Valid email is required";
+      if (!formData.location.trim()) return "Location is required";
     }
-
-    if (!consentGiven) return "You must agree to the privacy policy to continue";
-
+    if (s === "questions") {
+      if (!formData.heardAbout.trim()) return "Please tell us how you heard about IP";
+      if (!formData.threeWords.trim()) return "Please describe yourself in 3 words";
+    }
+    if (s === "story") {
+      if (!formData.bio.trim() || formData.bio.length < 10) return "Bio must be at least 10 characters";
+      if (formData.bio.length > 500) return "Bio must be under 500 characters";
+      const nonEmptyLinks = formData.links.filter((l) => l.trim());
+      for (const link of nonEmptyLinks) {
+        try {
+          new URL(link);
+        } catch {
+          return "Please enter valid URLs for all links";
+        }
+      }
+      if (!consentGiven) return "You must agree to the privacy policy to continue";
+    }
     return null;
+  };
+
+  const infoSteps: Step[] = ["basics", "questions", "story"];
+
+  const handleNext = () => {
+    const err = validateStep(step);
+    if (err) {
+      setError(err);
+      return;
+    }
+    setError(null);
+    const idx = infoSteps.indexOf(step);
+    if (idx < infoSteps.length - 1) {
+      setStep(infoSteps[idx + 1]);
+    }
+  };
+
+  const handleBack = () => {
+    setError(null);
+    const idx = infoSteps.indexOf(step);
+    if (idx > 0) {
+      setStep(infoSteps[idx - 1]);
+    }
+  };
+
+  // Fetch application data and transition to record step
+  const fetchApplicationAndRecord = async (appToken: string) => {
+    const res = await fetch(`/api/apply/${appToken}`);
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || "Failed to load application");
+    }
+    setApplication(data);
+    setError(null);
+    setStep("record");
   };
 
   const handleSubmitInfo = async (e: React.FormEvent) => {
     e.preventDefault();
-    const err = validateForm();
+    const err = validateStep("story");
     if (err) {
       setError(err);
       return;
@@ -102,9 +214,10 @@ export default function ApplyPage() {
           email: formData.email,
           location: formData.location,
           timezone: formData.timezone,
-          roleCompany: formData.roleCompany,
           heardAbout: formData.heardAbout,
-          priorEvents: formData.priorEvents || undefined,
+          priorEvents: formData.priorEvents
+            ? `Yes — ${formData.priorEventsWhich.join(", ") || "unspecified"}`
+            : "No",
           threeWords: formData.threeWords,
           bio: formData.bio,
           links: validLinks.length ? validLinks : undefined,
@@ -124,8 +237,7 @@ export default function ApplyPage() {
       if (data.requiresVerification) {
         setStep("verification");
       } else {
-        // No verification needed, go straight to upload
-        router.push(`/upload/${data.token}`);
+        await fetchApplicationAndRecord(data.token);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
@@ -157,8 +269,7 @@ export default function ApplyPage() {
         throw new Error(data.error || "Verification failed");
       }
 
-      // Verified! Go to upload page
-      router.push(`/upload/${token}`);
+      await fetchApplicationAndRecord(token);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Verification failed");
     } finally {
@@ -203,6 +314,295 @@ export default function ApplyPage() {
     }
   };
 
+  // Camera / recording functions
+  const startCamera = useCallback(async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } },
+        audio: true,
+      });
+      setStream(mediaStream);
+      setError(null);
+      setHasStarted(true);
+    } catch {
+      setError("Could not access camera. Please grant permission and try again.");
+    }
+  }, []);
+
+  const stopCamera = useCallback(() => {
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+      setStream(null);
+    }
+  }, [stream]);
+
+  const startRecording = useCallback(() => {
+    if (!stream) return;
+
+    chunksRef.current = [];
+    setDuration(0);
+    setCurrentPromptIndex(0);
+    setRecordedBlob(null);
+
+    const mediaRecorder = new MediaRecorder(stream, {
+      mimeType: "video/webm;codecs=vp9,opus",
+    });
+
+    mediaRecorder.ondataavailable = (e) => {
+      if (e.data.size > 0) {
+        chunksRef.current.push(e.data);
+      }
+    };
+
+    mediaRecorder.onstop = () => {
+      const blob = new Blob(chunksRef.current, { type: "video/webm" });
+      setRecordedBlob(blob);
+      stopCamera();
+    };
+
+    mediaRecorderRef.current = mediaRecorder;
+    mediaRecorder.start(1000);
+    setIsRecording(true);
+    isRecordingRef.current = true;
+
+    let elapsed = 0;
+    timerRef.current = setInterval(() => {
+      elapsed++;
+      setDuration(elapsed);
+
+      const newPromptIndex = Math.min(
+        Math.floor(elapsed / PROMPT_DURATION),
+        (application?.prompts.length || 1) - 1
+      );
+      setCurrentPromptIndex(newPromptIndex);
+
+      if (elapsed >= MAX_DURATION) {
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
+        setVideoDuration(elapsed);
+        if (mediaRecorderRef.current && isRecordingRef.current) {
+          mediaRecorderRef.current.stop();
+          setIsRecording(false);
+          isRecordingRef.current = false;
+        }
+      }
+    }, 1000);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stream, stopCamera, application?.prompts.length]);
+
+  const stopRecording = useCallback(() => {
+    if (mediaRecorderRef.current && isRecordingRef.current) {
+      setVideoDuration(duration);
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      isRecordingRef.current = false;
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    }
+  }, [duration]);
+
+  const uploadRecordedVideo = async (): Promise<{ key: string; url: string } | null> => {
+    if (!recordedBlob) return null;
+
+    const presignRes = await fetch("/api/upload/presign", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        filename: "recording.webm",
+        contentType: "video/webm",
+        size: recordedBlob.size,
+      }),
+    });
+
+    if (!presignRes.ok) {
+      const data = await presignRes.json();
+      throw new Error(data.error || "Failed to get upload URL");
+    }
+
+    const presignData = await presignRes.json();
+
+    if (presignData.localMode) {
+      const uploadData = new FormData();
+      uploadData.append("file", new File([recordedBlob], "recording.webm", { type: "video/webm" }));
+
+      const localRes = await fetch("/api/upload/local", {
+        method: "POST",
+        body: uploadData,
+      });
+
+      if (!localRes.ok) {
+        const data = await localRes.json();
+        throw new Error(data.error || "Local upload failed");
+      }
+
+      setUploadProgress(100);
+      const { key, url } = await localRes.json();
+      return { key, url };
+    }
+
+    const { uploadUrl, key, publicUrl } = presignData;
+
+    const xhr = new XMLHttpRequest();
+
+    await new Promise<void>((resolve, reject) => {
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) {
+          setUploadProgress(Math.round((e.loaded / e.total) * 100));
+        }
+      };
+
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve();
+        } else {
+          reject(new Error("Upload failed"));
+        }
+      };
+
+      xhr.onerror = () => reject(new Error("Upload failed"));
+
+      xhr.open("PUT", uploadUrl);
+      xhr.setRequestHeader("Content-Type", "video/webm");
+      xhr.send(recordedBlob);
+    });
+
+    return { key, url: publicUrl };
+  };
+
+  const handleSubmitVideo = async () => {
+    if (!recordedBlob) {
+      setError("Please record a video first");
+      return;
+    }
+
+    setSubmitting(true);
+    setError(null);
+    setUploadProgress(0);
+
+    try {
+      const videoData = await uploadRecordedVideo();
+
+      if (!videoData) {
+        throw new Error("Failed to upload video");
+      }
+
+      const res = await fetch("/api/apply/complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          token,
+          videoKey: videoData.key,
+          videoUrl: videoData.url,
+          videoDurationSec: videoDuration || duration,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to submit application");
+      }
+
+      setStep("confirmation");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  const clearVideo = () => {
+    setRecordedBlob(null);
+    setUploadProgress(0);
+    setVideoDuration(0);
+    setDuration(0);
+    setHasStarted(false);
+  };
+
+  // Modal close logic
+  const canCloseModal = !isRecording && !submitting && step !== "verification";
+
+  const handleCloseModal = () => {
+    if (!canCloseModal) return;
+    if (step === "record" && stream) {
+      stopCamera();
+      setHasStarted(false);
+    }
+    setModalOpen(false);
+  };
+
+  // Modal width based on step
+  const modalMaxWidth = step === "record" ? "52rem" : step === "confirmation" ? "36rem" : "42rem";
+
+  // Step progress dots
+  const allStepsOrder: Step[] = ["basics", "questions", "story", "verification", "record", "confirmation"];
+  const currentStepIdx = allStepsOrder.indexOf(step);
+
+  const stepDots = (
+    <div className="flex items-center gap-2 sm:gap-3 text-sm text-slate-500">
+      {(
+        [
+          { key: "basics", label: "Basics", idx: 0 },
+          { key: "questions", label: "Details", idx: 1 },
+          { key: "story", label: "Story", idx: 2 },
+          { key: "record", label: "Record", idx: 4 },
+        ] as const
+      ).map((s, i) => {
+        const isConfirmation = step === "confirmation";
+        const isActive =
+          s.key === step ||
+          (s.key === "record" && (step === "verification" || step === "record"));
+        const isCompleted =
+          isConfirmation ||
+          (s.key === "basics" && currentStepIdx > 0) ||
+          (s.key === "questions" && currentStepIdx > 1) ||
+          (s.key === "story" && currentStepIdx > 2) ||
+          (s.key === "record" && currentStepIdx > 4);
+        return (
+          <span key={s.key} className="flex items-center gap-2">
+            {i > 0 && <div className="w-4 sm:w-8 h-px bg-slate-200" />}
+            <span
+              className={`flex items-center gap-1.5 ${isActive && !isConfirmation ? "text-slate-900 font-medium" : ""}`}
+            >
+              <span
+                className={`w-6 h-6 rounded-full text-xs flex items-center justify-center font-medium ${
+                  isConfirmation
+                    ? "bg-emerald-100 text-emerald-600"
+                    : isActive
+                      ? "bg-violet-600 text-white"
+                      : isCompleted
+                        ? "bg-violet-100 text-violet-600"
+                        : "bg-slate-100 text-slate-400"
+                }`}
+              >
+                {isCompleted ? (
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                  </svg>
+                ) : (
+                  i + 1
+                )}
+              </span>
+              <span className="hidden sm:inline">{s.label}</span>
+            </span>
+          </span>
+        );
+      })}
+    </div>
+  );
+
+  const hasVideo = recordedBlob !== null;
+
   return (
     <main className="min-h-screen bg-white">
       {/* Nav */}
@@ -211,55 +611,181 @@ export default function ApplyPage() {
           <Link href="/" className="font-serif text-xl font-bold text-slate-900 tracking-tight">
             IP4
           </Link>
-          <div className="flex items-center gap-3 text-sm text-slate-500">
-            <span className={`flex items-center gap-2 ${step === "info" ? "text-slate-900 font-medium" : ""}`}>
-              <span className={`w-6 h-6 rounded-full text-xs flex items-center justify-center font-medium ${step === "info" ? "bg-violet-600 text-white" : "bg-slate-100 text-slate-400"}`}>
-                1
-              </span>
-              <span className="hidden sm:inline">Your Info</span>
-            </span>
-            <div className="w-8 h-px bg-slate-200" />
-            <span className={`flex items-center gap-2 ${step === "verification" ? "text-slate-900 font-medium" : ""}`}>
-              <span className={`w-6 h-6 rounded-full text-xs flex items-center justify-center font-medium ${step === "verification" ? "bg-violet-600 text-white" : "bg-slate-100 text-slate-400"}`}>
-                2
-              </span>
-              <span className="hidden sm:inline">Verify</span>
-            </span>
-            <div className="w-8 h-px bg-slate-200" />
-            <span className="flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-slate-100 text-xs flex items-center justify-center text-slate-400 font-medium">
-                3
-              </span>
-              <span className="hidden sm:inline">Record</span>
-            </span>
-          </div>
+          <Link
+            href="/"
+            className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
+          >
+            Back to home
+          </Link>
         </div>
       </nav>
 
-      <div className="max-w-4xl mx-auto px-6 py-12 md:py-20">
-        <div className="grid md:grid-cols-[1fr,320px] gap-12 md:gap-16">
-          {/* Main form column */}
-          <div>
-            <div className="mb-10">
-              <h1 className="font-serif text-3xl md:text-4xl font-bold text-slate-900 tracking-tight mb-3">
-                {step === "info" ? "Tell us about yourself." : "Verify your email."}
-              </h1>
-              <p className="text-slate-500 text-lg">
-                {step === "info"
-                  ? "No resume, no LinkedIn. We want to know what makes you interesting."
-                  : "Check your inbox for a 6-digit code."}
-              </p>
-            </div>
+      {/* Landing page content */}
+      <div className="max-w-3xl mx-auto px-6 py-16 md:py-24">
+        {/* Hero */}
+        <div className="text-center mb-16 md:mb-20">
+          <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 tracking-tight mb-5">
+            Apply to IP4
+          </h1>
+          <p className="text-xl md:text-2xl text-slate-500">
+            No resume, no LinkedIn. Just you.
+          </p>
+        </div>
 
-            {error && (
-              <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
-                {error}
+        {/* How it works */}
+        <div className="mb-16 md:mb-20">
+          <h2 className="font-serif text-2xl font-bold text-slate-900 mb-8 text-center">
+            Here&apos;s how it works
+          </h2>
+          <div className="grid sm:grid-cols-2 gap-6">
+            {[
+              {
+                num: 1,
+                title: "Tell us about yourself",
+                desc: "Name, location, a short bio, and a few quick questions. Takes about 3 minutes.",
+              },
+              {
+                num: 2,
+                title: "Verify your email",
+                desc: "We\u2019ll send a quick code to confirm it\u2019s really you.",
+              },
+              {
+                num: 3,
+                title: "Record a 90-second video",
+                desc: "Two prompts, 45 seconds each. No prep needed\u2014just be yourself.",
+              },
+              {
+                num: 4,
+                title: "We review & respond",
+                desc: "Our team watches every video. We\u2019ll get back to you within a few weeks.",
+              },
+            ].map((item) => (
+              <div key={item.num} className="flex gap-4 p-5 rounded-2xl bg-slate-50">
+                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-violet-600 text-white flex items-center justify-center text-sm font-semibold">
+                  {item.num}
+                </span>
+                <div>
+                  <h3 className="font-semibold text-slate-900 mb-1">{item.title}</h3>
+                  <p className="text-sm text-slate-500 leading-relaxed">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Quote */}
+        <div className="mb-16 md:mb-20 max-w-xl mx-auto text-center">
+          <svg className="w-8 h-8 text-violet-200 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+          </svg>
+          <p className="text-lg text-slate-600 leading-relaxed italic mb-4">
+            &ldquo;The application process itself told me this wasn&apos;t going to be
+            another boring conference. I was nervous recording my video, and
+            that&apos;s exactly why it worked.&rdquo;
+          </p>
+          <p className="text-sm text-slate-400">
+            &mdash; Priya R., IP3 Attendee
+          </p>
+        </div>
+
+        {/* Tip box */}
+        <div className="mb-16 md:mb-20 border border-slate-200 rounded-2xl p-6 max-w-xl mx-auto">
+          <h3 className="font-semibold text-slate-900 text-sm mb-3">A word of advice</h3>
+          <p className="text-sm text-slate-500 leading-relaxed">
+            Write your bio like you&apos;re telling a friend what you&apos;re into right now&mdash;not
+            like you&apos;re updating a professional profile. We care about what
+            lights you up.
+          </p>
+        </div>
+
+        {/* CTA */}
+        <div className="text-center">
+          <button
+            onClick={() => setModalOpen(true)}
+            className="px-10 py-4 bg-violet-600 text-white rounded-full font-medium text-lg hover:bg-violet-700 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-violet-600/25"
+          >
+            Get Started
+          </button>
+          <p className="mt-4 text-sm text-slate-400">Takes about 5 minutes</p>
+        </div>
+      </div>
+
+      {/* Modal overlay */}
+      {modalOpen && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 sm:p-6"
+          onClick={canCloseModal ? handleCloseModal : undefined}
+        >
+          <div
+            className="bg-white w-full max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl relative transition-[max-width] duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]"
+            style={{ maxWidth: modalMaxWidth }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal header */}
+            {step !== "confirmation" && (
+              <div className="sticky top-0 bg-white border-b border-slate-100 px-6 py-4 rounded-t-2xl z-10">
+                <div className="flex items-center justify-between">
+                  {stepDots}
+                  {canCloseModal && (
+                    <button
+                      onClick={handleCloseModal}
+                      className="ml-4 text-slate-400 hover:text-slate-600 transition-colors flex-shrink-0"
+                      aria-label="Close"
+                    >
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
               </div>
             )}
 
-            <div className="bg-white">
-              {step === "info" && (
-                <form onSubmit={handleSubmitInfo} className="space-y-8">
+            {/* Confirmation header — just a close button */}
+            {step === "confirmation" && (
+              <div className="sticky top-0 bg-white px-6 py-4 rounded-t-2xl z-10 flex justify-end">
+                <button
+                  onClick={handleCloseModal}
+                  className="text-slate-400 hover:text-slate-600 transition-colors"
+                  aria-label="Close"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            )}
+
+            {/* Modal body */}
+            <div className="px-6 py-8">
+              {/* Step heading (form + verification steps) */}
+              {(step === "basics" || step === "questions" || step === "story" || step === "verification") && (
+                <div className="mb-8">
+                  <h2 className="font-serif text-2xl md:text-3xl font-bold text-slate-900 tracking-tight mb-2">
+                    {step === "basics" && "Let\u2019s start with the basics."}
+                    {step === "questions" && "A few quick questions."}
+                    {step === "story" && "Now tell us your story."}
+                    {step === "verification" && "Verify your email."}
+                  </h2>
+                  <p className="text-slate-500">
+                    {step === "basics" && "No resume, no LinkedIn. We want to know what makes you interesting."}
+                    {step === "questions" && "Just a couple things so we can get to know you better."}
+                    {step === "story" && "This is the fun part\u2014tell us what lights you up."}
+                    {step === "verification" && "Check your inbox for a 6-digit code."}
+                  </p>
+                </div>
+              )}
+
+              {/* Error banner */}
+              {error && step !== "confirmation" && (
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+                  {error}
+                </div>
+              )}
+
+              {/* Step 1: The basics */}
+              {step === "basics" && (
+                <div className="space-y-8">
                   <div className="space-y-6">
                     <div>
                       <label className="block text-sm font-medium text-slate-900 mb-2">
@@ -271,7 +797,6 @@ export default function ApplyPage() {
                         onChange={(e) => updateField("name", e.target.value)}
                         className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-shadow bg-white"
                         placeholder="Jane Smith"
-                        required
                       />
                     </div>
 
@@ -285,7 +810,6 @@ export default function ApplyPage() {
                         onChange={(e) => updateField("email", e.target.value)}
                         className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-shadow bg-white"
                         placeholder="jane@example.com"
-                        required
                       />
                     </div>
 
@@ -300,7 +824,6 @@ export default function ApplyPage() {
                           onChange={(e) => updateField("location", e.target.value)}
                           className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-shadow bg-white"
                           placeholder="San Francisco, CA"
-                          required
                         />
                       </div>
                       <div>
@@ -315,24 +838,35 @@ export default function ApplyPage() {
                         />
                       </div>
                     </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-slate-900 mb-2">
-                        Role & Company
-                      </label>
-                      <input
-                        type="text"
-                        value={formData.roleCompany}
-                        onChange={(e) => updateField("roleCompany", e.target.value)}
-                        className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-shadow bg-white"
-                        placeholder="Designer at Acme, Founder of Side Project, Retired Teacher..."
-                        required
-                      />
-                    </div>
                   </div>
 
-                  <div className="h-px bg-slate-100" />
+                  {/* Honeypot field - hidden from users, bots will fill it */}
+                  <div className="hidden" aria-hidden="true">
+                    <label htmlFor="website">Website</label>
+                    <input
+                      type="text"
+                      id="website"
+                      name="website"
+                      value={formData.website}
+                      onChange={(e) => updateField("website", e.target.value)}
+                      tabIndex={-1}
+                      autoComplete="off"
+                    />
+                  </div>
 
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    className="w-full px-6 py-4 bg-violet-600 text-white rounded-full font-medium text-lg hover:bg-violet-700 transition-all hover:scale-[1.01] active:scale-[0.99]"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+
+              {/* Step 2: Quick questions */}
+              {step === "questions" && (
+                <div className="space-y-8">
                   <div className="space-y-6">
                     <div>
                       <label className="block text-sm font-medium text-slate-900 mb-2">
@@ -344,25 +878,65 @@ export default function ApplyPage() {
                         onChange={(e) => updateField("heardAbout", e.target.value)}
                         className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-shadow bg-white"
                         placeholder="Friend, Twitter, newsletter, etc."
-                        required
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-slate-900 mb-1">
-                        Have you attended any other curated events?
-                        <span className="text-slate-400 font-normal ml-2">(optional)</span>
+                      <label className="block text-sm font-medium text-slate-900 mb-3">
+                        Have you ever attended any IP events in the past?
                       </label>
-                      <p className="text-sm text-slate-500 mb-2">
-                        e.g., Conglomerateurs, Summit, TED, etc.
-                      </p>
-                      <input
-                        type="text"
-                        value={formData.priorEvents}
-                        onChange={(e) => updateField("priorEvents", e.target.value)}
-                        className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-shadow bg-white"
-                        placeholder="None, or list any events you've attended"
-                      />
+                      <div className="flex gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setFormData((prev) => ({ ...prev, priorEvents: true }))}
+                          className={`px-6 py-3 rounded-xl text-sm font-medium transition-all ${
+                            formData.priorEvents
+                              ? "bg-violet-600 text-white"
+                              : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                          }`}
+                        >
+                          Yes
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setFormData((prev) => ({ ...prev, priorEvents: false, priorEventsWhich: [] }))}
+                          className={`px-6 py-3 rounded-xl text-sm font-medium transition-all ${
+                            !formData.priorEvents
+                              ? "bg-violet-600 text-white"
+                              : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                          }`}
+                        >
+                          No
+                        </button>
+                      </div>
+                      {formData.priorEvents && (
+                        <div className="mt-4">
+                          <p className="text-sm text-slate-500 mb-3">Which ones?</p>
+                          <div className="flex gap-3">
+                            {["IP1", "IP2", "IP3"].map((event) => (
+                              <button
+                                key={event}
+                                type="button"
+                                onClick={() =>
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    priorEventsWhich: prev.priorEventsWhich.includes(event)
+                                      ? prev.priorEventsWhich.filter((e) => e !== event)
+                                      : [...prev.priorEventsWhich, event],
+                                  }))
+                                }
+                                className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
+                                  formData.priorEventsWhich.includes(event)
+                                    ? "bg-violet-600 text-white"
+                                    : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                                }`}
+                              >
+                                {event}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div>
@@ -375,13 +949,32 @@ export default function ApplyPage() {
                         onChange={(e) => updateField("threeWords", e.target.value)}
                         className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-shadow bg-white"
                         placeholder="Curious, restless, optimistic"
-                        required
                       />
                     </div>
                   </div>
 
-                  <div className="h-px bg-slate-100" />
+                  <div className="flex gap-3">
+                    <button
+                      type="button"
+                      onClick={handleBack}
+                      className="px-6 py-4 border border-slate-200 text-slate-700 rounded-full font-medium text-lg hover:bg-slate-50 transition-all"
+                    >
+                      Back
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleNext}
+                      className="flex-1 px-6 py-4 bg-violet-600 text-white rounded-full font-medium text-lg hover:bg-violet-700 transition-all hover:scale-[1.01] active:scale-[0.99]"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              )}
 
+              {/* Step 3: Tell us more */}
+              {step === "story" && (
+                <form onSubmit={handleSubmitInfo} className="space-y-8">
                   <div>
                     <label className="block text-sm font-medium text-slate-900 mb-1">
                       Short Bio
@@ -401,7 +994,6 @@ export default function ApplyPage() {
                       maxLength={500}
                       className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-shadow resize-none bg-white"
                       placeholder="I spend my weekends building mechanical keyboards and arguing about which pizza style is best..."
-                      required
                     />
                   </div>
 
@@ -446,20 +1038,6 @@ export default function ApplyPage() {
                     )}
                   </div>
 
-                  {/* Honeypot field - hidden from users, bots will fill it */}
-                  <div className="hidden" aria-hidden="true">
-                    <label htmlFor="website">Website</label>
-                    <input
-                      type="text"
-                      id="website"
-                      name="website"
-                      value={formData.website}
-                      onChange={(e) => updateField("website", e.target.value)}
-                      tabIndex={-1}
-                      autoComplete="off"
-                    />
-                  </div>
-
                   <div className="h-px bg-slate-100" />
 
                   {/* Privacy consent checkbox */}
@@ -483,16 +1061,26 @@ export default function ApplyPage() {
                     </span>
                   </label>
 
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full px-6 py-4 bg-violet-600 text-white rounded-full font-medium text-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.01] active:scale-[0.99]"
-                  >
-                    {loading ? "Submitting..." : "Continue to Video"}
-                  </button>
+                  <div className="flex gap-3">
+                    <button
+                      type="button"
+                      onClick={handleBack}
+                      className="px-6 py-4 border border-slate-200 text-slate-700 rounded-full font-medium text-lg hover:bg-slate-50 transition-all"
+                    >
+                      Back
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="flex-1 px-6 py-4 bg-violet-600 text-white rounded-full font-medium text-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.01] active:scale-[0.99]"
+                    >
+                      {loading ? "Submitting..." : "Continue to Video"}
+                    </button>
+                  </div>
                 </form>
               )}
 
+              {/* Verification step */}
               {step === "verification" && (
                 <form onSubmit={handleVerify} className="space-y-6">
                   <div className="text-center mb-8">
@@ -547,7 +1135,7 @@ export default function ApplyPage() {
                     <button
                       type="button"
                       onClick={() => {
-                        setStep("info");
+                        setStep("story");
                         setToken(null);
                         setVerificationCode("");
                         setError(null);
@@ -559,63 +1147,300 @@ export default function ApplyPage() {
                   </div>
                 </form>
               )}
+
+              {/* Record step */}
+              {step === "record" && application && (
+                <div className="space-y-6">
+                  {/* Heading */}
+                  <div className="mb-2">
+                    <p className="text-sm text-slate-400 mb-1">Hi {application.name},</p>
+                    <h2 className="font-serif text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
+                      Record your response.
+                    </h2>
+                  </div>
+
+                  {/* Rules - only show before starting */}
+                  {!hasStarted && !hasVideo && (
+                    <div className="bg-violet-50 border border-violet-200 rounded-2xl p-5">
+                      <h3 className="font-semibold text-violet-900 mb-3 flex items-center gap-2 text-sm">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        How it works
+                      </h3>
+                      <ul className="space-y-2 text-sm text-violet-800">
+                        <li>
+                          <span className="font-semibold">{application.prompts.length} questions, {PROMPT_DURATION}s each.</span>{" "}
+                          <span className="text-violet-600">Questions cycle automatically.</span>
+                        </li>
+                        <li>
+                          <span className="font-semibold">One take only.</span>{" "}
+                          <span className="text-violet-600">No re-recording after you submit.</span>
+                        </li>
+                        <li>
+                          <span className="font-semibold">No editing.</span>{" "}
+                          <span className="text-violet-600">We want the real you, not the polished you.</span>
+                        </li>
+                      </ul>
+                      <p className="mt-4 text-xs text-violet-600 italic">
+                        Tip: Don&apos;t overthink it. When the question changes, just start talking.
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Prompt box */}
+                  <div className="bg-slate-900 rounded-2xl p-6 md:p-8">
+                    <div className="flex items-center justify-between mb-4">
+                      <p className="text-sm text-slate-400 font-medium">
+                        {isRecording ? `Question ${currentPromptIndex + 1} of ${application.prompts.length}` : "Your prompts"}
+                      </p>
+                      {isRecording && (
+                        <div className="flex gap-2">
+                          {application.prompts.map((_, idx) => (
+                            <div
+                              key={idx}
+                              className={`w-2 h-2 rounded-full transition-all ${
+                                idx === currentPromptIndex
+                                  ? "bg-white scale-125"
+                                  : idx < currentPromptIndex
+                                  ? "bg-slate-500"
+                                  : "bg-slate-700"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {isRecording ? (
+                      <>
+                        <p className="text-xl md:text-2xl text-white font-medium leading-relaxed">
+                          {application.prompts[currentPromptIndex]?.text}
+                        </p>
+                        <div className="mt-4 h-1 bg-slate-700 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-white/50 transition-all duration-1000"
+                            style={{
+                              width: `${((duration % PROMPT_DURATION) / PROMPT_DURATION) * 100}%`,
+                            }}
+                          />
+                        </div>
+                        <p className="text-xs text-slate-500 mt-2">
+                          {PROMPT_DURATION - (duration % PROMPT_DURATION)}s until next question
+                        </p>
+                      </>
+                    ) : (
+                      <div className="space-y-4">
+                        {application.prompts.map((prompt, idx) => (
+                          <div key={prompt.id} className="flex gap-3">
+                            <span className="text-slate-500 font-mono text-sm">{idx + 1}.</span>
+                            <p className="text-white/80 leading-relaxed">{prompt.text}</p>
+                          </div>
+                        ))}
+                        <p className="text-sm text-slate-500 mt-4">
+                          Each question will be shown for {PROMPT_DURATION} seconds during recording.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Video area */}
+                  <div className="bg-white rounded-2xl border border-slate-200 p-5 md:p-6">
+                    {!hasStarted && !hasVideo && (
+                      <div className="text-center py-10">
+                        <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                        </div>
+                        <p className="text-slate-600 mb-1">Record your {MAX_DURATION}-second response</p>
+                        <p className="text-sm text-slate-500 mb-5">
+                          Read through the prompts above, then hit record when you&apos;re ready.
+                        </p>
+                        <button
+                          onClick={startCamera}
+                          className="px-8 py-4 bg-slate-900 text-white rounded-full font-medium hover:bg-slate-800 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                        >
+                          Enable Camera
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Recording view */}
+                    {stream && !recordedBlob && (
+                      <div className="space-y-5">
+                        <div className="relative bg-black rounded-xl overflow-hidden aspect-video">
+                          <video
+                            ref={videoRef}
+                            autoPlay
+                            muted
+                            playsInline
+                            className="w-full h-full object-cover"
+                          />
+                          {isRecording && (
+                            <>
+                              <div className="absolute top-4 left-4 flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-full">
+                                <span className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                                <span className="font-mono text-sm">{formatTime(duration)} / {formatTime(MAX_DURATION)}</span>
+                              </div>
+                              <div className="absolute bottom-0 left-0 right-0 h-1 bg-slate-700">
+                                <div
+                                  className="h-full bg-red-500 transition-all duration-1000"
+                                  style={{ width: `${(duration / MAX_DURATION) * 100}%` }}
+                                />
+                              </div>
+                            </>
+                          )}
+                        </div>
+
+                        <div className="flex justify-center gap-4">
+                          {!isRecording && (
+                            <button
+                              onClick={startRecording}
+                              className="px-8 py-4 bg-red-600 text-white rounded-full font-medium hover:bg-red-700 transition-all flex items-center gap-3"
+                            >
+                              <span className="w-3 h-3 bg-white rounded-full" />
+                              Start Recording
+                            </button>
+                          )}
+
+                          {isRecording && (
+                            <button
+                              onClick={stopRecording}
+                              className="px-8 py-4 bg-slate-900 text-white rounded-full font-medium hover:bg-slate-800 transition-all"
+                            >
+                              Stop Recording
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Preview recorded video */}
+                    {recordedBlob && (
+                      <div className="space-y-5">
+                        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-center gap-4">
+                          <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
+                            <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
+                          <div>
+                            <p className="font-medium text-emerald-800">Video recorded!</p>
+                            <p className="text-sm text-emerald-600">{formatTime(videoDuration || duration)}</p>
+                          </div>
+                        </div>
+
+                        <video
+                          src={URL.createObjectURL(recordedBlob)}
+                          controls
+                          className="w-full rounded-xl"
+                        />
+
+                        <button
+                          onClick={clearVideo}
+                          className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
+                        >
+                          Record a different video
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Upload progress */}
+                    {submitting && uploadProgress > 0 && uploadProgress < 100 && (
+                      <div className="mt-5">
+                        <div className="flex justify-between text-sm text-slate-600 mb-2">
+                          <span>Uploading...</span>
+                          <span>{uploadProgress}%</span>
+                        </div>
+                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-slate-900 transition-all"
+                            style={{ width: `${uploadProgress}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Submit button */}
+                  {hasVideo && (
+                    <div className="space-y-4">
+                      <button
+                        onClick={handleSubmitVideo}
+                        disabled={submitting}
+                        className="w-full px-6 py-4 bg-violet-600 text-white rounded-full font-medium text-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.01] active:scale-[0.99]"
+                      >
+                        {submitting ? "Submitting..." : "Submit Application"}
+                      </button>
+                      <p className="text-center text-sm text-slate-500">
+                        By submitting, you confirm this is your final take.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Confirmation step */}
+              {step === "confirmation" && (
+                <div className="text-center py-4">
+                  <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+
+                  <h2 className="font-serif text-3xl font-bold text-slate-900 tracking-tight mb-3">
+                    You&apos;re in the queue.
+                  </h2>
+
+                  <p className="text-slate-500 max-w-sm mx-auto mb-8">
+                    Thanks for putting yourself out there. We watch every single video
+                    and will be in touch.
+                  </p>
+
+                  <div className="text-left max-w-sm mx-auto mb-8">
+                    {[
+                      {
+                        num: "1",
+                        title: "We watch your video",
+                        desc: "A real human reviews every application.",
+                      },
+                      {
+                        num: "2",
+                        title: "We email you",
+                        desc: "Yes, no, or waitlist\u2014we\u2019ll let you know.",
+                      },
+                      {
+                        num: "3",
+                        title: "If accepted",
+                        desc: "You\u2019ll get all the details to confirm your spot.",
+                      },
+                    ].map((item) => (
+                      <div key={item.num} className="flex gap-4 py-4 border-b border-slate-100 last:border-0">
+                        <span className="font-serif text-2xl font-bold text-slate-200 flex-shrink-0 w-6">
+                          {item.num}
+                        </span>
+                        <div>
+                          <h3 className="font-medium text-slate-900 text-sm mb-0.5">{item.title}</h3>
+                          <p className="text-xs text-slate-500 leading-relaxed">{item.desc}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={handleCloseModal}
+                    className="px-10 py-4 bg-violet-600 text-white rounded-full font-medium text-lg hover:bg-violet-700 transition-all hover:scale-[1.01] active:scale-[0.99]"
+                  >
+                    Done
+                  </button>
+                </div>
+              )}
             </div>
           </div>
-
-          {/* Sidebar */}
-          <aside className="hidden md:block">
-            <div className="sticky top-24 space-y-8">
-              {/* What to expect */}
-              <div className="bg-slate-50 rounded-2xl p-6">
-                <h3 className="font-semibold text-slate-900 text-sm mb-4">What happens next</h3>
-                <ol className="space-y-4 text-sm">
-                  <li className="flex gap-3">
-                    <span className="flex-shrink-0 w-5 h-5 bg-violet-600 text-white rounded-full flex items-center justify-center text-xs font-medium">1</span>
-                    <span className="text-slate-600">Fill out this form</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <span className="flex-shrink-0 w-5 h-5 bg-slate-200 text-slate-500 rounded-full flex items-center justify-center text-xs font-medium">2</span>
-                    <span className="text-slate-500">Verify your email</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <span className="flex-shrink-0 w-5 h-5 bg-slate-200 text-slate-500 rounded-full flex items-center justify-center text-xs font-medium">3</span>
-                    <span className="text-slate-500">Record a 90-second video</span>
-                  </li>
-                  <li className="flex gap-3">
-                    <span className="flex-shrink-0 w-5 h-5 bg-slate-200 text-slate-500 rounded-full flex items-center justify-center text-xs font-medium">4</span>
-                    <span className="text-slate-500">We review &amp; respond</span>
-                  </li>
-                </ol>
-              </div>
-
-              {/* Tip */}
-              <div className="border border-slate-200 rounded-2xl p-6">
-                <h3 className="font-semibold text-slate-900 text-sm mb-3">A word of advice</h3>
-                <p className="text-sm text-slate-500 leading-relaxed">
-                  Write your bio like you&apos;re telling a friend what you&apos;re into right now&mdash;not
-                  like you&apos;re updating a professional profile. We care about what
-                  lights you up.
-                </p>
-              </div>
-
-              {/* Quote */}
-              <div className="relative">
-                <svg className="w-6 h-6 text-violet-200 mb-3" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                </svg>
-                <p className="text-sm text-slate-500 leading-relaxed italic">
-                  &ldquo;The application process itself told me this wasn&apos;t going to be
-                  another boring conference. I was nervous recording my video, and
-                  that&apos;s exactly why it worked.&rdquo;
-                </p>
-                <p className="text-xs text-slate-400 mt-3">
-                  &mdash; Priya R., IP3 Attendee
-                </p>
-              </div>
-            </div>
-          </aside>
         </div>
-      </div>
+      )}
     </main>
   );
 }
