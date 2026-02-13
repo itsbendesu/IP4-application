@@ -122,7 +122,7 @@ export default function Home() {
           priority
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-        <div className="relative z-10 max-w-6xl mx-auto px-6 pb-16 md:pb-24 w-full">
+        <div className="relative z-10 max-w-6xl mx-auto px-6 pb-20 md:pb-32 w-full">
           <p className="text-sm font-medium tracking-[0.2em] text-violet-300 uppercase mb-8">
             Interesting People 4 &mdash; Applications Open
           </p>
@@ -152,25 +152,27 @@ export default function Home() {
               Learn More
             </Link>
           </div>
+        </div>
+      </section>
 
-          {/* Social proof strip */}
-          <div className="mt-16 pt-8 border-t border-white/20">
-            <p className="text-sm text-white/50 mb-4">From previous gatherings</p>
-            <div className="flex flex-wrap gap-x-8 gap-y-3">
-              <div className="flex items-center gap-2">
-                <span className="font-serif text-2xl font-bold text-violet-300">400+</span>
-                <span className="text-sm text-white/60">attendees across<br />three events</span>
-              </div>
-              <div className="hidden sm:block w-px h-10 bg-white/20" />
-              <div className="flex items-center gap-2">
-                <span className="font-serif text-2xl font-bold text-violet-300">32</span>
-                <span className="text-sm text-white/60">countries<br />represented</span>
-              </div>
-              <div className="hidden sm:block w-px h-10 bg-white/20" />
-              <div className="flex items-center gap-2">
-                <span className="font-serif text-2xl font-bold text-violet-300">94%</span>
-                <span className="text-sm text-white/60">said they&apos;d<br />come back</span>
-              </div>
+      {/* Social proof strip */}
+      <section className="bg-slate-950 border-t border-white/10">
+        <div className="max-w-6xl mx-auto px-6 py-8 flex flex-wrap items-center gap-x-10 gap-y-4">
+          <p className="text-sm text-slate-500">From previous gatherings</p>
+          <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
+            <div className="flex items-center gap-2">
+              <span className="font-serif text-2xl font-bold text-violet-300">400+</span>
+              <span className="text-sm text-slate-400">attendees across three events</span>
+            </div>
+            <div className="hidden sm:block w-px h-6 bg-slate-700" />
+            <div className="flex items-center gap-2">
+              <span className="font-serif text-2xl font-bold text-violet-300">32</span>
+              <span className="text-sm text-slate-400">countries represented</span>
+            </div>
+            <div className="hidden sm:block w-px h-6 bg-slate-700" />
+            <div className="flex items-center gap-2">
+              <span className="font-serif text-2xl font-bold text-violet-300">94%</span>
+              <span className="text-sm text-slate-400">said they&apos;d come back</span>
             </div>
           </div>
         </div>
