@@ -152,27 +152,23 @@ export default function Home() {
               Learn More
             </Link>
           </div>
-        </div>
-      </section>
-
-      {/* Social proof strip */}
-      <section className="bg-slate-950 border-t border-white/10">
-        <div className="max-w-6xl mx-auto px-6 py-8 flex flex-wrap items-center gap-x-10 gap-y-4">
-          <p className="text-sm text-slate-500">From previous gatherings</p>
-          <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
-            <div className="flex items-center gap-2">
-              <span className="font-serif text-2xl font-bold text-violet-300">400+</span>
-              <span className="text-sm text-slate-400">attendees across three events</span>
-            </div>
-            <div className="hidden sm:block w-px h-6 bg-slate-700" />
-            <div className="flex items-center gap-2">
-              <span className="font-serif text-2xl font-bold text-violet-300">32</span>
-              <span className="text-sm text-slate-400">countries represented</span>
-            </div>
-            <div className="hidden sm:block w-px h-6 bg-slate-700" />
-            <div className="flex items-center gap-2">
-              <span className="font-serif text-2xl font-bold text-violet-300">94%</span>
-              <span className="text-sm text-slate-400">said they&apos;d come back</span>
+          <div className="mt-16 pt-8 border-t border-white/10 flex flex-wrap items-center gap-x-10 gap-y-4">
+            <p className="text-sm text-white/40">From previous gatherings</p>
+            <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
+              <div className="flex items-center gap-2">
+                <span className="font-serif text-2xl font-bold text-violet-300">400+</span>
+                <span className="text-sm text-white/50">attendees across three events</span>
+              </div>
+              <div className="hidden sm:block w-px h-6 bg-white/20" />
+              <div className="flex items-center gap-2">
+                <span className="font-serif text-2xl font-bold text-violet-300">32</span>
+                <span className="text-sm text-white/50">countries represented</span>
+              </div>
+              <div className="hidden sm:block w-px h-6 bg-white/20" />
+              <div className="flex items-center gap-2">
+                <span className="font-serif text-2xl font-bold text-violet-300">94%</span>
+                <span className="text-sm text-white/50">said they&apos;d come back</span>
+              </div>
             </div>
           </div>
         </div>
@@ -206,11 +202,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Photo Grid */}
+      {/* Photo Gallery */}
       <section className="py-16 md:py-24">
-        <div className="px-2 md:px-3">
+        <div className="max-w-6xl mx-auto px-6">
+          <p className="text-sm text-slate-400 mb-4">Scenes from IP3 &mdash; Victoria, BC</p>
           <PhotoGallery />
-          <p className="text-center text-sm text-slate-400 mt-6">Scenes from IP3 &mdash; Victoria, BC</p>
         </div>
       </section>
 
@@ -349,8 +345,8 @@ export default function Home() {
       {/* Cinematic Photo Break */}
       <section className="relative h-72 md:h-[28rem]">
         <Image
-          src="/images/ip3/comedy-stage-wide.jpeg"
-          alt="Performer on stage at IP3 comedy night"
+          src="/images/ip3/comedy-night-wide.jpeg"
+          alt="Performer on stage under blue and purple lights at IP3 comedy night"
           fill
           className="object-cover"
         />
@@ -444,24 +440,24 @@ export default function Home() {
           <div className="grid grid-cols-3 gap-3 md:gap-4 mb-16">
             <div className="relative h-44 md:h-72 rounded-2xl overflow-hidden">
               <Image
-                src="/images/ip3/table-conversations.jpeg"
-                alt="IP3 attendees in animated conversation at the Union Club"
+                src="/images/ip3/animated-conversation.jpeg"
+                alt="Attendee telling a story with hands mid-gesture at IP3"
                 fill
                 className="object-cover"
               />
             </div>
             <div className="relative h-44 md:h-72 rounded-2xl overflow-hidden">
               <Image
-                src="/images/ip3/drinks-conversation.jpeg"
-                alt="Animated conversation over drinks at IP3"
+                src="/images/ip3/outdoor-hangout.jpeg"
+                alt="Group gathered around for card tricks at the outdoor hangout"
                 fill
                 className="object-cover"
               />
             </div>
             <div className="relative h-44 md:h-72 rounded-2xl overflow-hidden">
               <Image
-                src="/images/ip3/comedy-night.jpeg"
-                alt="Comedy night performance on stage at IP3"
+                src="/images/ip3/pink-cocktails.jpeg"
+                alt="Rows of vibrant pink cocktails lined up at the bar"
                 fill
                 className="object-cover"
               />

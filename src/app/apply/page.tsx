@@ -688,16 +688,6 @@ export default function ApplyPage() {
           </p>
         </div>
 
-        {/* Tip box */}
-        <div className="mb-16 md:mb-20 border border-slate-200 rounded-2xl p-6 max-w-xl mx-auto">
-          <h3 className="font-semibold text-slate-900 text-sm mb-3">A word of advice</h3>
-          <p className="text-sm text-slate-500 leading-relaxed">
-            Write your bio like you&apos;re telling a friend what you&apos;re into right now&mdash;not
-            like you&apos;re updating a professional profile. We care about what
-            lights you up.
-          </p>
-        </div>
-
         {/* CTA */}
         <div className="text-center">
           <button
