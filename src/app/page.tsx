@@ -3,18 +3,24 @@ import Image from "next/image";
 import PhotoGallery from "@/components/PhotoGallery";
 
 const notablePeople = [
-  { name: "Shaan Puri", role: "Co-host, My First Million", image: "/images/speakers/shaan-puri.jpg" },
-  { name: "Kevin Rose", role: "Entrepreneur", image: "/images/speakers/kevin-rose.jpg" },
   { name: "Hannibal Buress", role: "Comedian", image: "/images/speakers/hannibal-buress.jpg" },
-  { name: "Sam Reich", role: "CEO, Dropout", image: "/images/speakers/sam-reich.jpg" },
-  { name: "Greg Isenberg", role: "CEO, Late Checkout", image: "/images/speakers/greg-isenberg.jpg" },
+  { name: "Sam Reich", role: "TV Producer", image: "/images/speakers/sam-reich.jpg" },
+  { name: "Greg Isenberg", role: "Entrepreneur", image: "/images/speakers/greg-isenberg.jpg" },
   { name: "Dr. Rhonda Patrick", role: "Scientist", image: "/images/speakers/dr-rhonda-patrick.jpg" },
-  { name: "Steph Smith", role: "a16z Podcast Host", image: "/images/speakers/steph-smith.jpg" },
-  { name: "Andrew Wilkinson", role: "CEO, Tiny", image: "/images/speakers/andrew-wilkinson.jpg" },
+  { name: "Matthew Buchanan", role: "Entrepreneur", image: "/images/speakers/matthew-buchanan.jpg" },
+  { name: "Patrick Campbell", role: "Entrepreneur", image: "/images/speakers/patrick-campbell.jpg" },
+  { name: "Shaan Puri", role: "Podcaster", image: "/images/speakers/shaan-puri.jpg" },
+  { name: "Bill Oakley", role: "TV Writer", image: "/images/speakers/bill-oakley.jpg" },
+  { name: "Darya Rose", role: "Neuroscientist", image: "/images/speakers/darya-rose.jpeg" },
+  { name: "Steph Smith", role: "Podcaster", image: "/images/speakers/steph-smith.jpg" },
+  { name: "Andrew Wilkinson", role: "Entrepreneur", image: "/images/speakers/andrew-wilkinson.jpg" },
   { name: "Nick Gray", role: "Author", image: "/images/speakers/nick-gray.jpg" },
-  { name: "Matthew Dicks", role: "Author of Storyworthy", image: "/images/speakers/matthew-dicks.jpg" },
-  { name: "Adam Lisagor", role: "Sandwich Video", image: "/images/speakers/adam-lisagor.jpg" },
+  { name: "Matthew Dicks", role: "Storyteller", image: "/images/speakers/matthew-dicks.jpg" },
+  { name: "Adam Lisagor", role: "Director", image: "/images/speakers/adam-lisagor.jpg" },
   { name: "Cyan Banister", role: "Investor", image: "/images/speakers/cyan-banister.jpg" },
+  { name: "Jon Glaser", role: "Comedian", image: "/images/speakers/jon-glaser.jpg" },
+  { name: "Josh Johnson", role: "Comedian", image: "/images/speakers/josh-johnson.jpg" },
+  { name: "Jason Verners", role: "Magician", image: "/images/speakers/jason-verners.jpg" },
 ];
 
 const featuredTestimonials = [
@@ -22,7 +28,7 @@ const featuredTestimonials = [
     quote:
       "A super well run event. I had a blast!",
     name: "Shaan Puri",
-    descriptor: "Founder & Co-host, My First Million",
+    descriptor: "Co-host, My First Million",
     image: "/images/speakers/shaan-puri.jpg",
   },
   {
@@ -82,29 +88,24 @@ function TestimonialBlock({
   bg?: string;
 }) {
   return (
-    <section className={`py-10 md:py-14 ${bg}`}>
-      <div className="max-w-3xl mx-auto px-6">
-        <div className="flex items-start gap-3 md:gap-4">
-          <span className="text-5xl md:text-6xl text-stone-300 font-serif leading-none select-none flex-shrink-0 -mt-1">
-            &ldquo;
-          </span>
-          <p className="text-2xl md:text-3xl lg:text-4xl text-stone-800 leading-relaxed font-serif italic">
-            {quote}
-          </p>
-        </div>
-        <div className="mt-6 ml-12 md:ml-14 flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full overflow-hidden relative bg-stone-200 flex-shrink-0">
+    <section className={`py-16 md:py-20 ${bg}`}>
+      <div className="max-w-4xl mx-auto px-6 text-center">
+        <p className="text-2xl md:text-3xl lg:text-4xl text-stone-800 leading-relaxed font-serif italic">
+          &ldquo;{quote}&rdquo;
+        </p>
+        <div className="mt-8 flex flex-col items-center gap-3">
+          <div className="w-16 h-16 rounded-full overflow-hidden relative bg-stone-200 flex-shrink-0">
             <Image
               src={image}
               alt={name}
               fill
               className="object-cover"
-              sizes="48px"
+              sizes="64px"
             />
           </div>
           <div>
-            <p className="font-semibold text-stone-900 text-sm">{name}</p>
-            <p className="text-xs text-stone-400">{descriptor}</p>
+            <p className="font-semibold text-stone-900">{name}</p>
+            <p className="text-sm text-stone-400">{descriptor}</p>
           </div>
         </div>
       </div>
@@ -186,7 +187,7 @@ export default function Home() {
       {/* Hero */}
       <section className="relative w-full min-h-screen flex items-end">
         <Image
-          src="/images/ip3/lakefront-sunset.jpeg"
+          src="/images/ip3/outdoor-gathering.jpeg"
           alt="Attendees gathered lakeside at golden hour with string lights at IP3"
           fill
           className="object-cover"
@@ -227,9 +228,10 @@ export default function Home() {
       <TestimonialBlock {...featuredTestimonials[0]} />
 
       {/* A Note from Andrew */}
-      <section className="bg-stone-50 py-24 md:py-32" id="about">
+      <section className="bg-stone-50 pt-14 md:pt-20 pb-24 md:pb-32" id="about">
         <div className="max-w-6xl mx-auto px-6">
           <div className="max-w-3xl">
+            <h2 className="text-3xl md:text-5xl font-bold text-stone-900 tracking-tight mb-4">How it all started.</h2>
             <p className="text-sm font-medium tracking-[0.15em] text-stone-400 uppercase mb-6">A note from Andrew</p>
             <div className="text-lg md:text-xl text-stone-700 leading-relaxed space-y-6">
               <p>
@@ -288,7 +290,7 @@ export default function Home() {
       <section className="py-16 md:py-24">
         <div className="max-w-6xl mx-auto px-6">
           <p className="text-2xl md:text-3xl font-bold text-stone-900 tracking-tight mb-1">Three days. Zero laptops.</p>
-          <p className="text-sm text-stone-400 mb-4">Victoria, BC</p>
+          <p className="text-sm text-stone-400 mb-4">Show and tell. Comedy. Music. Incredible food. Magic (yes, literally).</p>
           <PhotoGallery />
         </div>
       </section>
@@ -347,9 +349,9 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-6 md:gap-8 mb-20">
             {[
               { quote: "I usually find events a waste of time, but Interesting People was the opposite.", name: "Greg Isenberg", role: "CEO, Late Checkout", image: "/images/speakers/greg-isenberg.jpg" },
-              { quote: "It\u2019s rare that you go to an event where the bulk of people aren\u2019t on their phone.", name: "Jayson Gaignard", role: "Founder, Mastermind Talks", image: "" },
+              { quote: "It\u2019s rare that you go to an event where the bulk of people aren\u2019t on their phone.", name: "Jayson Gaignard", role: "Founder, Mastermind Talks", image: "/images/speakers/jayson-gaignard.avif" },
               { quote: "A great collection of smart people working on interesting things.", name: "Nick Gray", role: "Author & Founder", image: "/images/speakers/nick-gray.jpg" },
-              { quote: "So many inspiring conversations, connections made, learnings and insight.", name: "Tessa McLoughlin", role: "Founder & Director, KWENCH", image: "" },
+              { quote: "So many inspiring conversations, connections made, learnings and insight.", name: "Tessa McLoughlin", role: "Founder & Director, KWENCH", image: "/images/speakers/tessa-mcloughlin.avif" },
             ].map((t, i) => (
               <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-8 md:p-10">
                 <p className="text-xl md:text-2xl text-white leading-relaxed mb-8">
@@ -408,25 +410,62 @@ export default function Home() {
       {/* What We Look For */}
       <section className="py-24 md:py-32 bg-stone-50">
         <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-3xl md:text-5xl font-bold text-stone-900 tracking-tight mb-6">
-            What gets you in.
-          </h2>
-          <p className="text-lg text-stone-500 max-w-2xl mb-6">
-            When we review applications, we ask one question: did this person make us
-            feel warm and gooey inside?
-          </p>
-          <p className="text-lg text-stone-500 max-w-2xl mb-6">
-            We immediately cross people off when we see red flags like:{" "}
-            <span className="text-stone-700 font-medium">&ldquo;Chief Innovation Officer.&rdquo;</span>{" "}
-            <span className="text-stone-700 font-medium">&ldquo;Futurist.&rdquo;</span>{" "}
-            <span className="text-stone-700 font-medium">&ldquo;Catalyst.&rdquo;</span>{" "}
-            <span className="text-stone-700 font-medium">&ldquo;Change Maker.&rdquo;</span>{" "}
-            And the most dreaded of all:{" "}
-            <span className="text-stone-700 font-medium">&ldquo;Forbes 30 Under 30.&rdquo;</span>
-          </p>
-          <p className="text-lg text-stone-500 max-w-2xl mb-16">
-            We&apos;re not looking for titles. We&apos;re looking for three things.
-          </p>
+          <div className="flex flex-col md:flex-row md:items-start md:gap-16 mb-16">
+            <div className="md:flex-1">
+              <h2 className="text-3xl md:text-5xl font-bold text-stone-900 tracking-tight mb-6">
+                What gets you in.
+              </h2>
+              <p className="text-lg text-stone-500 mb-6">
+                When we review applications, we ask one question: did this person make us
+                feel warm and gooey inside?
+              </p>
+              <p className="text-lg text-stone-500 mb-6">
+                We immediately cross people off when we see red flags like:{" "}
+                <span className="text-stone-700 font-medium">&ldquo;Chief Innovation Officer.&rdquo;</span>{" "}
+                <span className="text-stone-700 font-medium">&ldquo;Futurist.&rdquo;</span>{" "}
+                <span className="text-stone-700 font-medium">&ldquo;Catalyst.&rdquo;</span>{" "}
+                <span className="text-stone-700 font-medium">&ldquo;Change Maker.&rdquo;</span>{" "}
+                And the most dreaded of all:{" "}
+                <span className="text-stone-700 font-medium">&ldquo;Forbes 30 Under 30.&rdquo;</span>
+              </p>
+              <p className="text-lg text-stone-500">
+                We&apos;re not looking for titles. We&apos;re looking for three things.
+              </p>
+            </div>
+
+            {/* Fake LinkedIn card with red sharpie slashes */}
+            <div className="hidden md:block md:w-72 lg:w-80 flex-shrink-0 mt-8 md:mt-4">
+              <div className="relative bg-white rounded-xl shadow-lg border border-stone-200 overflow-hidden rotate-2">
+                {/* LinkedIn-style header */}
+                <div className="h-16 bg-gradient-to-r from-blue-700 to-blue-500" />
+                <div className="px-5 pb-5">
+                  {/* Avatar */}
+                  <div className="w-16 h-16 rounded-full bg-stone-300 border-4 border-white -mt-8 mb-3 overflow-hidden relative">
+                    <Image
+                      src="/images/chad-worthington.jpg"
+                      alt="Chad Worthington III"
+                      fill
+                      className="object-cover"
+                      sizes="64px"
+                    />
+                  </div>
+                  <p className="font-bold text-stone-900 text-sm">Chad Worthington III</p>
+                  <p className="text-xs text-stone-500 mt-0.5">Chief Innovation Officer</p>
+                  <p className="text-xs text-stone-400 mt-0.5">Forbes 30 Under 30 | TEDx Speaker</p>
+                  <p className="text-xs text-stone-400">Disruptor | Thought Leader | Catalyst</p>
+                  <div className="mt-3 flex gap-2">
+                    <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">500+ connections</span>
+                  </div>
+                </div>
+                {/* NOPE stamp */}
+                <div className="absolute top-12 right-3 pointer-events-none">
+                  <div className="border-4 border-red-600 rounded-md px-4 py-1.5 rotate-[-12deg] opacity-90">
+                    <span className="text-red-600 text-2xl font-black tracking-widest uppercase">NOPE</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             <div className="group">
@@ -485,6 +524,7 @@ export default function Home() {
               { theirs: "\u201CNetworking breaks\u201D that feel like speed dating", ours: "Shared meals, walks, and activities that create real bonds" },
               { theirs: "Sad conference center buffets and rubber chicken", ours: "Chef-curated meals you\u2019ll actually talk about after" },
               { theirs: "You leave with 50 LinkedIn connections you\u2019ll ignore", ours: "You leave with 5 people you\u2019ll actually stay in touch with" },
+              { theirs: "Fluorescent-lit convention centers with no windows", ours: "Beautiful venues surrounded by nature in Victoria, BC" },
               { theirs: "Optimized for sponsors and optics", ours: "Optimized for genuine human connection" },
             ].map((row, i) => (
               <div key={i} className="grid md:grid-cols-2 gap-4 md:gap-0">
@@ -583,7 +623,7 @@ export default function Home() {
             {/* Local */}
             <div className="bg-white rounded-2xl border border-stone-200 p-8 flex flex-col">
               <p className="text-sm font-medium tracking-[0.2em] text-stone-400 uppercase mb-2">Local</p>
-              <p className="text-4xl font-bold text-stone-900 mb-2">$4,999</p>
+              <p className="text-4xl font-bold text-stone-900 mb-2">$5,999</p>
               <p className="text-xs text-stone-400 mb-6">Victoria residents only</p>
               <p className="text-stone-500 leading-relaxed mb-6 flex-grow text-sm">
                 You live here, you sleep at home. Full access to every session, meal, and activity &mdash; just no hotel room. Must have a Victoria, BC address.
@@ -649,7 +689,7 @@ export default function Home() {
               <p className="text-4xl font-bold text-stone-900 mb-2">$15,999</p>
               <p className="text-xs text-stone-400 mb-6">Limited to 20 guests</p>
               <p className="text-stone-500 leading-relaxed mb-6 flex-grow text-sm">
-                Everything in Regular, elevated. You get the best room, a car, a seat at the table with speakers, and Andrew&apos;s personal attention.
+                Everything in Regular, elevated. Best room, black car, front-row seats, a private dinner with speakers, and a personal concierge you can text anytime to handle whatever you need.
               </p>
               <ul className="text-sm text-stone-600 space-y-2 mb-8">
                 <li className="flex items-start gap-2">
@@ -671,6 +711,10 @@ export default function Home() {
                 <li className="flex items-start gap-2">
                   <svg className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>
                   Private dinner with speakers &amp; Andrew
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>
+                  24/7 personal text concierge
                 </li>
               </ul>
               <Link

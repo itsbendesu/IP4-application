@@ -5,13 +5,13 @@ import { useState, useEffect, useCallback } from "react";
 
 const photos = [
   { src: "/images/ip3/comedy-stage.jpeg", alt: "Comedy night on stage with a packed audience at IP3", pos: "object-bottom" },
-  { src: "/images/ip3/deep-conversation.jpeg", alt: "Animated conversation over drinks at IP3", pos: "object-[50%_25%]" },
+  { src: "/images/ip3/outdoor-hangout.jpeg", alt: "Attendees gathered for evening activities at IP3", pos: "object-top" },
   { src: "/images/ip3/cocktail-prep.jpeg", alt: "Vibrant pink cocktails being prepared at the outdoor bar", pos: "object-center" },
   { src: "/images/ip3/outdoor-gathering.jpeg", alt: "Attendees mingling under string lights among the trees at Shawnigan Lake", pos: "object-center" },
-  { src: "/images/ip3/lake-jump.jpeg", alt: "Attendees leaping off the dock into Shawnigan Lake", pos: "object-bottom" },
+  { src: "/images/ip3/animated-conversation.jpeg", alt: "Lively conversation at IP3", pos: "object-center" },
   { src: "/images/ip3/food-spread.jpeg", alt: "Oysters, charcuterie, and drinks at the VIP reception", pos: "object-center" },
   { src: "/images/ip3/card-magic.jpeg", alt: "Group gathered around a table for close-up card magic outdoors", pos: "object-top" },
-  { src: "/images/ip3/storytelling.jpeg", alt: "Attendee sharing a story with a captivated group", pos: "object-center" },
+  { src: "/images/ip3/comedy-night-wide.jpeg", alt: "Comedy performance at IP3", pos: "object-center" },
   { src: "/images/ip3/dock-dive.jpeg", alt: "Jumping off the dock into the lake with swimmers below", pos: "object-bottom" },
 ];
 
