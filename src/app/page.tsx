@@ -26,7 +26,7 @@ const notablePeople = [
 const featuredTestimonials = [
   {
     quote:
-      "A super well run event. I had a blast!",
+      "A super well run event. I had a blast.",
     name: "Shaan Puri",
     descriptor: "Co-host, My First Million",
     image: "/images/speakers/shaan-puri.jpg",
@@ -225,7 +225,7 @@ export default function Home() {
       </section>
 
       {/* Testimonial — Shaan Puri */}
-      <TestimonialBlock {...featuredTestimonials[0]} />
+      <TestimonialBlock {...featuredTestimonials[1]} />
 
       {/* A Note from Andrew */}
       <section className="bg-stone-50 pt-14 md:pt-20 pb-24 md:pb-32" id="about">
@@ -289,14 +289,14 @@ export default function Home() {
       {/* Photo Gallery */}
       <section className="py-16 md:py-24">
         <div className="max-w-6xl mx-auto px-6">
-          <p className="text-2xl md:text-3xl font-bold text-stone-900 tracking-tight mb-1">Three days. Zero laptops.</p>
+          <p className="text-2xl md:text-3xl font-bold text-stone-900 tracking-tight mb-1">What happens when 150 interesting people put their phones away.</p>
           <p className="text-sm text-stone-400 mb-4">Show and tell. Comedy. Music. Incredible food. Magic (yes, literally).</p>
           <PhotoGallery />
         </div>
       </section>
 
       {/* Testimonial — Steph Smith */}
-      <TestimonialBlock {...featuredTestimonials[1]} bg="bg-stone-50" />
+      <TestimonialBlock {...featuredTestimonials[0]} bg="bg-stone-50" />
 
       {/* Alumni Grid */}
       <section className="bg-white py-24 md:py-32" id="people">
@@ -703,10 +703,6 @@ export default function Home() {
                 <li className="flex items-start gap-2">
                   <svg className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>
                   Black car airport transfer
-                </li>
-                <li className="flex items-start gap-2">
-                  <svg className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>
-                  Dedicated front-row seating
                 </li>
                 <li className="flex items-start gap-2">
                   <svg className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>

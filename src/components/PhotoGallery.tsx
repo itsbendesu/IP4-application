@@ -5,10 +5,10 @@ import { useState, useEffect, useCallback } from "react";
 
 const photos = [
   { src: "/images/ip3/comedy-stage.jpeg", alt: "Comedy night on stage with a packed audience at IP3", pos: "object-bottom" },
-  { src: "/images/ip3/outdoor-hangout.jpeg", alt: "Attendees gathered for evening activities at IP3", pos: "object-top" },
-  { src: "/images/ip3/cocktail-prep.jpeg", alt: "Vibrant pink cocktails being prepared at the outdoor bar", pos: "object-center" },
-  { src: "/images/ip3/outdoor-gathering.jpeg", alt: "Attendees mingling under string lights among the trees at Shawnigan Lake", pos: "object-center" },
+  { src: "/images/ip3/storytelling.jpeg", alt: "Attendee sharing a story with a captivated group at IP3", pos: "object-[50%_15%]" },
+  { src: "/images/ip3/event-photo-4.avif", alt: "Vibrant pink cocktails being prepared at the outdoor bar", pos: "object-center" },
   { src: "/images/ip3/animated-conversation.jpeg", alt: "Lively conversation at IP3", pos: "object-center" },
+  { src: "/images/ip3/lakefront-sunset.jpeg", alt: "Golden hour lakeside dinner with string lights at IP3", pos: "object-center" },
   { src: "/images/ip3/food-spread.jpeg", alt: "Oysters, charcuterie, and drinks at the VIP reception", pos: "object-center" },
   { src: "/images/ip3/card-magic.jpeg", alt: "Group gathered around a table for close-up card magic outdoors", pos: "object-top" },
   { src: "/images/ip3/comedy-night-wide.jpeg", alt: "Comedy performance at IP3", pos: "object-center" },
