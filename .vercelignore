@@ -1,2 +1,6 @@
 public/uploads/
 reference/
+.env
+.env.local
+.env.old
+.env.old-prod
