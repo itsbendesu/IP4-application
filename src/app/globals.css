@@ -3,6 +3,9 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --accent: #2563eb; /* blue-600 */
+  --accent-hover: #1d4ed8; /* blue-700 */
+  --accent-light: #3b82f6; /* blue-500 */
 }
 
 @theme inline {
@@ -10,7 +13,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-serif: var(--font-playfair), Georgia, serif;
+  --font-serif: var(--font-lora), Georgia, serif;
 }
 
 body {
@@ -24,26 +27,8 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Testimonial card hover */
-.testimonial-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.testimonial-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-}
-
-/* Gradient text utility */
-.gradient-text {
-  background: linear-gradient(135deg, #0f172a 0%, #334155 50%, #0f172a 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Number accent styling */
+/* Number accent styling — bold sans-serif, no italics */
 .number-accent {
-  font-family: var(--font-playfair), Georgia, serif;
-  font-style: italic;
-  color: #a78bfa; /* violet-400 */
+  font-weight: 700;
+  color: #2563eb; /* blue-600 */
 }

@@ -2,109 +2,180 @@ import Link from "next/link";
 import Image from "next/image";
 import PhotoGallery from "@/components/PhotoGallery";
 
-const testimonials = [
+const notablePeople = [
+  { name: "Shaan Puri", role: "Co-host, My First Million", image: "/images/speakers/shaan-puri.jpg" },
+  { name: "Kevin Rose", role: "Entrepreneur", image: "/images/speakers/kevin-rose.jpg" },
+  { name: "Hannibal Buress", role: "Comedian", image: "/images/speakers/hannibal-buress.jpg" },
+  { name: "Sam Reich", role: "CEO, Dropout", image: "/images/speakers/sam-reich.jpg" },
+  { name: "Greg Isenberg", role: "CEO, Late Checkout", image: "/images/speakers/greg-isenberg.jpg" },
+  { name: "Dr. Rhonda Patrick", role: "Scientist", image: "/images/speakers/dr-rhonda-patrick.jpg" },
+  { name: "Steph Smith", role: "a16z Podcast Host", image: "/images/speakers/steph-smith.jpg" },
+  { name: "Andrew Wilkinson", role: "CEO, Tiny", image: "/images/speakers/andrew-wilkinson.jpg" },
+  { name: "Nick Gray", role: "Author", image: "/images/speakers/nick-gray.jpg" },
+  { name: "Matthew Dicks", role: "Author of Storyworthy", image: "/images/speakers/matthew-dicks.jpg" },
+  { name: "Adam Lisagor", role: "Sandwich Video", image: "/images/speakers/adam-lisagor.jpg" },
+  { name: "Cyan Banister", role: "Investor", image: "/images/speakers/cyan-banister.jpg" },
+];
+
+const featuredTestimonials = [
   {
     quote:
-      "I've been to Davos, TED, Summit—none of them made me feel the way IP3 did. For three days I wasn't a founder or a title. I was just a person in a room full of people who actually gave a damn.",
-    name: "Sarah M.",
-    descriptor: "IP3 Attendee",
+      "A super well run event. I had a blast!",
+    name: "Shaan Puri",
+    descriptor: "Founder & Co-host, My First Million",
+    image: "/images/speakers/shaan-puri.jpg",
   },
   {
     quote:
-      "I walked in knowing no one and left with five people I now talk to every week. Not contacts. Friends.",
-    name: "James K.",
-    descriptor: "IP2 & IP3 Attendee",
+      "Interesting People is exactly what a conference should be, but often isn\u2019t. A small, curated group with programming focused on connection instead of cookie-cutter content.",
+    name: "Steph Smith",
+    descriptor: "Creator of Internet Pipes, a16z Podcast Host",
+    image: "/images/speakers/steph-smith.jpg",
   },
   {
     quote:
-      "The video application scared me. In hindsight, that was the point. It filtered for people willing to be vulnerable, and that set the tone for the whole weekend.",
-    name: "Priya R.",
-    descriptor: "IP3 Attendee",
-  },
-  {
-    quote:
-      "No panels. No lanyards. No 'so what do you do?' energy. Just the best conversations I've had in years.",
-    name: "Marco D.",
-    descriptor: "IP1, IP2, & IP3 Attendee",
-  },
-  {
-    quote:
-      "Someone described it as 'a dinner party that lasts three days' and honestly that's the most accurate thing I've ever heard.",
-    name: "Amelia T.",
-    descriptor: "IP3 Attendee",
-  },
-  {
-    quote:
-      "I'm an introvert. I usually hate these things. But the curation was so good that every conversation felt effortless. I didn't have to perform.",
-    name: "David L.",
-    descriptor: "IP2 Attendee",
+      "Met a roomful of people who were genuinely incredible human beings: Smart. Kind. Generous. Curious. Open minded. A collection of damn unicorns!",
+    name: "Matthew Dicks",
+    descriptor: "Author of Storyworthy",
+    image: "/images/speakers/matthew-dicks.jpg",
   },
 ];
 
 const faqs = [
   {
     q: "What actually happens at the event?",
-    a: "Three days of structured and unstructured time together. Shared meals, facilitated conversations, collaborative activities, and plenty of space to just be. Instead of the usual conference format of 80% listening and 20% talking, we flipped it on its head. IP is all about the attendees and their stories.",
+    a: "Three days of structured and unstructured time together. Hand-picked dinner groups with conversation prompts to skip the small talk. A storytelling workshop with Moth champion Matthew Dicks. Comedy night. Lake swims. Late-night conversations that turn into friendships. No panels. No keynotes. No lanyards.",
   },
   {
     q: "Where and when is IP4?",
-    a: "Details on location and dates are shared with accepted applicants. We keep it intimate\u2014expect somewhere beautiful, walkable, and away from the noise.",
+    a: "July 27\u201330, 2026 in Victoria, Canada. Somewhere beautiful, walkable, and away from the noise.",
   },
   {
     q: "How many people attend?",
-    a: "Around 150. Small enough to meet everyone, large enough to be surprised. We\u2019re deliberate about the mix\u2014ages, backgrounds, geographies, industries.",
-  },
-  {
-    q: "What does it cost?",
-    a: "Pricing details are shared upon acceptance. We offer need-based scholarships because interesting isn\u2019t correlated with wealth.",
+    a: "Around 150. Small enough to meet everyone, large enough to be surprised. We\u2019re deliberate about the mix \u2014 ages, backgrounds, geographies, industries.",
   },
   {
     q: "Why do I have to record a video?",
-    a: "Because resumes lie and bios are performative. A 90-second unedited video tells us more about who you actually are than any written application ever could. It filters for people willing to be real\u2014and that vulnerability set the tone for the whole weekend.",
+    a: "Because resumes lie and bios are performative. A 90-second unedited video tells us more about who you actually are than any written application ever could. It filters for people willing to be real \u2014 and that vulnerability sets the tone for the whole weekend.",
   },
   {
-    q: "What if I'm not a founder or executive?",
-    a: "Good. We\u2019re not selecting for titles. Teachers, artists, scientists, writers, community organizers\u2014some of the most interesting people at IP3 had nothing to do with startups.",
+    q: "Is this a networking event?",
+    a: "God no. Networking is for guys named Chadwick who hand out business cards at funerals. This is about making actual friends with people who are interesting and kind. If you\u2019re here to collect contacts, this isn\u2019t for you.",
+  },
+  {
+    q: "What if I\u2019m not a founder or executive?",
+    a: "Good. We\u2019re not selecting for titles. Teachers, artists, scientists, writers, community organizers \u2014 some of the most interesting people at IP3 had nothing to do with startups.",
   },
 ];
+
+function TestimonialBlock({
+  quote,
+  name,
+  descriptor,
+  image,
+  bg = "bg-white",
+}: {
+  quote: string;
+  name: string;
+  descriptor: string;
+  image: string;
+  bg?: string;
+}) {
+  return (
+    <section className={`py-10 md:py-14 ${bg}`}>
+      <div className="max-w-3xl mx-auto px-6">
+        <div className="flex items-start gap-3 md:gap-4">
+          <span className="text-5xl md:text-6xl text-stone-300 font-serif leading-none select-none flex-shrink-0 -mt-1">
+            &ldquo;
+          </span>
+          <p className="text-2xl md:text-3xl lg:text-4xl text-stone-800 leading-relaxed font-serif italic">
+            {quote}
+          </p>
+        </div>
+        <div className="mt-6 ml-12 md:ml-14 flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full overflow-hidden relative bg-stone-200 flex-shrink-0">
+            <Image
+              src={image}
+              alt={name}
+              fill
+              className="object-cover"
+              sizes="48px"
+            />
+          </div>
+          <div>
+            <p className="font-semibold text-stone-900 text-sm">{name}</p>
+            <p className="text-xs text-stone-400">{descriptor}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function AnglePhotos({
+  images,
+}: {
+  images: { src: string; alt: string; rotate: string }[];
+}) {
+  return (
+    <div className="pt-2 pb-8 md:pt-4 md:pb-12 overflow-hidden">
+      <div className="max-w-5xl mx-auto px-6 flex justify-center items-center gap-4 md:gap-8">
+        {images.map((img, i) => (
+          <div
+            key={i}
+            className={`w-56 h-40 md:w-80 md:h-56 relative rounded-lg overflow-hidden shadow-xl flex-shrink-0 ${img.rotate} ${i === 1 ? "hidden md:block translate-y-4" : ""} ${i === 2 ? "hidden lg:block -translate-y-2" : ""}`}
+          >
+            <Image
+              src={img.src}
+              alt={img.alt}
+              fill
+              className="object-cover object-top"
+              sizes="320px"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-white">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-lg">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-lg border-b border-stone-100">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="font-serif text-xl font-bold text-white tracking-tight drop-shadow-sm">
-            IP4
+          <Link href="/" className="flex items-center gap-1 font-bold text-lg text-stone-900 tracking-tight">
+            Interesting People<sup className="text-blue-600 text-sm font-bold ml-0.5">4</sup>
           </Link>
           <div className="flex items-center gap-8">
             <Link
               href="#about"
-              className="hidden md:block text-sm text-white/70 hover:text-white transition-colors"
+              className="hidden md:block text-sm text-stone-500 hover:text-stone-900 transition-colors"
             >
               About
             </Link>
             <Link
-              href="#testimonials"
-              className="hidden md:block text-sm text-white/70 hover:text-white transition-colors"
+              href="#people"
+              className="hidden md:block text-sm text-stone-500 hover:text-stone-900 transition-colors"
             >
-              Stories
+              People
             </Link>
             <Link
               href="#process"
-              className="hidden md:block text-sm text-white/70 hover:text-white transition-colors"
+              className="hidden md:block text-sm text-stone-500 hover:text-stone-900 transition-colors"
             >
               Process
             </Link>
             <Link
               href="#faq"
-              className="hidden md:block text-sm text-white/70 hover:text-white transition-colors"
+              className="hidden md:block text-sm text-stone-500 hover:text-stone-900 transition-colors"
             >
               FAQ
             </Link>
             <Link
               href="/apply"
-              className="px-5 py-2.5 bg-violet-600 text-white text-sm rounded-full font-medium hover:bg-violet-700 transition-all"
+              className="px-5 py-2.5 bg-blue-600 text-white text-sm rounded-full font-medium hover:bg-blue-700 transition-all"
             >
               Apply Now
             </Link>
@@ -121,114 +192,247 @@ export default function Home() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-        <div className="relative z-10 max-w-6xl mx-auto px-6 pb-20 md:pb-32 w-full">
-          <p className="text-sm font-medium tracking-[0.2em] text-violet-300 uppercase mb-8">
-            Interesting People 4 &mdash; Applications Open
-          </p>
-          <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-[1.05] tracking-tight max-w-4xl">
-            We used to hate
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
+        <div className="relative z-10 max-w-6xl mx-auto px-6 pb-12 md:pb-20 w-full">
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-[1.05] tracking-tight max-w-4xl drop-shadow-lg [text-shadow:_0_2px_20px_rgba(0,0,0,0.5)]">
+            We hate
             <br />
             conferences.
           </h1>
-          <p className="mt-8 text-xl md:text-2xl text-white/80 leading-relaxed max-w-2xl">
-            So we built something different. A three-day gathering for 150 people
-            selected not for their titles, but for their{" "}
-            <span className="text-violet-300 font-medium">curiosity</span>,{" "}
-            <span className="text-violet-300 font-medium">depth</span>, and{" "}
-            <span className="text-violet-300 font-medium">willingness to be real</span>.
+          <p className="mt-6 text-lg md:text-xl text-white/80 leading-relaxed max-w-2xl [text-shadow:_0_1px_8px_rgba(0,0,0,0.4)]">
+            They&apos;re about sitting. Making awkward small talk. Bragging at the bar. Status.{" "}
+            <span className="text-white font-medium">They suck.</span>{" "}
+            This is not that. This is 150 people selected for{" "}
+            <span className="text-blue-300 font-medium">curiosity</span>,{" "}
+            <span className="text-blue-300 font-medium">depth</span>, and{" "}
+            <span className="text-blue-300 font-medium">being actual humans</span>.
           </p>
-          <div className="mt-12 flex flex-col sm:flex-row gap-4">
+          <p className="mt-6 text-sm font-medium tracking-wide text-white/60 uppercase">
+            July 27&ndash;30, 2026 &middot; Victoria, Canada
+          </p>
+          <div className="mt-6 flex flex-col items-start gap-3">
             <Link
               href="/apply"
-              className="inline-flex items-center justify-center px-8 py-4 bg-violet-600 text-white rounded-full font-medium text-lg hover:bg-violet-700 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white rounded-full font-medium text-lg hover:bg-blue-700 transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               Apply for IP4
             </Link>
-            <Link
-              href="#about"
-              className="inline-flex items-center justify-center px-8 py-4 bg-white/10 text-white rounded-full font-medium text-lg border border-white/20 hover:bg-white/20 transition-all backdrop-blur-sm"
-            >
-              Learn More
-            </Link>
+            <p className="text-sm text-white/50">Limited to 150 attendees.</p>
           </div>
-          <div className="mt-16 pt-8 border-t border-white/10 flex flex-wrap items-center gap-x-10 gap-y-4">
-            <p className="text-sm text-white/40">From previous gatherings</p>
-            <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
-              <div className="flex items-center gap-2">
-                <span className="font-serif text-2xl font-bold text-violet-300">400+</span>
-                <span className="text-sm text-white/50">attendees across three events</span>
+
+        </div>
+      </section>
+
+      {/* Testimonial — Shaan Puri */}
+      <TestimonialBlock {...featuredTestimonials[0]} />
+
+      {/* A Note from Andrew */}
+      <section className="bg-stone-50 py-24 md:py-32" id="about">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="max-w-3xl">
+            <p className="text-sm font-medium tracking-[0.15em] text-stone-400 uppercase mb-6">A note from Andrew</p>
+            <div className="text-lg md:text-xl text-stone-700 leading-relaxed space-y-6">
+              <p>
+                In 2010, I was twenty-four, sitting at a big circular table at my first tech
+                conference. Cheesy gold chairs, greyhound bus pattern cushions, hotel banquet
+                hall. The VC next to me &mdash; white button-down, Patagonia vest, of course &mdash; asked
+                about my startup. I told him I&apos;d bootstrapped it.
+              </p>
+              <p>
+                &ldquo;Ah,&rdquo; he said. &ldquo;A <em>lifestyle business</em>.&rdquo;
+              </p>
+              <p>
+                Then he turned his back on me and started talking to someone else. Left me
+                sitting there, cheeks flushed, awkwardly sandwiched between two other conversations.
+              </p>
+              <p>
+                I&apos;ve never forgotten how that felt. Being dismissed based on an arbitrary
+                status game. <span className="text-stone-900 font-medium">(Also: screw that guy.)</span>
+              </p>
+              <p>
+                So I built the opposite. Like Harvard, but instead of needing a trust
+                fund and a last name that&apos;s on a building somewhere, you just need to
+                be interesting and nice. No agenda. No pressure. Just 150 genuinely curious
+                humans and the space to connect like actual people.
+              </p>
+            </div>
+            <div className="mt-10 flex items-center gap-4">
+              <div className="w-14 h-14 rounded-full overflow-hidden relative bg-stone-200 flex-shrink-0">
+                <Image
+                  src="/images/speakers/andrew-wilkinson.jpg"
+                  alt="Andrew Wilkinson"
+                  fill
+                  className="object-cover"
+                  sizes="56px"
+                />
               </div>
-              <div className="hidden sm:block w-px h-6 bg-white/20" />
-              <div className="flex items-center gap-2">
-                <span className="font-serif text-2xl font-bold text-violet-300">32</span>
-                <span className="text-sm text-white/50">countries represented</span>
-              </div>
-              <div className="hidden sm:block w-px h-6 bg-white/20" />
-              <div className="flex items-center gap-2">
-                <span className="font-serif text-2xl font-bold text-violet-300">94%</span>
-                <span className="text-sm text-white/50">said they&apos;d come back</span>
+              <div>
+                <p className="font-semibold text-stone-900">Andrew Wilkinson</p>
+                <p className="text-sm text-stone-400">Founder, Interesting People</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* The Big Idea — editorial section */}
-      <section className="bg-slate-950 py-24 md:py-32" id="about">
+      {/* Angled photos — performances & speakers */}
+      <AnglePhotos
+        images={[
+          { src: "/images/ip3/comedy-night-wide.jpeg", alt: "Comedy night at IP3", rotate: "-rotate-3" },
+          { src: "/images/ip3/outdoor-hangout.jpeg", alt: "Outdoor hangout at IP3", rotate: "rotate-2" },
+          { src: "/images/ip3/animated-conversation.jpeg", alt: "Animated conversation at IP3", rotate: "-rotate-1" },
+        ]}
+      />
+
+      {/* Photo Gallery */}
+      <section className="py-16 md:py-24">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="max-w-3xl">
-            <p className="text-sm font-medium tracking-[0.2em] text-slate-500 uppercase mb-8">
-              The idea
+          <p className="text-2xl md:text-3xl font-bold text-stone-900 tracking-tight mb-1">Three days. Zero laptops.</p>
+          <p className="text-sm text-stone-400 mb-4">Victoria, BC</p>
+          <PhotoGallery />
+        </div>
+      </section>
+
+      {/* Testimonial — Steph Smith */}
+      <TestimonialBlock {...featuredTestimonials[1]} bg="bg-stone-50" />
+
+      {/* Alumni Grid */}
+      <section className="bg-white py-24 md:py-32" id="people">
+        <div className="max-w-6xl mx-auto px-6">
+          <h2 className="text-3xl md:text-5xl font-bold text-stone-900 tracking-tight mb-4">
+            Some of our alumni.
+          </h2>
+          <p className="text-lg text-stone-500 max-w-2xl mb-12">
+            Founders, comedians, scientists, storytellers, artists, investors. The only thing they have in common is that they&apos;re interesting.
+          </p>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 md:gap-8">
+            {notablePeople.map((person) => (
+              <div key={person.name} className="text-center group">
+                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden mx-auto mb-3 relative bg-stone-200 ring-2 ring-transparent group-hover:ring-blue-300 transition-all">
+                  <Image
+                    src={person.image}
+                    alt={person.name}
+                    fill
+                    className="object-cover grayscale"
+                    sizes="96px"
+                  />
+                </div>
+                <p className="font-semibold text-stone-900 text-sm">{person.name}</p>
+                <p className="text-xs text-stone-400">{person.role}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Social Proof Wall */}
+      <section className="bg-stone-900 py-24 md:py-32 overflow-hidden">
+        <div className="max-w-6xl mx-auto px-6">
+          <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight mb-10 text-center">
+            People rave about Interesting People.
+          </h2>
+
+          {/* Hero quote */}
+          <div className="text-center mb-16">
+            <p className="text-3xl md:text-4xl lg:text-5xl font-serif italic text-white/70 leading-snug max-w-3xl mx-auto">
+              &ldquo;I&apos;ve been to Davos, Sun Valley, TED &mdash; this was better.&rdquo;
             </p>
-            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.1] mb-8">
-              We optimize for{" "}
-              <span className="text-violet-400 italic">interestingness</span>.
-            </h2>
-            <p className="text-lg md:text-xl text-white/90 leading-relaxed mb-6">
-              It started at a VC conference in 2010. The guy across the table found out
-              our founder&apos;s business was bootstrapped&mdash;no venture money&mdash;and literally
-              turned his back to talk to someone else. That moment crystallized everything
-              wrong with how we gather: we sort people by status, not substance.
+            <p className="text-white/40 text-sm mt-6">
+              &mdash; IP3 Attendee
             </p>
-            <p className="text-lg md:text-xl text-white/90 leading-relaxed">
-              So we built the opposite. Like Harvard, but instead of needing a trust
-              fund and a last name that&apos;s on a building somewhere, you just need to
-              be interesting and nice. No agenda to network. No pressure to perform.
-              Just 150 genuinely curious humans and the space to connect like actual
-              human beings.
+          </div>
+
+          {/* Quote grid — 2x2, big and juicy */}
+          <div className="grid md:grid-cols-2 gap-6 md:gap-8 mb-20">
+            {[
+              { quote: "I usually find events a waste of time, but Interesting People was the opposite.", name: "Greg Isenberg", role: "CEO, Late Checkout", image: "/images/speakers/greg-isenberg.jpg" },
+              { quote: "It\u2019s rare that you go to an event where the bulk of people aren\u2019t on their phone.", name: "Jayson Gaignard", role: "Founder, Mastermind Talks", image: "" },
+              { quote: "A great collection of smart people working on interesting things.", name: "Nick Gray", role: "Author & Founder", image: "/images/speakers/nick-gray.jpg" },
+              { quote: "So many inspiring conversations, connections made, learnings and insight.", name: "Tessa McLoughlin", role: "Founder & Director, KWENCH", image: "" },
+            ].map((t, i) => (
+              <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-8 md:p-10">
+                <p className="text-xl md:text-2xl text-white leading-relaxed mb-8">
+                  &ldquo;{t.quote}&rdquo;
+                </p>
+                <div className="flex items-center gap-4">
+                  {t.image ? (
+                    <div className="w-12 h-12 rounded-full overflow-hidden relative bg-stone-700 flex-shrink-0">
+                      <Image
+                        src={t.image}
+                        alt={t.name}
+                        fill
+                        className="object-cover"
+                        sizes="48px"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
+                      <span className="text-white/50 text-lg font-medium">{t.name.charAt(0)}</span>
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-white font-medium">{t.name}</p>
+                    <p className="text-white/40 text-sm">{t.role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Big stat */}
+          <div className="text-center">
+            <p className="text-7xl md:text-9xl font-bold text-white tracking-tight">94%</p>
+            <p className="text-lg md:text-xl text-white/60 mt-4">
+              of attendees said they&apos;d come back in a heartbeat.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Photo Gallery */}
-      <section className="py-16 md:py-24">
-        <div className="max-w-6xl mx-auto px-6">
-          <p className="text-sm text-slate-400 mb-4">Scenes from IP3 &mdash; Victoria, BC</p>
-          <PhotoGallery />
+      {/* Scarcity bar */}
+      <div className="bg-blue-600 py-4">
+        <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-center gap-3 text-center">
+          <p className="text-white font-medium">
+            Only 150 spots. Over 6,000 applications last year.
+          </p>
+          <Link
+            href="/apply"
+            className="text-sm text-blue-100 underline underline-offset-2 hover:text-white transition-colors"
+          >
+            Apply before it&apos;s too late &rarr;
+          </Link>
         </div>
-      </section>
+      </div>
 
       {/* What We Look For */}
-      <section className="py-24 md:py-32">
+      <section className="py-24 md:py-32 bg-stone-50">
         <div className="max-w-6xl mx-auto px-6">
-          <p className="text-sm font-medium tracking-[0.2em] text-slate-400 uppercase mb-4">
-            Selection criteria
-          </p>
-          <h2 className="font-serif text-3xl md:text-5xl font-bold text-slate-900 tracking-tight mb-6">
+          <h2 className="text-3xl md:text-5xl font-bold text-stone-900 tracking-tight mb-6">
             What gets you in.
           </h2>
-          <p className="text-lg text-slate-500 max-w-2xl mb-16">
+          <p className="text-lg text-stone-500 max-w-2xl mb-6">
             When we review applications, we ask one question: did this person make us
-            feel warm and gooey inside? That usually comes down to three things.
+            feel warm and gooey inside?
+          </p>
+          <p className="text-lg text-stone-500 max-w-2xl mb-6">
+            We immediately cross people off when we see red flags like:{" "}
+            <span className="text-stone-700 font-medium">&ldquo;Chief Innovation Officer.&rdquo;</span>{" "}
+            <span className="text-stone-700 font-medium">&ldquo;Futurist.&rdquo;</span>{" "}
+            <span className="text-stone-700 font-medium">&ldquo;Catalyst.&rdquo;</span>{" "}
+            <span className="text-stone-700 font-medium">&ldquo;Change Maker.&rdquo;</span>{" "}
+            And the most dreaded of all:{" "}
+            <span className="text-stone-700 font-medium">&ldquo;Forbes 30 Under 30.&rdquo;</span>
+          </p>
+          <p className="text-lg text-stone-500 max-w-2xl mb-16">
+            We&apos;re not looking for titles. We&apos;re looking for three things.
           </p>
 
           <div className="grid md:grid-cols-3 gap-8">
             <div className="group">
               <span className="number-accent text-5xl md:text-6xl font-bold">01</span>
-              <h3 className="text-2xl font-semibold text-slate-900 mt-4 mb-4">Curiosity</h3>
-              <p className="text-slate-500 leading-relaxed">
+              <h3 className="text-2xl font-semibold text-stone-900 mt-4 mb-4">Curiosity</h3>
+              <p className="text-stone-500 leading-relaxed">
                 The kind of person who makes you lean in at dinner. Who asks surprising
                 questions. Who has depth, not just credentials. Who goes down rabbit
                 holes for the joy of it.
@@ -237,8 +441,8 @@ export default function Home() {
 
             <div className="group">
               <span className="number-accent text-5xl md:text-6xl font-bold">02</span>
-              <h3 className="text-2xl font-semibold text-slate-900 mt-4 mb-4">Generosity</h3>
-              <p className="text-slate-500 leading-relaxed">
+              <h3 className="text-2xl font-semibold text-stone-900 mt-4 mb-4">Generosity</h3>
+              <p className="text-stone-500 leading-relaxed">
                 Interesting people make others feel interesting too. They remember
                 the small detail you mentioned in passing. They show up fully and
                 contribute rather than spectate.
@@ -247,8 +451,8 @@ export default function Home() {
 
             <div className="group">
               <span className="number-accent text-5xl md:text-6xl font-bold">03</span>
-              <h3 className="text-2xl font-semibold text-slate-900 mt-4 mb-4">Emotional Intelligence</h3>
-              <p className="text-slate-500 leading-relaxed">
+              <h3 className="text-2xl font-semibold text-stone-900 mt-4 mb-4">Emotional Intelligence</h3>
+              <p className="text-stone-500 leading-relaxed">
                 People who read rooms. Who can disagree without making it personal.
                 Who connect without performing. Who make the space better just by
                 being in it.
@@ -258,137 +462,67 @@ export default function Home() {
         </div>
       </section>
 
-      {/* The IP Difference — side by side comparison */}
-      <section className="py-24 md:py-32 bg-slate-950 overflow-hidden">
+      {/* Testimonial — Matthew Dicks */}
+      <TestimonialBlock {...featuredTestimonials[2]} />
+
+      {/* The IP Difference — red/green treatment */}
+      <section className="py-24 md:py-32 bg-stone-50 overflow-hidden">
         <div className="max-w-6xl mx-auto px-6">
-          <div className="mb-16">
-            <p className="text-sm font-medium tracking-[0.2em] text-slate-500 uppercase mb-4">
-              The IP Difference
-            </p>
-            <h2 className="font-serif text-3xl md:text-5xl font-bold text-white tracking-tight">
-              This is not that.
-            </h2>
+          {/* Column headers as the heading */}
+          <div className="grid md:grid-cols-2 gap-4 md:gap-0 mb-2">
+            <div className="md:pr-8 md:border-r md:border-stone-200">
+              <h2 className="text-2xl md:text-3xl font-bold text-stone-400 tracking-tight">Most Conferences</h2>
+            </div>
+            <div className="md:pl-8">
+              <h2 className="text-2xl md:text-3xl font-bold text-blue-600 tracking-tight">Interesting People</h2>
+            </div>
           </div>
 
-          <div className="space-y-0 divide-y divide-slate-800">
+          <div className="space-y-0 divide-y divide-stone-200 border-t border-stone-200">
             {[
               { theirs: "Curated by status and who you know", ours: "Curated by curiosity, depth, and emotional intelligence" },
-              { theirs: "Panels where one person talks, everyone else scrolls", ours: "80% of the time you're talking, not listening" },
-              { theirs: "\"Networking breaks\" that feel like speed dating", ours: "Shared meals, walks, and activities that create real bonds" },
-              { theirs: "Name badges designed to start with your company", ours: "No badges. We learn names the old-fashioned way" },
-              { theirs: "You leave with 50 LinkedIn connections you'll ignore", ours: "You leave with 5 people you'll actually stay in touch with" },
+              { theirs: "Panels where one person talks, everyone else scrolls", ours: "80% of the time you\u2019re connecting, not listening" },
+              { theirs: "\u201CNetworking breaks\u201D that feel like speed dating", ours: "Shared meals, walks, and activities that create real bonds" },
+              { theirs: "Sad conference center buffets and rubber chicken", ours: "Chef-curated meals you\u2019ll actually talk about after" },
+              { theirs: "You leave with 50 LinkedIn connections you\u2019ll ignore", ours: "You leave with 5 people you\u2019ll actually stay in touch with" },
               { theirs: "Optimized for sponsors and optics", ours: "Optimized for genuine human connection" },
             ].map((row, i) => (
               <div key={i} className="grid md:grid-cols-2 gap-4 md:gap-0">
-                <div className="py-5 md:py-6 md:pr-8 md:border-r md:border-slate-800">
-                  <p className="text-slate-500 line-through decoration-slate-700">{row.theirs}</p>
+                <div className="py-5 md:py-6 md:pr-8 md:border-r md:border-stone-200 flex items-center gap-3">
+                  <svg className="w-5 h-5 text-red-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  <p className="text-red-400 line-through decoration-red-300">{row.theirs}</p>
                 </div>
-                <div className="pb-5 md:py-6 md:pl-8">
-                  <p className="text-white font-medium">{row.ours}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-12 flex items-center gap-6 text-sm text-slate-600">
-            <div className="flex items-center gap-2">
-              <span className="w-8 h-px bg-slate-700 line-through" />
-              <span>Every other event</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-8 h-px bg-white" />
-              <span className="text-slate-400">Interesting People</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Grid */}
-      <section className="bg-slate-50 py-24 md:py-32" id="testimonials">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
-            <div>
-              <p className="text-sm font-medium tracking-[0.2em] text-slate-400 uppercase mb-4">
-                In their words
-              </p>
-              <h2 className="font-serif text-3xl md:text-5xl font-bold text-slate-900 tracking-tight">
-                Stories from the room.
-              </h2>
-            </div>
-            <p className="text-slate-500 max-w-md">
-              We don&apos;t need to sell you on it. The people who&apos;ve been there will.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {testimonials.map((t, i) => (
-              <div
-                key={i}
-                className="testimonial-card bg-white rounded-2xl border border-slate-200/80 p-8 flex flex-col"
-              >
-                <svg className="w-8 h-8 text-violet-200 mb-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-                </svg>
-                <p className="text-slate-600 leading-relaxed flex-grow mb-6">
-                  {t.quote}
-                </p>
-                <div className="pt-4 border-t border-slate-100">
-                  <p className="font-medium text-slate-900">{t.name}</p>
-                  <p className="text-sm text-slate-400">{t.descriptor}</p>
+                <div className="pb-5 md:py-6 md:pl-8 flex items-center gap-3">
+                  <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <p className="text-stone-900 font-medium">{row.ours}</p>
                 </div>
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Cinematic Photo Break */}
-      <section className="relative h-72 md:h-[28rem]">
-        <Image
-          src="/images/ip3/comedy-night-wide.jpeg"
-          alt="Performer on stage under blue and purple lights at IP3 comedy night"
-          fill
-          className="object-cover"
-        />
-      </section>
-
-      {/* Featured Quote */}
-      <section className="py-24 md:py-32">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <svg className="w-12 h-12 text-violet-200 mx-auto mb-8" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-          </svg>
-          <blockquote className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 leading-[1.2] tracking-tight">
-            &ldquo;It&apos;s the only event I&apos;ve ever been to where I didn&apos;t once
-            check my phone.&rdquo;
-          </blockquote>
-          <p className="mt-8 text-slate-500">
-            <span className="font-medium text-slate-700">Marco D.</span>{" "}
-            &mdash; IP1, IP2, & IP3 Attendee
-          </p>
         </div>
       </section>
 
       {/* The Process */}
-      <section className="bg-slate-950 py-24 md:py-32" id="process">
+      <section className="bg-white py-24 md:py-32" id="process">
         <div className="max-w-6xl mx-auto px-6">
-          <p className="text-sm font-medium tracking-[0.2em] text-slate-500 uppercase mb-4">
-            How it works
-          </p>
-          <h2 className="font-serif text-3xl md:text-5xl font-bold text-white tracking-tight mb-6">
-            The application takes 10 minutes.
+          <h2 className="text-3xl md:text-5xl font-bold text-stone-900 tracking-tight mb-6">
+            Ten minutes. That&apos;s it.
           </h2>
-          <p className="text-lg text-slate-400 max-w-2xl mb-16">
+          <p className="text-lg text-stone-500 max-w-2xl mb-16">
             We made the bar to apply low and the bar to get in high. It&apos;s intentionally
             simple, intentionally uncomfortable, and intentionally human.
           </p>
 
           <div className="grid md:grid-cols-3 gap-8 md:gap-12">
             <div className="relative">
-              <span className="font-serif text-6xl md:text-7xl font-bold text-violet-300/30 absolute -top-4 -left-2">1</span>
+              <span className="text-6xl md:text-7xl font-bold text-blue-200 absolute -top-4 -left-2">1</span>
               <div className="relative pt-12">
-                <h3 className="text-xl font-semibold text-white mb-3">Tell us who you are</h3>
-                <p className="text-slate-400 leading-relaxed">
+                <h3 className="text-xl font-semibold text-stone-900 mb-3">Tell us who you are</h3>
+                <p className="text-stone-500 leading-relaxed">
                   Your name, where you&apos;re from, and a short bio. No resume. No LinkedIn.
                   We want to know what makes you tick, not what makes you look good on paper.
                 </p>
@@ -396,109 +530,192 @@ export default function Home() {
             </div>
 
             <div className="relative">
-              <span className="font-serif text-6xl md:text-7xl font-bold text-violet-300/30 absolute -top-4 -left-2">2</span>
+              <span className="text-6xl md:text-7xl font-bold text-blue-200 absolute -top-4 -left-2">2</span>
               <div className="relative pt-12">
-                <h3 className="text-xl font-semibold text-white mb-3">Record a 90-second video</h3>
-                <p className="text-slate-400 leading-relaxed">
+                <h3 className="text-xl font-semibold text-stone-900 mb-3">Record a 90-second video</h3>
+                <p className="text-stone-500 leading-relaxed">
                   Three questions. 30 seconds each. One take. No do-overs. We want to
-                  see the real you&mdash;how you think on your feet, not how well you
+                  see the real you &mdash; how you think on your feet, not how well you
                   rehearse.
                 </p>
               </div>
             </div>
 
             <div className="relative">
-              <span className="font-serif text-6xl md:text-7xl font-bold text-violet-300/30 absolute -top-4 -left-2">3</span>
+              <span className="text-6xl md:text-7xl font-bold text-blue-200 absolute -top-4 -left-2">3</span>
               <div className="relative pt-12">
-                <h3 className="text-xl font-semibold text-white mb-3">We watch. We respond.</h3>
-                <p className="text-slate-400 leading-relaxed">
+                <h3 className="text-xl font-semibold text-stone-900 mb-3">We watch. We respond.</h3>
+                <p className="text-stone-500 leading-relaxed">
                   A real human watches every single video. No AI screening. No keyword filters.
-                  We&apos;ll email you either way&mdash;yes, no, or waitlist.
+                  We&apos;ll email you either way &mdash; yes, no, or waitlist.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="mt-16 pt-12 border-t border-white/10 flex flex-col sm:flex-row gap-6 items-start sm:items-center">
+          <div className="mt-16 pt-12 border-t border-stone-200 flex flex-col sm:flex-row gap-6 items-start sm:items-center">
             <Link
               href="/apply"
-              className="inline-flex items-center justify-center px-8 py-4 bg-white text-slate-900 rounded-full font-medium text-lg hover:bg-slate-100 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white rounded-full font-medium text-lg hover:bg-blue-700 transition-all hover:scale-[1.02] active:scale-[0.98]"
             >
               Start Your Application
             </Link>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-stone-400">
               Applications reviewed on a rolling basis. Apply early.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Photos + Stats */}
-      <section className="bg-slate-50 py-24 md:py-32">
-        <div className="max-w-7xl mx-auto px-6">
-          {/* Photo row */}
-          <div className="grid grid-cols-3 gap-3 md:gap-4 mb-16">
-            <div className="relative h-44 md:h-72 rounded-2xl overflow-hidden">
-              <Image
-                src="/images/ip3/animated-conversation.jpeg"
-                alt="Attendee telling a story with hands mid-gesture at IP3"
-                fill
-                className="object-cover"
-              />
+      {/* Pricing */}
+      <section className="bg-stone-50 py-24 md:py-32" id="pricing">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold text-stone-900 tracking-tight mb-4">
+              Pick your experience.
+            </h2>
+            <p className="text-lg text-stone-500 max-w-xl mx-auto">
+              Every tier includes all sessions, meals, and activities. The difference is where you sleep and who you dine with.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Local */}
+            <div className="bg-white rounded-2xl border border-stone-200 p-8 flex flex-col">
+              <p className="text-sm font-medium tracking-[0.2em] text-stone-400 uppercase mb-2">Local</p>
+              <p className="text-4xl font-bold text-stone-900 mb-2">$4,999</p>
+              <p className="text-xs text-stone-400 mb-6">Victoria residents only</p>
+              <p className="text-stone-500 leading-relaxed mb-6 flex-grow text-sm">
+                You live here, you sleep at home. Full access to every session, meal, and activity &mdash; just no hotel room. Must have a Victoria, BC address.
+              </p>
+              <ul className="text-sm text-stone-600 space-y-2 mb-8">
+                <li className="flex items-start gap-2">
+                  <svg className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                  All sessions &amp; activities
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                  All meals &amp; refreshments
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="w-4 h-4 text-stone-300 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                  <span className="text-stone-400">No accommodation</span>
+                </li>
+              </ul>
+              <Link
+                href="/apply"
+                className="inline-flex items-center justify-center px-6 py-3.5 bg-stone-900 text-white rounded-full font-medium hover:bg-stone-800 transition-all hover:scale-[1.02] active:scale-[0.98] w-full"
+              >
+                Apply
+              </Link>
             </div>
-            <div className="relative h-44 md:h-72 rounded-2xl overflow-hidden">
-              <Image
-                src="/images/ip3/outdoor-hangout.jpeg"
-                alt="Group gathered around for card tricks at the outdoor hangout"
-                fill
-                className="object-cover"
-              />
+
+            {/* Regular */}
+            <div className="bg-white rounded-2xl border border-stone-200 p-8 flex flex-col">
+              <p className="text-sm font-medium tracking-[0.2em] text-stone-400 uppercase mb-2">Regular</p>
+              <p className="text-4xl font-bold text-stone-900 mb-2">$9,999</p>
+              <p className="text-xs text-stone-400 mb-6">The full experience</p>
+              <p className="text-stone-500 leading-relaxed mb-6 flex-grow text-sm">
+                Three days, all-in. Luxury accommodations, every meal, every session, every late-night conversation.
+              </p>
+              <ul className="text-sm text-stone-600 space-y-2 mb-8">
+                <li className="flex items-start gap-2">
+                  <svg className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                  All sessions &amp; activities
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                  All meals &amp; refreshments
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                  Luxury accommodations
+                </li>
+              </ul>
+              <Link
+                href="/apply"
+                className="inline-flex items-center justify-center px-6 py-3.5 bg-stone-900 text-white rounded-full font-medium hover:bg-stone-800 transition-all hover:scale-[1.02] active:scale-[0.98] w-full"
+              >
+                Apply Now
+              </Link>
             </div>
-            <div className="relative h-44 md:h-72 rounded-2xl overflow-hidden">
-              <Image
-                src="/images/ip3/pink-cocktails.jpeg"
-                alt="Rows of vibrant pink cocktails lined up at the bar"
-                fill
-                className="object-cover"
-              />
+
+            {/* VIP */}
+            <div className="bg-white rounded-2xl border-2 border-blue-500 p-8 flex flex-col relative">
+              <span className="absolute -top-3 left-8 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                The Full Treatment
+              </span>
+              <p className="text-sm font-medium tracking-[0.2em] text-blue-600 uppercase mb-2">VIP</p>
+              <p className="text-4xl font-bold text-stone-900 mb-2">$15,999</p>
+              <p className="text-xs text-stone-400 mb-6">Limited to 20 guests</p>
+              <p className="text-stone-500 leading-relaxed mb-6 flex-grow text-sm">
+                Everything in Regular, elevated. You get the best room, a car, a seat at the table with speakers, and Andrew&apos;s personal attention.
+              </p>
+              <ul className="text-sm text-stone-600 space-y-2 mb-8">
+                <li className="flex items-start gap-2">
+                  <svg className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                  Everything in Regular
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>
+                  Upgraded suite
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>
+                  Black car airport transfer
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>
+                  Dedicated front-row seating
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>
+                  Private dinner with speakers &amp; Andrew
+                </li>
+              </ul>
+              <Link
+                href="/apply"
+                className="inline-flex items-center justify-center px-6 py-3.5 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition-all hover:scale-[1.02] active:scale-[0.98] w-full"
+              >
+                Apply for VIP
+              </Link>
             </div>
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            {[
-              { value: "3", label: "days together" },
-              { value: "150", label: "attendees max" },
-              { value: "0", label: "panels or keynotes" },
-              { value: "100%", label: "human-reviewed" },
-            ].map((stat, i) => (
-              <div key={i} className="relative group bg-white rounded-2xl border border-slate-200 p-8 md:p-10 overflow-hidden hover:border-violet-200 transition-colors">
-                <div className="absolute inset-0 bg-gradient-to-br from-violet-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <p className="relative font-serif text-5xl md:text-6xl font-bold text-violet-600">{stat.value}</p>
-                <p className="relative text-sm text-slate-500 mt-2">{stat.label}</p>
-              </div>
-            ))}
+          {/* Scholarship bar */}
+          <div className="mt-8 bg-amber-50 border border-amber-200 rounded-2xl px-8 py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <p className="font-semibold text-stone-900">
+                Interesting but broke?
+              </p>
+              <p className="text-sm text-stone-500 mt-1">
+                We set aside spots for artists, comedians, musicians, and creatives who&apos;d make the event better but can&apos;t swing the price tag. No shame, just a different application.
+              </p>
+            </div>
+            <Link
+              href="/apply"
+              className="inline-flex items-center justify-center px-6 py-3 bg-amber-500 text-white rounded-full font-medium text-sm hover:bg-amber-600 transition-all whitespace-nowrap flex-shrink-0"
+            >
+              Apply for a Scholarship
+            </Link>
           </div>
         </div>
       </section>
 
       {/* FAQ */}
-      <section className="py-24 md:py-32" id="faq">
+      <section className="py-24 md:py-32 bg-white" id="faq">
         <div className="max-w-3xl mx-auto px-6">
-          <p className="text-sm font-medium tracking-[0.2em] text-slate-400 uppercase mb-4">
-            Frequently asked
-          </p>
-          <h2 className="font-serif text-3xl md:text-5xl font-bold text-slate-900 tracking-tight mb-16">
+          <h2 className="text-3xl md:text-5xl font-bold text-stone-900 tracking-tight mb-16">
             Questions we hear a lot.
           </h2>
 
           <div className="space-y-0">
             {faqs.map((faq, i) => (
-              <details key={i} className="group border-b border-slate-200">
+              <details key={i} className="group border-b border-stone-200">
                 <summary className="flex items-center justify-between py-6 cursor-pointer list-none">
-                  <h3 className="text-lg font-medium text-slate-900 pr-8">{faq.q}</h3>
+                  <h3 className="text-lg font-medium text-stone-900 pr-8">{faq.q}</h3>
                   <svg
-                    className="w-5 h-5 text-violet-400 flex-shrink-0 transition-transform group-open:rotate-45"
+                    className="w-5 h-5 text-blue-500 flex-shrink-0 transition-transform group-open:rotate-45"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -506,60 +723,41 @@ export default function Home() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
                 </summary>
-                <p className="pb-6 text-slate-500 leading-relaxed pr-12">{faq.a}</p>
+                <p className="pb-6 text-stone-500 leading-relaxed pr-12">{faq.a}</p>
               </details>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="bg-slate-950 py-24 md:py-32">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="font-serif text-4xl md:text-6xl font-bold text-white leading-[1.1] tracking-tight mb-6">
-            Still reading?
-            <br />
-            <span className="text-violet-400">That&apos;s a good sign.</span>
-          </h2>
-          <p className="text-lg text-slate-400 max-w-xl mx-auto mb-12">
-            The kind of person who reads this far is usually the kind of person
-            we&apos;re looking for. Take 10 minutes. Be yourself. See what happens.
-          </p>
-          <Link
-            href="/apply"
-            className="inline-flex items-center justify-center px-10 py-5 bg-violet-500 text-white rounded-full font-medium text-lg hover:bg-violet-600 transition-all hover:scale-[1.02] active:scale-[0.98]"
-          >
-            Apply for IP4
-          </Link>
-        </div>
-      </section>
-
       {/* Footer */}
-      <footer className="bg-white border-t border-slate-100 py-12">
+      <footer className="bg-white border-t border-stone-100 py-12">
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
             <div>
-              <p className="font-serif text-lg font-bold text-slate-900 mb-1">Interesting People</p>
-              <p className="text-sm text-slate-400">
+              <p className="text-lg font-bold text-stone-900 mb-1">
+                Interesting People<sup className="text-blue-600 text-xs ml-0.5">4</sup>
+              </p>
+              <p className="text-sm text-stone-400">
                 A gathering for the genuinely curious.
               </p>
             </div>
             <div className="flex flex-wrap gap-x-8 gap-y-2 text-sm">
-              <Link href="/apply" className="text-slate-500 hover:text-slate-900 transition-colors">
+              <Link href="/apply" className="text-stone-500 hover:text-stone-900 transition-colors">
                 Apply
               </Link>
-              <Link href="/privacy" className="text-slate-500 hover:text-slate-900 transition-colors">
+              <Link href="/privacy" className="text-stone-500 hover:text-stone-900 transition-colors">
                 Privacy
               </Link>
-              <Link href="#about" className="text-slate-500 hover:text-slate-900 transition-colors">
+              <Link href="#about" className="text-stone-500 hover:text-stone-900 transition-colors">
                 About
               </Link>
-              <Link href="#faq" className="text-slate-500 hover:text-slate-900 transition-colors">
+              <Link href="#faq" className="text-stone-500 hover:text-stone-900 transition-colors">
                 FAQ
               </Link>
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t border-slate-100 text-sm text-slate-400">
+          <div className="mt-8 pt-8 border-t border-stone-100 text-sm text-stone-400">
             Applications reviewed on a rolling basis. We respond to everyone.
           </div>
         </div>

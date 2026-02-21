@@ -4,15 +4,15 @@ import Image from "next/image";
 import { useState, useEffect, useCallback } from "react";
 
 const photos = [
-  { src: "/images/ip3/comedy-stage.jpeg", alt: "Comedy night on stage with a packed audience at IP3" },
-  { src: "/images/ip3/deep-conversation.jpeg", alt: "Animated conversation over drinks at IP3" },
-  { src: "/images/ip3/cocktail-prep.jpeg", alt: "Vibrant pink cocktails being prepared at the outdoor bar" },
-  { src: "/images/ip3/outdoor-gathering.jpeg", alt: "Attendees mingling under string lights among the trees at Shawnigan Lake" },
-  { src: "/images/ip3/lake-jump.jpeg", alt: "Attendees leaping off the dock into Shawnigan Lake" },
-  { src: "/images/ip3/food-spread.jpeg", alt: "Oysters, charcuterie, and drinks at the VIP reception" },
-  { src: "/images/ip3/card-magic.jpeg", alt: "Group gathered around a table for close-up card magic outdoors" },
-  { src: "/images/ip3/storytelling.jpeg", alt: "Attendee sharing a story with a captivated group" },
-  { src: "/images/ip3/dock-dive.jpeg", alt: "Jumping off the dock into the lake with swimmers below" },
+  { src: "/images/ip3/comedy-stage.jpeg", alt: "Comedy night on stage with a packed audience at IP3", pos: "object-bottom" },
+  { src: "/images/ip3/deep-conversation.jpeg", alt: "Animated conversation over drinks at IP3", pos: "object-[50%_25%]" },
+  { src: "/images/ip3/cocktail-prep.jpeg", alt: "Vibrant pink cocktails being prepared at the outdoor bar", pos: "object-center" },
+  { src: "/images/ip3/outdoor-gathering.jpeg", alt: "Attendees mingling under string lights among the trees at Shawnigan Lake", pos: "object-center" },
+  { src: "/images/ip3/lake-jump.jpeg", alt: "Attendees leaping off the dock into Shawnigan Lake", pos: "object-bottom" },
+  { src: "/images/ip3/food-spread.jpeg", alt: "Oysters, charcuterie, and drinks at the VIP reception", pos: "object-center" },
+  { src: "/images/ip3/card-magic.jpeg", alt: "Group gathered around a table for close-up card magic outdoors", pos: "object-top" },
+  { src: "/images/ip3/storytelling.jpeg", alt: "Attendee sharing a story with a captivated group", pos: "object-center" },
+  { src: "/images/ip3/dock-dive.jpeg", alt: "Jumping off the dock into the lake with swimmers below", pos: "object-bottom" },
 ];
 
 export default function PhotoGallery() {
@@ -58,7 +58,7 @@ export default function PhotoGallery() {
               src={photo.src}
               alt={photo.alt}
               fill
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              className={`object-cover ${photo.pos} transition-transform duration-500 group-hover:scale-105`}
               sizes={i === 0 ? "(max-width: 768px) 100vw, 66vw" : "(max-width: 768px) 50vw, 33vw"}
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
