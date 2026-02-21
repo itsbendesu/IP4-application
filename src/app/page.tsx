@@ -13,7 +13,7 @@ const notablePeople = [
   { name: "Bill Oakley", role: "TV Writer", image: "/images/speakers/bill-oakley.jpg" },
   { name: "Darya Rose", role: "Neuroscientist", image: "/images/speakers/darya-rose.jpeg" },
   { name: "Steph Smith", role: "Podcaster", image: "/images/speakers/steph-smith.jpg" },
-  { name: "Andrew Wilkinson", role: "Entrepreneur", image: "/images/speakers/andrew-wilkinson.jpg" },
+  { name: "Chris Sparling", role: "Investor", image: "/images/speakers/chris-sparling.jpg" },
   { name: "Nick Gray", role: "Author", image: "/images/speakers/nick-gray.jpg" },
   { name: "Matthew Dicks", role: "Storyteller", image: "/images/speakers/matthew-dicks.jpg" },
   { name: "Adam Lisagor", role: "Director", image: "/images/speakers/adam-lisagor.jpg" },
@@ -490,7 +490,7 @@ export default function Home() {
 
             <div className="group">
               <span className="number-accent text-5xl md:text-6xl font-bold">03</span>
-              <h3 className="text-2xl font-semibold text-stone-900 mt-4 mb-4">Emotional Intelligence</h3>
+              <h3 className="text-2xl font-semibold text-stone-900 mt-4 mb-4">Good Energy</h3>
               <p className="text-stone-500 leading-relaxed">
                 People who read rooms. Who can disagree without making it personal.
                 Who connect without performing. Who make the space better just by
