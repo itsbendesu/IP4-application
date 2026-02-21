@@ -579,9 +579,9 @@ export default function ApplyPage() {
                   isConfirmation
                     ? "bg-emerald-100 text-emerald-600"
                     : isActive
-                      ? "bg-violet-600 text-white"
+                      ? "bg-blue-600 text-white"
                       : isCompleted
-                        ? "bg-violet-100 text-violet-600"
+                        ? "bg-blue-100 text-blue-600"
                         : "bg-slate-100 text-slate-400"
                 }`}
               >
@@ -621,23 +621,23 @@ export default function ApplyPage() {
       </nav>
 
       {/* Landing page content */}
-      <div className="max-w-3xl mx-auto px-6 py-16 md:py-24">
+      <div className="max-w-3xl mx-auto px-6 py-8 md:py-10">
         {/* Hero */}
-        <div className="text-center mb-16 md:mb-20">
-          <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 tracking-tight mb-5">
+        <div className="text-center mb-6 md:mb-8">
+          <h1 className="font-serif text-4xl md:text-5xl font-bold text-slate-900 tracking-tight mb-2">
             Apply to IP4
           </h1>
-          <p className="text-xl md:text-2xl text-slate-500">
+          <p className="text-lg md:text-xl text-slate-500">
             No resume, no LinkedIn. Just you.
           </p>
         </div>
 
         {/* How it works */}
-        <div className="mb-16 md:mb-20">
-          <h2 className="font-serif text-2xl font-bold text-slate-900 mb-8 text-center">
+        <div className="mb-6 md:mb-8">
+          <h2 className="font-serif text-xl font-bold text-slate-900 mb-4 text-center">
             Here&apos;s how it works
           </h2>
-          <div className="grid sm:grid-cols-2 gap-6">
+          <div className="grid sm:grid-cols-2 gap-3">
             {[
               {
                 num: 1,
@@ -660,8 +660,8 @@ export default function ApplyPage() {
                 desc: "Our team watches every video. We\u2019ll get back to you within a few weeks.",
               },
             ].map((item) => (
-              <div key={item.num} className="flex gap-4 p-5 rounded-2xl bg-slate-50">
-                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-violet-600 text-white flex items-center justify-center text-sm font-semibold">
+              <div key={item.num} className="flex gap-3 p-4 rounded-2xl bg-slate-50">
+                <span className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-semibold">
                   {item.num}
                 </span>
                 <div>
@@ -674,11 +674,11 @@ export default function ApplyPage() {
         </div>
 
         {/* Quote */}
-        <div className="mb-16 md:mb-20 max-w-xl mx-auto text-center">
-          <svg className="w-8 h-8 text-violet-200 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
+        <div className="mb-6 md:mb-8 max-w-xl mx-auto text-center">
+          <svg className="w-6 h-6 text-blue-200 mx-auto mb-2" fill="currentColor" viewBox="0 0 24 24">
             <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
           </svg>
-          <p className="text-lg text-slate-600 leading-relaxed italic mb-4">
+          <p className="text-base text-slate-600 leading-relaxed italic mb-2">
             &ldquo;The application process itself told me this wasn&apos;t going to be
             another boring conference. I was nervous recording my video, and
             that&apos;s exactly why it worked.&rdquo;
@@ -692,11 +692,11 @@ export default function ApplyPage() {
         <div className="text-center">
           <button
             onClick={() => setModalOpen(true)}
-            className="px-10 py-4 bg-violet-600 text-white rounded-full font-medium text-lg hover:bg-violet-700 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-violet-600/25"
+            className="px-10 py-3.5 bg-blue-600 text-white rounded-full font-medium text-lg hover:bg-blue-700 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-blue-600/25"
           >
             Get Started
           </button>
-          <p className="mt-4 text-sm text-slate-400">Takes about 5 minutes</p>
+          <p className="mt-2 text-sm text-slate-400">Takes about 5 minutes</p>
         </div>
       </div>
 
@@ -785,7 +785,7 @@ export default function ApplyPage() {
                         type="text"
                         value={formData.name}
                         onChange={(e) => updateField("name", e.target.value)}
-                        className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-shadow bg-white"
+                        className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-white"
                         placeholder="Jane Smith"
                       />
                     </div>
@@ -798,7 +798,7 @@ export default function ApplyPage() {
                         type="email"
                         value={formData.email}
                         onChange={(e) => updateField("email", e.target.value)}
-                        className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-shadow bg-white"
+                        className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-white"
                         placeholder="jane@example.com"
                       />
                     </div>
@@ -812,7 +812,7 @@ export default function ApplyPage() {
                           type="text"
                           value={formData.location}
                           onChange={(e) => updateField("location", e.target.value)}
-                          className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-shadow bg-white"
+                          className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-white"
                           placeholder="San Francisco, CA"
                         />
                       </div>
@@ -847,7 +847,7 @@ export default function ApplyPage() {
                   <button
                     type="button"
                     onClick={handleNext}
-                    className="w-full px-6 py-4 bg-violet-600 text-white rounded-full font-medium text-lg hover:bg-violet-700 transition-all hover:scale-[1.01] active:scale-[0.99]"
+                    className="w-full px-6 py-4 bg-blue-600 text-white rounded-full font-medium text-lg hover:bg-blue-700 transition-all hover:scale-[1.01] active:scale-[0.99]"
                   >
                     Next
                   </button>
@@ -866,7 +866,7 @@ export default function ApplyPage() {
                         type="text"
                         value={formData.heardAbout}
                         onChange={(e) => updateField("heardAbout", e.target.value)}
-                        className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-shadow bg-white"
+                        className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-white"
                         placeholder="Friend, Twitter, newsletter, etc."
                       />
                     </div>
@@ -881,7 +881,7 @@ export default function ApplyPage() {
                           onClick={() => setFormData((prev) => ({ ...prev, priorEvents: true }))}
                           className={`px-6 py-3 rounded-xl text-sm font-medium transition-all ${
                             formData.priorEvents
-                              ? "bg-violet-600 text-white"
+                              ? "bg-blue-600 text-white"
                               : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                           }`}
                         >
@@ -892,7 +892,7 @@ export default function ApplyPage() {
                           onClick={() => setFormData((prev) => ({ ...prev, priorEvents: false, priorEventsWhich: [] }))}
                           className={`px-6 py-3 rounded-xl text-sm font-medium transition-all ${
                             !formData.priorEvents
-                              ? "bg-violet-600 text-white"
+                              ? "bg-blue-600 text-white"
                               : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                           }`}
                         >
@@ -917,7 +917,7 @@ export default function ApplyPage() {
                                 }
                                 className={`px-5 py-2.5 rounded-xl text-sm font-medium transition-all ${
                                   formData.priorEventsWhich.includes(event)
-                                    ? "bg-violet-600 text-white"
+                                    ? "bg-blue-600 text-white"
                                     : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                                 }`}
                               >
@@ -937,7 +937,7 @@ export default function ApplyPage() {
                         type="text"
                         value={formData.threeWords}
                         onChange={(e) => updateField("threeWords", e.target.value)}
-                        className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-shadow bg-white"
+                        className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-white"
                         placeholder="Curious, restless, optimistic"
                       />
                     </div>
@@ -954,7 +954,7 @@ export default function ApplyPage() {
                     <button
                       type="button"
                       onClick={handleNext}
-                      className="flex-1 px-6 py-4 bg-violet-600 text-white rounded-full font-medium text-lg hover:bg-violet-700 transition-all hover:scale-[1.01] active:scale-[0.99]"
+                      className="flex-1 px-6 py-4 bg-blue-600 text-white rounded-full font-medium text-lg hover:bg-blue-700 transition-all hover:scale-[1.01] active:scale-[0.99]"
                     >
                       Next
                     </button>
@@ -982,7 +982,7 @@ export default function ApplyPage() {
                       onChange={(e) => updateField("bio", e.target.value)}
                       rows={4}
                       maxLength={500}
-                      className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-shadow resize-none bg-white"
+                      className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow resize-none bg-white"
                       placeholder="I spend my weekends building mechanical keyboards and arguing about which pizza style is best..."
                     />
                   </div>
@@ -1001,7 +1001,7 @@ export default function ApplyPage() {
                           type="url"
                           value={link}
                           onChange={(e) => updateLink(i, e.target.value)}
-                          className="flex-1 px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none transition-shadow bg-white"
+                          className="flex-1 px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-white"
                           placeholder="https://..."
                         />
                         {formData.links.length > 1 && (
@@ -1062,7 +1062,7 @@ export default function ApplyPage() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="flex-1 px-6 py-4 bg-violet-600 text-white rounded-full font-medium text-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.01] active:scale-[0.99]"
+                      className="flex-1 px-6 py-4 bg-blue-600 text-white rounded-full font-medium text-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.01] active:scale-[0.99]"
                     >
                       {loading ? "Submitting..." : "Continue to Video"}
                     </button>
@@ -1092,7 +1092,7 @@ export default function ApplyPage() {
                       type="text"
                       value={verificationCode}
                       onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                      className="w-full px-4 py-4 text-center text-2xl tracking-[0.5em] border border-slate-200 rounded-xl focus:ring-2 focus:ring-violet-500 focus:border-violet-500 outline-none font-mono"
+                      className="w-full px-4 py-4 text-center text-2xl tracking-[0.5em] border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono"
                       placeholder="000000"
                       maxLength={6}
                       autoFocus
@@ -1103,7 +1103,7 @@ export default function ApplyPage() {
                   <button
                     type="submit"
                     disabled={loading || verificationCode.length !== 6}
-                    className="w-full px-6 py-4 bg-violet-600 text-white rounded-full font-medium text-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    className="w-full px-6 py-4 bg-blue-600 text-white rounded-full font-medium text-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                   >
                     {loading ? "Verifying..." : "Verify Email"}
                   </button>
@@ -1151,28 +1151,28 @@ export default function ApplyPage() {
 
                   {/* Rules - only show before starting */}
                   {!hasStarted && !hasVideo && (
-                    <div className="bg-violet-50 border border-violet-200 rounded-2xl p-5">
-                      <h3 className="font-semibold text-violet-900 mb-3 flex items-center gap-2 text-sm">
+                    <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5">
+                      <h3 className="font-semibold text-blue-900 mb-3 flex items-center gap-2 text-sm">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                         </svg>
                         How it works
                       </h3>
-                      <ul className="space-y-2 text-sm text-violet-800">
+                      <ul className="space-y-2 text-sm text-blue-800">
                         <li>
                           <span className="font-semibold">{application.prompts.length} questions, {PROMPT_DURATION}s each.</span>{" "}
-                          <span className="text-violet-600">Questions cycle automatically.</span>
+                          <span className="text-blue-600">Questions cycle automatically.</span>
                         </li>
                         <li>
                           <span className="font-semibold">One take only.</span>{" "}
-                          <span className="text-violet-600">No re-recording after you submit.</span>
+                          <span className="text-blue-600">No re-recording after you submit.</span>
                         </li>
                         <li>
                           <span className="font-semibold">No editing.</span>{" "}
-                          <span className="text-violet-600">We want the real you, not the polished you.</span>
+                          <span className="text-blue-600">We want the real you, not the polished you.</span>
                         </li>
                       </ul>
-                      <p className="mt-4 text-xs text-violet-600 italic">
+                      <p className="mt-4 text-xs text-blue-600 italic">
                         Tip: Don&apos;t overthink it. When the question changes, just start talking.
                       </p>
                     </div>
@@ -1359,7 +1359,7 @@ export default function ApplyPage() {
                       <button
                         onClick={handleSubmitVideo}
                         disabled={submitting}
-                        className="w-full px-6 py-4 bg-violet-600 text-white rounded-full font-medium text-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.01] active:scale-[0.99]"
+                        className="w-full px-6 py-4 bg-blue-600 text-white rounded-full font-medium text-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.01] active:scale-[0.99]"
                       >
                         {submitting ? "Submitting..." : "Submit Application"}
                       </button>
@@ -1421,7 +1421,7 @@ export default function ApplyPage() {
 
                   <button
                     onClick={handleCloseModal}
-                    className="px-10 py-4 bg-violet-600 text-white rounded-full font-medium text-lg hover:bg-violet-700 transition-all hover:scale-[1.01] active:scale-[0.99]"
+                    className="px-10 py-4 bg-blue-600 text-white rounded-full font-medium text-lg hover:bg-blue-700 transition-all hover:scale-[1.01] active:scale-[0.99]"
                   >
                     Done
                   </button>
