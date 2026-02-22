@@ -7,7 +7,9 @@ import { createVerificationCode, isEmailVerificationEnabled } from "@/lib/email-
 const startApplicationSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),
   email: z.string().email("Invalid email"),
-  location: z.string().min(1, "Location is required").max(100),
+  phone: z.string().min(1, "Phone number is required").max(30),
+  ticketType: z.enum(["local", "regular", "vip"], { message: "Please select a ticket type" }),
+  address: z.string().max(300).optional(),
   timezone: z.string().min(1, "Timezone is required"),
   roleCompany: z.string().max(150).optional(),
   heardAbout: z.string().min(1, "Please tell us how you heard about IP").max(200),
@@ -17,7 +19,10 @@ const startApplicationSchema = z.object({
   links: z.array(z.string().url()).max(5).optional(),
   // Honeypot field - should be empty
   website: z.string().max(0, "Invalid submission").optional(),
-});
+}).refine(
+  (data) => data.ticketType !== "local" || (data.address && data.address.trim().length > 0),
+  { message: "Address is required for Local tickets", path: ["address"] }
+);
 
 export async function POST(request: NextRequest) {
   try {
@@ -101,7 +106,9 @@ export async function POST(request: NextRequest) {
       data: {
         name: data.name,
         email: data.email,
-        location: data.location,
+        phone: data.phone,
+        ticketType: data.ticketType,
+        address: data.address ?? undefined,
         timezone: data.timezone,
         roleCompany: data.roleCompany ?? "",
         heardAbout: data.heardAbout,

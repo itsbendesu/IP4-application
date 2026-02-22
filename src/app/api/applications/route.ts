@@ -5,7 +5,9 @@ import { z } from "zod";
 const applicationSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email"),
-  location: z.string().min(1, "Location is required"),
+  phone: z.string().optional(),
+  ticketType: z.enum(["local", "regular", "vip"]).optional(),
+  address: z.string().optional(),
   timezone: z.string().min(1, "Timezone is required"),
   bio: z.string().min(10, "Bio must be at least 10 characters").max(500, "Bio must be under 500 characters"),
   links: z.array(z.string().url()).optional(),
@@ -46,7 +48,9 @@ export async function POST(request: NextRequest) {
         data: {
           name: data.name,
           email: data.email,
-          location: data.location,
+          phone: data.phone ?? "",
+          ticketType: data.ticketType ?? "",
+          address: data.address ?? undefined,
           timezone: data.timezone,
           bio: data.bio,
           links: data.links ?? undefined,

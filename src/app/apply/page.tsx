@@ -29,14 +29,24 @@ export default function ApplyPage() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    location: "",
+    phone: "",
+    ticketType: "" as "" | "local" | "regular" | "vip",
+    address: "",
+    localSwear: false,
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     heardAbout: "",
     priorEvents: false,
     priorEventsWhich: [] as string[],
     threeWords: "",
     bio: "",
-    links: [""],
+    socials: {
+      instagram: "",
+      x: "",
+      tiktok: "",
+      youtube: "",
+      website: "",
+    },
+    projectLinks: [""],
     // Honeypot field - bots will fill this
     website: "",
   });
@@ -114,28 +124,35 @@ export default function ApplyPage() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const updateLink = (index: number, value: string) => {
-    const newLinks = [...formData.links];
-    newLinks[index] = value;
-    setFormData((prev) => ({ ...prev, links: newLinks }));
+  const updateSocial = (platform: string, value: string) => {
+    setFormData((prev) => ({ ...prev, socials: { ...prev.socials, [platform]: value } }));
   };
 
-  const addLink = () => {
-    if (formData.links.length < 5) {
-      setFormData((prev) => ({ ...prev, links: [...prev.links, ""] }));
+  const updateProjectLink = (index: number, value: string) => {
+    const newLinks = [...formData.projectLinks];
+    newLinks[index] = value;
+    setFormData((prev) => ({ ...prev, projectLinks: newLinks }));
+  };
+
+  const addProjectLink = () => {
+    if (formData.projectLinks.length < 5) {
+      setFormData((prev) => ({ ...prev, projectLinks: [...prev.projectLinks, ""] }));
     }
   };
 
-  const removeLink = (index: number) => {
-    const newLinks = formData.links.filter((_, i) => i !== index);
-    setFormData((prev) => ({ ...prev, links: newLinks.length ? newLinks : [""] }));
+  const removeProjectLink = (index: number) => {
+    const newLinks = formData.projectLinks.filter((_, i) => i !== index);
+    setFormData((prev) => ({ ...prev, projectLinks: newLinks.length ? newLinks : [""] }));
   };
 
   const validateStep = (s: Step) => {
     if (s === "basics") {
       if (!formData.name.trim()) return "Name is required";
       if (!formData.email.trim() || !formData.email.includes("@")) return "Valid email is required";
-      if (!formData.location.trim()) return "Location is required";
+      if (!formData.phone.trim()) return "Phone number is required";
+      if (!formData.ticketType) return "Please select a ticket type";
+      if (formData.ticketType === "local" && !formData.address.trim()) return "Address is required for Local tickets";
+      if (formData.ticketType === "local" && !formData.localSwear) return "Please confirm you live in Victoria";
     }
     if (s === "questions") {
       if (!formData.heardAbout.trim()) return "Please tell us how you heard about IP";
@@ -144,13 +161,14 @@ export default function ApplyPage() {
     if (s === "story") {
       if (!formData.bio.trim() || formData.bio.length < 10) return "Bio must be at least 10 characters";
       if (formData.bio.length > 500) return "Bio must be under 500 characters";
-      const nonEmptyLinks = formData.links.filter((l) => l.trim());
-      for (const link of nonEmptyLinks) {
-        try {
-          new URL(link);
-        } catch {
-          return "Please enter valid URLs for all links";
-        }
+      const filledSocials = Object.values(formData.socials).filter((v) => v.trim());
+      if (filledSocials.length === 0) return "Please share at least one social or personal profile";
+      for (const url of filledSocials) {
+        try { new URL(url); } catch { return "Please enter valid URLs for all social profiles"; }
+      }
+      const nonEmptyProjectLinks = formData.projectLinks.filter((l) => l.trim());
+      for (const link of nonEmptyProjectLinks) {
+        try { new URL(link); } catch { return "Please enter valid URLs for all project links"; }
       }
       if (!consentGiven) return "You must agree to the privacy policy to continue";
     }
@@ -204,7 +222,10 @@ export default function ApplyPage() {
     setError(null);
 
     try {
-      const validLinks = formData.links.filter((l) => l.trim());
+      const allLinks = [
+        ...Object.values(formData.socials).filter((v) => v.trim()),
+        ...formData.projectLinks.filter((l) => l.trim()),
+      ];
 
       const res = await fetch("/api/apply/start", {
         method: "POST",
@@ -212,7 +233,9 @@ export default function ApplyPage() {
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
-          location: formData.location,
+          phone: formData.phone,
+          ticketType: formData.ticketType,
+          address: formData.ticketType === "local" ? formData.address : undefined,
           timezone: formData.timezone,
           heardAbout: formData.heardAbout,
           priorEvents: formData.priorEvents
@@ -220,7 +243,7 @@ export default function ApplyPage() {
             : "No",
           threeWords: formData.threeWords,
           bio: formData.bio,
-          links: validLinks.length ? validLinks : undefined,
+          links: allLinks.length ? allLinks : undefined,
           website: formData.website, // Honeypot
         }),
       });
@@ -803,31 +826,77 @@ export default function ApplyPage() {
                       />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-slate-900 mb-2">
-                          Location
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.location}
-                          onChange={(e) => updateField("location", e.target.value)}
-                          className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-white"
-                          placeholder="San Francisco, CA"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-slate-900 mb-2">
-                          Timezone
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.timezone}
-                          readOnly
-                          className="w-full px-4 py-3.5 border border-slate-100 rounded-xl bg-slate-50 text-slate-500"
-                        />
-                      </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-900 mb-2">
+                        Phone Number
+                      </label>
+                      <input
+                        type="tel"
+                        value={formData.phone}
+                        onChange={(e) => updateField("phone", e.target.value)}
+                        className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-white"
+                        placeholder="+1 (555) 123-4567"
+                      />
                     </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-slate-900 mb-2">
+                        Ticket Type
+                      </label>
+                      <div className="flex gap-3">
+                        {([
+                          { value: "local", label: "Local", price: "$5,999" },
+                          { value: "regular", label: "Regular", price: "$9,999" },
+                          { value: "vip", label: "VIP", price: "$15,999" },
+                        ] as const).map((tier) => (
+                          <button
+                            key={tier.value}
+                            type="button"
+                            onClick={() => setFormData((prev) => ({ ...prev, ticketType: tier.value }))}
+                            className={`flex-1 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                              formData.ticketType === tier.value
+                                ? "bg-blue-600 text-white"
+                                : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                            }`}
+                          >
+                            <span className="block">{tier.label}</span>
+                            <span className={`block text-xs mt-0.5 ${formData.ticketType === tier.value ? "text-blue-200" : "text-slate-400"}`}>{tier.price}</span>
+                          </button>
+                        ))}
+                      </div>
+                      {formData.ticketType === "local" && (
+                        <p className="text-xs text-slate-500 mt-2">Local tickets are for Victoria, BC residents only.</p>
+                      )}
+                    </div>
+
+                    {formData.ticketType === "local" && (
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-sm font-medium text-slate-900 mb-2">
+                            Street Address
+                          </label>
+                          <input
+                            type="text"
+                            value={formData.address}
+                            onChange={(e) => updateField("address", e.target.value)}
+                            className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-white"
+                            placeholder="Your Victoria, BC address"
+                          />
+                        </div>
+                        <label className="flex items-start gap-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={formData.localSwear}
+                            onChange={(e) => setFormData((prev) => ({ ...prev, localSwear: e.target.checked }))}
+                            className="mt-0.5 h-5 w-5 text-slate-900 border-slate-300 rounded focus:ring-slate-900"
+                          />
+                          <span className="text-sm text-slate-600 leading-relaxed">
+                            I solemnly swear I actually live here, in Victoria, as my primary residence.
+                          </span>
+                        </label>
+                      </div>
+                    )}
+
                   </div>
 
                   {/* Honeypot field - hidden from users, bots will fill it */}
@@ -989,25 +1058,54 @@ export default function ApplyPage() {
 
                   <div>
                     <label className="block text-sm font-medium text-slate-900 mb-1">
-                      Links
+                      Social Profiles
+                    </label>
+                    <p className="text-sm text-slate-500 mb-3">
+                      Share at least one so we can get to know the real you.
+                    </p>
+                    <div className="space-y-3">
+                      {([
+                        { key: "instagram", label: "Instagram", placeholder: "https://instagram.com/yourhandle" },
+                        { key: "x", label: "X (Twitter)", placeholder: "https://x.com/yourhandle" },
+                        { key: "tiktok", label: "TikTok", placeholder: "https://tiktok.com/@yourhandle" },
+                        { key: "youtube", label: "YouTube", placeholder: "https://youtube.com/@yourchannel" },
+                        { key: "website", label: "Personal Website", placeholder: "https://yoursite.com" },
+                      ] as const).map((platform) => (
+                        <div key={platform.key} className="flex items-center gap-3">
+                          <span className="text-sm text-slate-500 w-32 flex-shrink-0">{platform.label}</span>
+                          <input
+                            type="url"
+                            value={formData.socials[platform.key]}
+                            onChange={(e) => updateSocial(platform.key, e.target.value)}
+                            className="flex-1 px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-white text-sm"
+                            placeholder={platform.placeholder}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-900 mb-1">
+                      Projects &amp; Businesses
                       <span className="text-slate-400 font-normal ml-2">(optional)</span>
                     </label>
                     <p className="text-sm text-slate-500 mb-3">
-                      Personal site, blog, projects&mdash;not LinkedIn.
+                      Links to anything you&apos;ve built, run, or are working on.
                     </p>
-                    {formData.links.map((link, i) => (
+                    {formData.projectLinks.map((link, i) => (
                       <div key={i} className="flex gap-2 mb-2">
                         <input
                           type="url"
                           value={link}
-                          onChange={(e) => updateLink(i, e.target.value)}
+                          onChange={(e) => updateProjectLink(i, e.target.value)}
                           className="flex-1 px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-white"
                           placeholder="https://..."
                         />
-                        {formData.links.length > 1 && (
+                        {formData.projectLinks.length > 1 && (
                           <button
                             type="button"
-                            onClick={() => removeLink(i)}
+                            onClick={() => removeProjectLink(i)}
                             className="px-3 py-2 text-slate-400 hover:text-red-500 transition-colors"
                           >
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1017,10 +1115,10 @@ export default function ApplyPage() {
                         )}
                       </div>
                     ))}
-                    {formData.links.length < 5 && (
+                    {formData.projectLinks.length < 5 && (
                       <button
                         type="button"
-                        onClick={addLink}
+                        onClick={addProjectLink}
                         className="text-sm text-slate-500 hover:text-slate-900 transition-colors mt-1"
                       >
                         + Add another link

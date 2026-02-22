@@ -15,7 +15,9 @@ interface Submission {
   applicant: {
     name: string;
     email: string;
-    location: string;
+    phone: string;
+    ticketType: string;
+    address: string | null;
     timezone: string;
     bio: string;
     links: string[] | null;
@@ -331,13 +333,25 @@ export default function SubmissionDetailPage({ params }: { params: Promise<{ id:
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-500">Location</p>
-                    <p className="text-gray-900">{submission.applicant.location}</p>
+                    <p className="text-sm text-gray-500">Phone</p>
+                    <p className="text-gray-900">{submission.applicant.phone}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Timezone</p>
-                    <p className="text-gray-900">{submission.applicant.timezone}</p>
+                    <p className="text-sm text-gray-500">Ticket Type</p>
+                    <p className="text-gray-900 capitalize">{submission.applicant.ticketType}</p>
                   </div>
+                </div>
+
+                {submission.applicant.address && (
+                  <div>
+                    <p className="text-sm text-gray-500">Address</p>
+                    <p className="text-gray-900">{submission.applicant.address}</p>
+                  </div>
+                )}
+
+                <div>
+                  <p className="text-sm text-gray-500">Timezone</p>
+                  <p className="text-gray-900">{submission.applicant.timezone}</p>
                 </div>
 
                 <div>

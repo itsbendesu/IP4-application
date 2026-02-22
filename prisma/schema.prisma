@@ -52,7 +52,9 @@ model PendingApplication {
   token         String   @unique @default(cuid()) // URL token for upload page
   name          String
   email         String   @unique
-  location      String
+  phone         String   @default("")
+  ticketType    String   @default("")   // "local", "regular", or "vip"
+  address       String?                 // Required only for local ticket type
   timezone      String
   roleCompany   String   @default("") // Role & company
   heardAbout    String   @default("") // How they heard about IP
@@ -79,7 +81,9 @@ model Applicant {
   id          String      @id @default(cuid())
   name        String
   email       String      @unique
-  location    String
+  phone       String      @default("")
+  ticketType  String      @default("")   // "local", "regular", or "vip"
+  address     String?                    // Required only for local ticket type
   timezone    String
   roleCompany String      @default("") // Role & company
   heardAbout  String      @default("") // How they heard about IP

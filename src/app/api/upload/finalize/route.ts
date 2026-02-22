@@ -10,7 +10,9 @@ const finalizeSchema = z.object({
   applicant: z.object({
     name: z.string().min(1),
     email: z.string().email(),
-    location: z.string().min(1),
+    phone: z.string().optional(),
+    ticketType: z.enum(["local", "regular", "vip"]).optional(),
+    address: z.string().optional(),
     timezone: z.string().min(1),
     bio: z.string().min(10).max(500),
     links: z.array(z.string().url()).optional(),
@@ -77,7 +79,9 @@ export async function POST(request: NextRequest) {
         data: {
           name: data.applicant.name,
           email: data.applicant.email,
-          location: data.applicant.location,
+          phone: data.applicant.phone ?? "",
+          ticketType: data.applicant.ticketType ?? "",
+          address: data.applicant.address ?? undefined,
           timezone: data.applicant.timezone,
           bio: data.applicant.bio,
           links: data.applicant.links ?? undefined,

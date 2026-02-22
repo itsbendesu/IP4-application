@@ -85,7 +85,9 @@ export async function POST(request: NextRequest) {
         data: {
           name: pending.name,
           email: pending.email,
-          location: pending.location,
+          phone: pending.phone,
+          ticketType: pending.ticketType,
+          address: pending.address ?? undefined,
           timezone: pending.timezone,
           roleCompany: pending.roleCompany,
           heardAbout: pending.heardAbout,
