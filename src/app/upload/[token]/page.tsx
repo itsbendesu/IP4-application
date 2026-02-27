@@ -351,7 +351,7 @@ export default function UploadPage() {
           token,
           videoKey: videoData.key,
           videoUrl: videoData.url,
-          videoDurationSec: videoDuration || duration,
+          videoDurationSec: videoDuration || duration || 1,
         }),
       });
 
