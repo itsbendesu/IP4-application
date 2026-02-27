@@ -117,6 +117,39 @@ export async function POST(request: NextRequest) {
       return { applicant, submission };
     });
 
+    // Fire-and-forget: send to IP Brain
+    const ipBrainUrl = process.env.IP_BRAIN_URL || "https://ip-brain.vercel.app";
+    (async () => {
+      try {
+        // Fetch prompt text for context
+        const prompt = await prisma.prompt.findUnique({ where: { id: pending.promptId } });
+        await fetch(`${ipBrainUrl}/api/events/ip4/applications`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: pending.name,
+            email: pending.email,
+            phone: pending.phone,
+            ticket_type: pending.ticketType,
+            address: pending.address,
+            timezone: pending.timezone,
+            bio: pending.bio,
+            three_words: pending.threeWords,
+            heard_about: pending.heardAbout,
+            prior_events: pending.priorEvents,
+            role_company: pending.roleCompany,
+            links: pending.links,
+            video_url: data.videoUrl,
+            video_duration_sec: Math.round(data.videoDurationSec),
+            prompt_text: prompt?.text || null,
+            source_id: result.submission.id,
+          }),
+        });
+      } catch {
+        // Silently ignore — IP Brain being down shouldn't block the user
+      }
+    })();
+
     return NextResponse.json({
       success: true,
       submissionId: result.submission.id,
