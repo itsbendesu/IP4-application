@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { upload as blobUpload } from "@vercel/blob/client";
 import Link from "next/link";
 
 interface Prompt {
@@ -231,25 +230,13 @@ export default function UploadPage() {
         return { key, url };
       }
 
-      // Handle Vercel Blob upload
-      if (presignData.blobMode) {
-        const file = new File([recordedBlob], "recording.webm", { type: "video/webm" });
-        const blob = await blobUpload(file.name, file, {
-          access: "public",
-          handleUploadUrl: presignData.handleUploadUrl,
-          onUploadProgress: ({ percentage }) => {
-            setUploadProgress(Math.round(percentage));
-          },
-        });
-        return { key: blob.pathname, url: blob.url };
-      }
-
-      // Handle R2 upload
-      const { uploadUrl, key, publicUrl } = presignData;
+      // Upload via XHR PUT (works for both Vercel Blob and R2)
+      const { uploadUrl } = presignData;
+      const isBlobMode = !!presignData.blobMode;
 
       const xhr = new XMLHttpRequest();
 
-      await new Promise<void>((resolve, reject) => {
+      const responseText = await new Promise<string>((resolve, reject) => {
         xhr.upload.onprogress = (e) => {
           if (e.lengthComputable) {
             setUploadProgress(Math.round((e.loaded / e.total) * 100));
@@ -258,20 +245,31 @@ export default function UploadPage() {
 
         xhr.onload = () => {
           if (xhr.status >= 200 && xhr.status < 300) {
-            resolve();
+            resolve(xhr.responseText);
           } else {
-            reject(new Error("Upload failed"));
+            const msg = xhr.responseText ? JSON.parse(xhr.responseText).error : "Upload failed";
+            reject(new Error(msg || "Upload failed"));
           }
         };
 
-        xhr.onerror = () => reject(new Error("Upload failed"));
+        xhr.onerror = () => reject(new Error("Upload failed — network error"));
 
         xhr.open("PUT", uploadUrl);
         xhr.setRequestHeader("Content-Type", "video/webm");
+        if (isBlobMode) {
+          xhr.setRequestHeader("x-filename", "recording.webm");
+        }
         xhr.send(recordedBlob);
       });
 
-      return { key, url: publicUrl };
+      if (isBlobMode) {
+        // Blob route returns JSON with key + url
+        const result = JSON.parse(responseText);
+        return { key: result.key, url: result.url };
+      }
+
+      // R2: key and publicUrl came from presign response
+      return { key: presignData.key, url: presignData.publicUrl };
     } catch (err) {
       throw err;
     }

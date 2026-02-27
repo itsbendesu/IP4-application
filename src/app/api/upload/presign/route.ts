@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
       if (process.env.BLOB_READ_WRITE_TOKEN) {
         return NextResponse.json({
           blobMode: true,
-          handleUploadUrl: "/api/upload/blob",
+          uploadUrl: "/api/upload/blob",
           constraints: {
             maxSizeMB: MAX_FILE_SIZE / 1024 / 1024,
             maxDurationSec: MAX_DURATION_SEC,
