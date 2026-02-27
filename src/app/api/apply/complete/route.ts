@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { after } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { verifyUpload, deleteUpload, isR2Configured } from "@/lib/r2";
@@ -126,11 +127,10 @@ export async function POST(request: NextRequest) {
       return { applicant, submission };
     });
 
-    // Fire-and-forget: send to IP Brain
+    // Send to IP Brain after response is sent (keeps function alive on Vercel)
     const ipBrainUrl = process.env.IP_BRAIN_URL || "https://ip-brain.vercel.app";
-    (async () => {
+    after(async () => {
       try {
-        // Fetch prompt text for context
         const prompt = await prisma.prompt.findUnique({ where: { id: pending.promptId } });
         await fetch(`${ipBrainUrl}/api/events/ip4/applications`, {
           method: "POST",
@@ -157,7 +157,7 @@ export async function POST(request: NextRequest) {
       } catch {
         // Silently ignore — IP Brain being down shouldn't block the user
       }
-    })();
+    });
 
     return NextResponse.json({
       success: true,
