@@ -233,15 +233,21 @@ export default function UploadPage() {
 
       // Handle Vercel Blob upload via client SDK (direct browser → Blob)
       if (presignData.blobMode) {
-        const file = new File([recordedBlob], "recording.webm", { type: "video/webm" });
-        const blob = await upload(file.name, file, {
-          access: "public",
-          handleUploadUrl: "/api/upload/blob",
-          onUploadProgress: ({ percentage }) => {
-            setUploadProgress(Math.round(percentage));
-          },
-        });
-        return { key: blob.pathname, url: blob.url };
+        try {
+          const file = new File([recordedBlob], "recording.webm", { type: "video/webm" });
+          const blob = await upload(file.name, file, {
+            access: "public",
+            handleUploadUrl: "/api/upload/blob",
+            onUploadProgress: ({ percentage }) => {
+              setUploadProgress(Math.round(percentage));
+            },
+          });
+          return { key: blob.pathname, url: blob.url };
+        } catch (blobErr) {
+          console.error("Blob upload error:", blobErr);
+          const msg = blobErr instanceof Error ? blobErr.message : String(blobErr);
+          throw new Error(`Video upload failed: ${msg}`);
+        }
       }
 
       // Handle R2 upload via XHR (for progress tracking)
