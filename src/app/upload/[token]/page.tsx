@@ -310,7 +310,7 @@ export default function UploadPage() {
           if (xhr.status >= 200 && xhr.status < 300) {
             resolve();
           } else {
-            reject(new Error("Upload failed"));
+            reject(new Error(`R2 upload failed (${xhr.status}): ${xhr.responseText?.slice(0, 300)}`));
           }
         };
 
