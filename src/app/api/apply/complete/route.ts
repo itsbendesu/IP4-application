@@ -16,6 +16,14 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
+
+    // Coerce videoDurationSec to a number with fallback
+    if (body.videoDurationSec === undefined || body.videoDurationSec === null) {
+      body.videoDurationSec = 1;
+    } else {
+      body.videoDurationSec = Number(body.videoDurationSec) || 1;
+    }
+
     const data = completeSchema.parse(body);
     videoKey = data.videoKey;
 
@@ -162,7 +170,13 @@ export async function POST(request: NextRequest) {
     }
 
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.issues[0].message }, { status: 400 });
+      const issue = error.issues[0];
+      const field = issue.path.join(".");
+      console.error("Complete validation error:", JSON.stringify(error.issues));
+      return NextResponse.json(
+        { error: `${field ? field + ": " : ""}${issue.message}` },
+        { status: 400 }
+      );
     }
 
     console.error("Complete application error:", error);

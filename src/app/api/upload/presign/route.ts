@@ -57,6 +57,17 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
+
+    // Coerce number fields with fallbacks
+    if (body.contentLength !== undefined) {
+      body.contentLength = Number(body.contentLength) || 0;
+    }
+    if (body.durationSec === undefined || body.durationSec === null) {
+      body.durationSec = 1;
+    } else {
+      body.durationSec = Number(body.durationSec) || 1;
+    }
+
     const data = presignSchema.parse(body);
 
     // Generate presigned upload URL
@@ -79,7 +90,13 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.issues[0].message }, { status: 400 });
+      const issue = error.issues[0];
+      const field = issue.path.join(".");
+      console.error("Presign validation error:", JSON.stringify(error.issues));
+      return NextResponse.json(
+        { error: `${field ? field + ": " : ""}${issue.message}` },
+        { status: 400 }
+      );
     }
 
     console.error("Presign error:", error);

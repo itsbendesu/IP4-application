@@ -199,9 +199,9 @@ export default function UploadPage() {
         body: JSON.stringify({
           fileName: "recording.webm",
           contentType: "video/webm",
-          contentLength: recordedBlob.size,
+          contentLength: recordedBlob.size || 1,
           email: application?.email || "unknown@unknown.com",
-          durationSec: videoDuration || duration || 1,
+          durationSec: Math.max(1, Math.round(videoDuration || duration || 1)),
         }),
       });
 
@@ -351,7 +351,7 @@ export default function UploadPage() {
           token,
           videoKey: videoData.key,
           videoUrl: videoData.url,
-          videoDurationSec: videoDuration || duration || 1,
+          videoDurationSec: Math.max(1, Math.round(videoDuration || duration || 1)),
         }),
       });
 
