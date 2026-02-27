@@ -127,8 +127,8 @@ export async function POST(request: NextRequest) {
       return { applicant, submission };
     });
 
-    // Send to IP Brain after response is sent (keeps function alive on Vercel)
-    const ipBrainUrl = process.env.IP_BRAIN_URL || "https://ip-brain.vercel.app";
+    // Send to IPHQ after response is sent (keeps function alive on Vercel)
+    const ipBrainUrl = process.env.IP_BRAIN_URL || "https://ipevents.co";
     after(async () => {
       try {
         const prompt = await prisma.prompt.findUnique({ where: { id: pending.promptId } });
@@ -155,7 +155,7 @@ export async function POST(request: NextRequest) {
           }),
         });
       } catch {
-        // Silently ignore — IP Brain being down shouldn't block the user
+        // Silently ignore — IPHQ being down shouldn't block the user
       }
     });
 
