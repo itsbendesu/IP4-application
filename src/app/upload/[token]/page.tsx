@@ -197,9 +197,11 @@ export default function UploadPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          filename: "recording.webm",
+          fileName: "recording.webm",
           contentType: "video/webm",
-          size: recordedBlob.size,
+          contentLength: recordedBlob.size,
+          email: application?.email || "unknown@unknown.com",
+          durationSec: videoDuration || duration || 1,
         }),
       });
 

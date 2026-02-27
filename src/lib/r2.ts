@@ -51,11 +51,12 @@ export async function createPresignedUpload(
   const key = `videos/${sanitizedEmail}/${timestamp}.${ext}`;
 
   // Create presigned PUT URL (valid for 30 minutes)
+  // Note: ContentLength omitted from signing — R2 enforces exact match
+  // which breaks if recorded blob size differs from estimate
   const command = new PutObjectCommand({
     Bucket: BUCKET,
     Key: key,
     ContentType: contentType,
-    ContentLength: contentLength,
   });
 
   const expiresIn = 30 * 60; // 30 minutes
