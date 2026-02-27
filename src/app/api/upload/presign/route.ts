@@ -11,12 +11,12 @@ import {
 const presignSchema = z.object({
   contentType: z.string().refine((t) => ALLOWED_TYPES.includes(t), {
     message: `Invalid file type. Allowed: ${ALLOWED_TYPES.join(", ")}`,
-  }),
+  }).optional().default("video/webm"),
   contentLength: z.number().max(MAX_FILE_SIZE, {
     message: `File too large. Maximum: ${MAX_FILE_SIZE / 1024 / 1024}MB`,
   }).optional().default(0),
-  fileName: z.string().min(1),
-  email: z.string().email(),
+  fileName: z.string().optional().default("recording.webm"),
+  email: z.string().optional().default("unknown@unknown.com"),
   durationSec: z.number().min(1).max(MAX_DURATION_SEC, {
     message: `Video too long. Maximum: ${MAX_DURATION_SEC} seconds`,
   }).optional().default(1),
@@ -58,13 +58,14 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    // Coerce number fields — handles string or undefined values
-    if (body.contentLength != null) {
-      body.contentLength = Number(body.contentLength) || 0;
-    }
-    if (body.durationSec != null) {
-      body.durationSec = Number(body.durationSec) || 1;
-    }
+    // Accept old field names from cached client code
+    body.fileName = body.fileName || body.filename || "recording.webm";
+    body.contentType = body.contentType || body.type || "video/webm";
+    body.contentLength = Number(body.contentLength || body.size) || 0;
+    body.email = body.email || "unknown@unknown.com";
+    body.durationSec = Number(body.durationSec || body.duration) || 1;
+
+    console.log("Presign body received:", JSON.stringify(body));
 
     const data = presignSchema.parse(body);
 
