@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { upload } from "@vercel/blob/client";
 import Link from "next/link";
 
 interface Prompt {
@@ -231,23 +230,67 @@ export default function UploadPage() {
         return { key, url };
       }
 
-      // Handle Vercel Blob upload via client SDK (direct browser → Blob)
+      // Handle Vercel Blob upload (manual token exchange + direct PUT)
       if (presignData.blobMode) {
-        try {
-          const file = new File([recordedBlob], "recording.webm", { type: "video/webm" });
-          const blob = await upload(file.name, file, {
-            access: "public",
-            handleUploadUrl: "/api/upload/blob",
-            onUploadProgress: ({ percentage }) => {
-              setUploadProgress(Math.round(percentage));
+        const pathname = `recordings/${Date.now()}.webm`;
+
+        // Step 1: Get client token from our server
+        const tokenRes = await fetch("/api/upload/blob", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            type: "blob.generate-client-token",
+            payload: {
+              pathname,
+              callbackUrl: `${window.location.origin}/api/upload/blob`,
+              multipart: false,
+              clientPayload: null,
             },
-          });
-          return { key: blob.pathname, url: blob.url };
-        } catch (blobErr) {
-          console.error("Blob upload error:", blobErr);
-          const msg = blobErr instanceof Error ? blobErr.message : String(blobErr);
-          throw new Error(`Video upload failed: ${msg}`);
+          }),
+        });
+
+        if (!tokenRes.ok) {
+          const err = await tokenRes.json().catch(() => ({}));
+          throw new Error(err.error || "Failed to get upload token");
         }
+
+        const tokenData = await tokenRes.json();
+        const clientToken = tokenData.clientToken;
+
+        // Extract store URL from token: vercel_blob_client_{storeId}_...
+        const parts = clientToken.split("_");
+        const storeId = parts[3];
+        const blobUploadUrl = `https://${storeId.toLowerCase()}.public.blob.vercel-storage.com/${pathname}`;
+
+        // Step 2: PUT file directly to Vercel Blob
+        const xhr = new XMLHttpRequest();
+
+        const responseText = await new Promise<string>((resolve, reject) => {
+          xhr.upload.onprogress = (e) => {
+            if (e.lengthComputable) {
+              setUploadProgress(Math.round((e.loaded / e.total) * 100));
+            }
+          };
+
+          xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              resolve(xhr.responseText);
+            } else {
+              reject(new Error(`Upload to storage failed (${xhr.status}): ${xhr.responseText?.slice(0, 200)}`));
+            }
+          };
+
+          xhr.onerror = () => reject(new Error("Upload failed — network error"));
+
+          xhr.open("PUT", blobUploadUrl);
+          xhr.setRequestHeader("authorization", `Bearer ${clientToken}`);
+          xhr.setRequestHeader("x-content-type", "video/webm");
+          xhr.setRequestHeader("x-api-version", "7");
+          xhr.send(recordedBlob);
+        });
+
+        const blobResult = JSON.parse(responseText);
+        return { key: blobResult.pathname, url: blobResult.url };
       }
 
       // Handle R2 upload via XHR (for progress tracking)
