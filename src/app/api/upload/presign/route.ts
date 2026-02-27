@@ -24,8 +24,20 @@ const presignSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    // Check if R2 is configured - if not, return local mode flag
+    // Check if R2 is configured - if not, try alternatives
     if (!isR2Configured()) {
+      // Vercel Blob configured?
+      if (process.env.BLOB_READ_WRITE_TOKEN) {
+        return NextResponse.json({
+          blobMode: true,
+          handleUploadUrl: "/api/upload/blob",
+          constraints: {
+            maxSizeMB: MAX_FILE_SIZE / 1024 / 1024,
+            maxDurationSec: MAX_DURATION_SEC,
+            allowedTypes: ALLOWED_TYPES,
+          },
+        });
+      }
       // In development, allow local uploads
       if (process.env.NODE_ENV !== "production") {
         return NextResponse.json({

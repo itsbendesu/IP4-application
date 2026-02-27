@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { upload as blobUpload } from "@vercel/blob/client";
 import Link from "next/link";
 
 interface Prompt {
@@ -228,6 +229,19 @@ export default function UploadPage() {
         setUploadProgress(100);
         const { key, url } = await localRes.json();
         return { key, url };
+      }
+
+      // Handle Vercel Blob upload
+      if (presignData.blobMode) {
+        const file = new File([recordedBlob], "recording.webm", { type: "video/webm" });
+        const blob = await blobUpload(file.name, file, {
+          access: "public",
+          handleUploadUrl: presignData.handleUploadUrl,
+          onUploadProgress: ({ percentage }) => {
+            setUploadProgress(Math.round(percentage));
+          },
+        });
+        return { key: blob.pathname, url: blob.url };
       }
 
       // Handle R2 upload

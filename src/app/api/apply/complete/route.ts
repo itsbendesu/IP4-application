@@ -51,8 +51,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify video exists in R2
-    if (isR2Configured()) {
+    // Verify video exists in R2 (skip for Vercel Blob URLs)
+    const isBlobUrl = data.videoUrl.includes(".vercel-storage.com") || data.videoUrl.includes(".blob.vercel-storage.com");
+    if (isR2Configured() && !isBlobUrl) {
       const uploadStatus = await verifyUpload(data.videoKey);
       if (!uploadStatus.exists) {
         return NextResponse.json(
