@@ -67,6 +67,7 @@ export default function ApplyPage() {
   const [submitting, setSubmitting] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [videoDuration, setVideoDuration] = useState(0);
+  const [recordedUrl, setRecordedUrl] = useState<string | null>(null);
 
   // Recording refs
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -380,6 +381,7 @@ export default function ApplyPage() {
     mediaRecorder.onstop = () => {
       const blob = new Blob(chunksRef.current, { type: "video/webm" });
       setRecordedBlob(blob);
+      setRecordedUrl(URL.createObjectURL(blob));
       stopCamera();
     };
 
@@ -545,7 +547,9 @@ export default function ApplyPage() {
   };
 
   const clearVideo = () => {
+    if (recordedUrl) URL.revokeObjectURL(recordedUrl);
     setRecordedBlob(null);
+    setRecordedUrl(null);
     setUploadProgress(0);
     setVideoDuration(0);
     setDuration(0);
@@ -1420,7 +1424,7 @@ export default function ApplyPage() {
                         </div>
 
                         <video
-                          src={URL.createObjectURL(recordedBlob)}
+                          src={recordedUrl || undefined}
                           controls
                           className="w-full rounded-xl"
                         />
