@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
+import { upload } from "@vercel/blob/client";
 import Link from "next/link";
 
 interface Prompt {
@@ -230,25 +231,17 @@ export default function UploadPage() {
         return { key, url };
       }
 
-      // Handle Vercel Blob upload via fetch
+      // Handle Vercel Blob upload via client SDK (direct browser → Blob)
       if (presignData.blobMode) {
-        const blobRes = await fetch(presignData.uploadUrl, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "video/webm",
-            "x-filename": "recording.webm",
+        const file = new File([recordedBlob], "recording.webm", { type: "video/webm" });
+        const blob = await upload(file.name, file, {
+          access: "public",
+          handleUploadUrl: "/api/upload/blob",
+          onUploadProgress: ({ percentage }) => {
+            setUploadProgress(Math.round(percentage));
           },
-          body: recordedBlob,
         });
-
-        if (!blobRes.ok) {
-          const err = await blobRes.json().catch(() => ({}));
-          throw new Error(err.error || "Upload failed");
-        }
-
-        setUploadProgress(100);
-        const result = await blobRes.json();
-        return { key: result.key, url: result.url };
+        return { key: blob.pathname, url: blob.url };
       }
 
       // Handle R2 upload via XHR (for progress tracking)
