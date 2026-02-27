@@ -230,13 +230,32 @@ export default function UploadPage() {
         return { key, url };
       }
 
-      // Upload via XHR PUT (works for both Vercel Blob and R2)
-      const { uploadUrl } = presignData;
-      const isBlobMode = !!presignData.blobMode;
+      // Handle Vercel Blob upload via fetch
+      if (presignData.blobMode) {
+        const blobRes = await fetch(presignData.uploadUrl, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "video/webm",
+            "x-filename": "recording.webm",
+          },
+          body: recordedBlob,
+        });
 
+        if (!blobRes.ok) {
+          const err = await blobRes.json().catch(() => ({}));
+          throw new Error(err.error || "Upload failed");
+        }
+
+        setUploadProgress(100);
+        const result = await blobRes.json();
+        return { key: result.key, url: result.url };
+      }
+
+      // Handle R2 upload via XHR (for progress tracking)
+      const { uploadUrl, key, publicUrl } = presignData;
       const xhr = new XMLHttpRequest();
 
-      const responseText = await new Promise<string>((resolve, reject) => {
+      await new Promise<void>((resolve, reject) => {
         xhr.upload.onprogress = (e) => {
           if (e.lengthComputable) {
             setUploadProgress(Math.round((e.loaded / e.total) * 100));
@@ -245,10 +264,9 @@ export default function UploadPage() {
 
         xhr.onload = () => {
           if (xhr.status >= 200 && xhr.status < 300) {
-            resolve(xhr.responseText);
+            resolve();
           } else {
-            const msg = xhr.responseText ? JSON.parse(xhr.responseText).error : "Upload failed";
-            reject(new Error(msg || "Upload failed"));
+            reject(new Error("Upload failed"));
           }
         };
 
@@ -256,20 +274,10 @@ export default function UploadPage() {
 
         xhr.open("PUT", uploadUrl);
         xhr.setRequestHeader("Content-Type", "video/webm");
-        if (isBlobMode) {
-          xhr.setRequestHeader("x-filename", "recording.webm");
-        }
         xhr.send(recordedBlob);
       });
 
-      if (isBlobMode) {
-        // Blob route returns JSON with key + url
-        const result = JSON.parse(responseText);
-        return { key: result.key, url: result.url };
-      }
-
-      // R2: key and publicUrl came from presign response
-      return { key: presignData.key, url: presignData.publicUrl };
+      return { key, url: publicUrl };
     } catch (err) {
       throw err;
     }
