@@ -12,14 +12,14 @@ const presignSchema = z.object({
   contentType: z.string().refine((t) => ALLOWED_TYPES.includes(t), {
     message: `Invalid file type. Allowed: ${ALLOWED_TYPES.join(", ")}`,
   }),
-  contentLength: z.number().min(1).max(MAX_FILE_SIZE, {
+  contentLength: z.number().max(MAX_FILE_SIZE, {
     message: `File too large. Maximum: ${MAX_FILE_SIZE / 1024 / 1024}MB`,
-  }),
+  }).optional().default(0),
   fileName: z.string().min(1),
   email: z.string().email(),
   durationSec: z.number().min(1).max(MAX_DURATION_SEC, {
     message: `Video too long. Maximum: ${MAX_DURATION_SEC} seconds`,
-  }),
+  }).optional().default(1),
 });
 
 export async function POST(request: NextRequest) {
@@ -58,13 +58,11 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    // Coerce number fields with fallbacks
-    if (body.contentLength !== undefined) {
+    // Coerce number fields — handles string or undefined values
+    if (body.contentLength != null) {
       body.contentLength = Number(body.contentLength) || 0;
     }
-    if (body.durationSec === undefined || body.durationSec === null) {
-      body.durationSec = 1;
-    } else {
+    if (body.durationSec != null) {
       body.durationSec = Number(body.durationSec) || 1;
     }
 

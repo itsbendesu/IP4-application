@@ -39,8 +39,8 @@ export async function createPresignedUpload(
     throw new Error(`Invalid file type. Allowed: ${ALLOWED_TYPES.join(", ")}`);
   }
 
-  // Validate file size
-  if (contentLength > MAX_FILE_SIZE) {
+  // Validate file size (skip if contentLength not provided — R2 will enforce)
+  if (contentLength && contentLength > MAX_FILE_SIZE) {
     throw new Error(`File too large. Maximum size: ${MAX_FILE_SIZE / 1024 / 1024}MB`);
   }
 

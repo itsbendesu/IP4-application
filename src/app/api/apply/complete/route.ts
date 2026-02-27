@@ -8,7 +8,7 @@ const completeSchema = z.object({
   token: z.string().min(1),
   videoKey: z.string().min(1),
   videoUrl: z.string().min(1), // Accepts both full URLs and local paths like /uploads/x.webm
-  videoDurationSec: z.number().min(1).max(120),
+  videoDurationSec: z.number().min(1).max(120).optional().default(1),
 });
 
 export async function POST(request: NextRequest) {
