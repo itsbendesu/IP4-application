@@ -523,8 +523,8 @@ export default function UploadPage() {
                 <span className="text-blue-600">Questions appear one at a time when you start recording.</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="font-semibold">No prep.</span>
-                <span className="text-blue-600">You won&apos;t see the questions until you hit record.</span>
+                <span className="font-semibold">One take.</span>
+                <span className="text-blue-600">You won&apos;t see the questions beforehand and there are no do-overs.</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="font-semibold">No editing.</span>
@@ -609,7 +609,7 @@ export default function UploadPage() {
             </div>
           )}
 
-          {/* Preview recorded video */}
+          {/* Recording complete */}
           {recordedBlob && (
             <div className="space-y-6">
               <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-center gap-4">
@@ -620,22 +620,9 @@ export default function UploadPage() {
                 </div>
                 <div>
                   <p className="font-medium text-emerald-800">Video recorded!</p>
-                  <p className="text-sm text-emerald-600">{formatTime(videoDuration || duration)}</p>
+                  <p className="text-sm text-emerald-600">{formatTime(videoDuration || duration)} — ready to submit</p>
                 </div>
               </div>
-
-              <video
-                src={URL.createObjectURL(recordedBlob)}
-                controls
-                className="w-full rounded-xl"
-              />
-
-              <button
-                onClick={clearVideo}
-                className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
-              >
-                Record a different video
-              </button>
             </div>
           )}
 
