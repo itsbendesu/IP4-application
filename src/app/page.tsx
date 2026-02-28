@@ -574,7 +574,7 @@ export default function Home() {
               <div className="relative pt-12">
                 <h3 className="text-xl font-semibold text-stone-900 mb-3">Record a 90-second video</h3>
                 <p className="text-stone-500 leading-relaxed">
-                  Three questions. 30 seconds each. One take. No do-overs. We want to
+                  Two questions. 45 seconds each. One take. No do-overs. We want to
                   see the real you &mdash; how you think on your feet, not how well you
                   rehearse.
                 </p>

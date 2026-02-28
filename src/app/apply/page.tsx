@@ -77,7 +77,7 @@ export default function ApplyPage() {
   const isRecordingRef = useRef(false);
 
   const MAX_DURATION = 90;
-  const PROMPT_DURATION = 30;
+  const PROMPT_DURATION = 45;
 
   // Lock body scroll and handle Escape key when modal is open
   useEffect(() => {
@@ -704,7 +704,7 @@ export default function ApplyPage() {
               {
                 num: 3,
                 title: "Record a 90-second video",
-                desc: "Three questions, 30 seconds each. No prep needed\u2014just be yourself.",
+                desc: "Two questions, 45 seconds each. No prep needed\u2014just be yourself.",
               },
               {
                 num: 4,
