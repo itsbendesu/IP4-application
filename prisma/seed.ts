@@ -11,25 +11,40 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 const prompts = [
-  "Describe a moment in the last year that changed how you think.",
-  "What's something you've been working on recently that you're especially proud of?",
-  "What's a question you can't stop thinking about lately—even if you don't have a good answer yet?",
-  "Describe a moment when you realized you were wrong about someone or something. What helped you see it differently?",
-  "What's the most interesting idea you've come across recently? Why is it exciting?",
-  "When you're in a group of people you don't know well, what role do you tend to naturally fall into—and why do you think that is?",
-  "Tell us about something you find genuinely fascinating that most people wouldn't guess about you.",
+  "Describe a belief you held with total confidence that turned out to be completely wrong. How long did you resist updating it?",
+  "What's something you're known for that quietly embarrasses you?",
+  "Tell us about a moment when you chose comfort over courage. No redemption arc required.",
+  "What do the people who find you genuinely difficult to be around get right about you?",
+  "What are you currently pretending to care less about than you actually do?",
+  "If the most interesting chapter of your life is still ahead of you, what needs to be true for that to happen?",
+  "What's a question you're afraid someone at this conference might ask you?",
+  "Finish this sentence honestly: \"Most people in my field are too afraid to admit that…\"",
+  "What's something you've changed your mind about in the last 12 months that genuinely cost you something to update?",
+  "You have 30 seconds. Use it to tell us something you're worried we might judge you for.",
+  "What's something you've accomplished that you've never fully let yourself feel good about, and why?",
+  "Describe the version of you that shows up when no one important is watching.",
+  "What's a conversation you've been avoiding, and what are you protecting by avoiding it?",
+  "What did you used to believe made someone successful that you no longer believe?",
+  "If the people who love you most were being honest, what would they say is holding you back?",
 ];
 
 async function main() {
   console.log("Seeding database...");
 
-  // Create prompts
+  // Deactivate all existing prompts
+  await prisma.prompt.updateMany({
+    where: { active: true },
+    data: { active: false },
+  });
+  console.log("Deactivated old prompts");
+
+  // Create new prompts
   for (let i = 0; i < prompts.length; i++) {
     await prisma.prompt.upsert({
-      where: { id: `prompt-${i + 1}` },
-      update: { text: prompts[i] },
+      where: { id: `prompt-v2-${i + 1}` },
+      update: { text: prompts[i], active: true },
       create: {
-        id: `prompt-${i + 1}`,
+        id: `prompt-v2-${i + 1}`,
         text: prompts[i],
         active: true,
       },

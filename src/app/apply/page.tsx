@@ -125,6 +125,25 @@ export default function ApplyPage() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const normalizeSocialUrl = (platform: string, value: string): string => {
+    const v = value.trim();
+    if (!v) return "";
+    // Already a full URL
+    if (/^https?:\/\//i.test(v)) return v;
+    // Has a domain (e.g. www.instagram.com/handle or instagram.com/handle)
+    if (v.includes(".")) return `https://${v}`;
+    // Bare handle — build platform URL
+    const handle = v.replace(/^@/, "");
+    const bases: Record<string, string> = {
+      instagram: `https://instagram.com/${handle}`,
+      x: `https://x.com/${handle}`,
+      tiktok: `https://tiktok.com/@${handle}`,
+      youtube: `https://youtube.com/@${handle}`,
+      website: `https://${v}`,
+    };
+    return bases[platform] || `https://${v}`;
+  };
+
   const updateSocial = (platform: string, value: string) => {
     setFormData((prev) => ({ ...prev, socials: { ...prev.socials, [platform]: value } }));
   };
@@ -162,14 +181,16 @@ export default function ApplyPage() {
     if (s === "story") {
       if (!formData.bio.trim() || formData.bio.length < 10) return "Bio must be at least 10 characters";
       if (formData.bio.length > 500) return "Bio must be under 500 characters";
-      const filledSocials = Object.values(formData.socials).filter((v) => v.trim());
+      const filledSocials = Object.entries(formData.socials).filter(([, v]) => v.trim());
       if (filledSocials.length === 0) return "Please share at least one social or personal profile";
-      for (const url of filledSocials) {
-        try { new URL(url); } catch { return "Please enter valid URLs for all social profiles"; }
+      for (const [platform, value] of filledSocials) {
+        const url = normalizeSocialUrl(platform, value);
+        try { new URL(url); } catch { return `Invalid profile for ${platform}`; }
       }
       const nonEmptyProjectLinks = formData.projectLinks.filter((l) => l.trim());
       for (const link of nonEmptyProjectLinks) {
-        try { new URL(link); } catch { return "Please enter valid URLs for all project links"; }
+        const normalized = /^https?:\/\//i.test(link) ? link : `https://${link}`;
+        try { new URL(normalized); } catch { return "Please enter valid URLs for all project links"; }
       }
       if (!consentGiven) return "You must agree to the privacy policy to continue";
     }
@@ -224,8 +245,12 @@ export default function ApplyPage() {
 
     try {
       const allLinks = [
-        ...Object.values(formData.socials).filter((v) => v.trim()),
-        ...formData.projectLinks.filter((l) => l.trim()),
+        ...Object.entries(formData.socials)
+          .filter(([, v]) => v.trim())
+          .map(([platform, value]) => normalizeSocialUrl(platform, value)),
+        ...formData.projectLinks
+          .filter((l) => l.trim())
+          .map((l) => /^https?:\/\//i.test(l) ? l : `https://${l}`),
       ];
 
       const res = await fetch("/api/apply/start", {
@@ -679,7 +704,7 @@ export default function ApplyPage() {
               {
                 num: 3,
                 title: "Record a 90-second video",
-                desc: "Two prompts, 45 seconds each. No prep needed\u2014just be yourself.",
+                desc: "Three questions, 30 seconds each. No prep needed\u2014just be yourself.",
               },
               {
                 num: 4,
@@ -1065,20 +1090,20 @@ export default function ApplyPage() {
                       Social Profiles
                     </label>
                     <p className="text-sm text-slate-500 mb-3">
-                      Share at least one so we can get to know the real you.
+                      Share at least one to help us get to know you better.
                     </p>
                     <div className="space-y-3">
                       {([
-                        { key: "instagram", label: "Instagram", placeholder: "https://instagram.com/yourhandle" },
-                        { key: "x", label: "X (Twitter)", placeholder: "https://x.com/yourhandle" },
-                        { key: "tiktok", label: "TikTok", placeholder: "https://tiktok.com/@yourhandle" },
-                        { key: "youtube", label: "YouTube", placeholder: "https://youtube.com/@yourchannel" },
-                        { key: "website", label: "Personal Website", placeholder: "https://yoursite.com" },
+                        { key: "instagram", label: "Instagram", placeholder: "yourhandle" },
+                        { key: "x", label: "X (Twitter)", placeholder: "yourhandle" },
+                        { key: "tiktok", label: "TikTok", placeholder: "yourhandle" },
+                        { key: "youtube", label: "YouTube", placeholder: "yourchannel" },
+                        { key: "website", label: "Personal Website", placeholder: "yoursite.com" },
                       ] as const).map((platform) => (
                         <div key={platform.key} className="flex items-center gap-3">
                           <span className="text-sm text-slate-500 w-32 flex-shrink-0">{platform.label}</span>
                           <input
-                            type="url"
+                            type="text"
                             value={formData.socials[platform.key]}
                             onChange={(e) => updateSocial(platform.key, e.target.value)}
                             className="flex-1 px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-white text-sm"
@@ -1100,11 +1125,11 @@ export default function ApplyPage() {
                     {formData.projectLinks.map((link, i) => (
                       <div key={i} className="flex gap-2 mb-2">
                         <input
-                          type="url"
+                          type="text"
                           value={link}
                           onChange={(e) => updateProjectLink(i, e.target.value)}
                           className="flex-1 px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-white"
-                          placeholder="https://..."
+                          placeholder="yourproject.com"
                         />
                         {formData.projectLinks.length > 1 && (
                           <button
@@ -1263,11 +1288,11 @@ export default function ApplyPage() {
                       <ul className="space-y-2 text-sm text-blue-800">
                         <li>
                           <span className="font-semibold">{application.prompts.length} questions, {PROMPT_DURATION}s each.</span>{" "}
-                          <span className="text-blue-600">Questions cycle automatically.</span>
+                          <span className="text-blue-600">Questions appear one at a time when you start recording.</span>
                         </li>
                         <li>
-                          <span className="font-semibold">One take only.</span>{" "}
-                          <span className="text-blue-600">No re-recording after you submit.</span>
+                          <span className="font-semibold">No prep.</span>{" "}
+                          <span className="text-blue-600">You won&apos;t see the questions until you hit record.</span>
                         </li>
                         <li>
                           <span className="font-semibold">No editing.</span>{" "}
@@ -1280,13 +1305,13 @@ export default function ApplyPage() {
                     </div>
                   )}
 
-                  {/* Prompt box */}
-                  <div className="bg-slate-900 rounded-2xl p-6 md:p-8">
-                    <div className="flex items-center justify-between mb-4">
-                      <p className="text-sm text-slate-400 font-medium">
-                        {isRecording ? `Question ${currentPromptIndex + 1} of ${application.prompts.length}` : "Your prompts"}
-                      </p>
-                      {isRecording && (
+                  {/* Prompt box - only visible during recording */}
+                  {isRecording && (
+                    <div className="bg-slate-900 rounded-2xl p-6 md:p-8">
+                      <div className="flex items-center justify-between mb-4">
+                        <p className="text-sm text-slate-400 font-medium">
+                          Question {currentPromptIndex + 1} of {application.prompts.length}
+                        </p>
                         <div className="flex gap-2">
                           {application.prompts.map((_, idx) => (
                             <div
@@ -1301,40 +1326,23 @@ export default function ApplyPage() {
                             />
                           ))}
                         </div>
-                      )}
-                    </div>
-
-                    {isRecording ? (
-                      <>
-                        <p className="text-xl md:text-2xl text-white font-medium leading-relaxed">
-                          {application.prompts[currentPromptIndex]?.text}
-                        </p>
-                        <div className="mt-4 h-1 bg-slate-700 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-white/50 transition-all duration-1000"
-                            style={{
-                              width: `${((duration % PROMPT_DURATION) / PROMPT_DURATION) * 100}%`,
-                            }}
-                          />
-                        </div>
-                        <p className="text-xs text-slate-500 mt-2">
-                          {PROMPT_DURATION - (duration % PROMPT_DURATION)}s until next question
-                        </p>
-                      </>
-                    ) : (
-                      <div className="space-y-4">
-                        {application.prompts.map((prompt, idx) => (
-                          <div key={prompt.id} className="flex gap-3">
-                            <span className="text-slate-500 font-mono text-sm">{idx + 1}.</span>
-                            <p className="text-white/80 leading-relaxed">{prompt.text}</p>
-                          </div>
-                        ))}
-                        <p className="text-sm text-slate-500 mt-4">
-                          Each question will be shown for {PROMPT_DURATION} seconds during recording.
-                        </p>
                       </div>
-                    )}
-                  </div>
+                      <p className="text-xl md:text-2xl text-white font-medium leading-relaxed">
+                        {application.prompts[currentPromptIndex]?.text}
+                      </p>
+                      <div className="mt-4 h-1 bg-slate-700 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-white/50 transition-all duration-1000"
+                          style={{
+                            width: `${((duration % PROMPT_DURATION) / PROMPT_DURATION) * 100}%`,
+                          }}
+                        />
+                      </div>
+                      <p className="text-xs text-slate-500 mt-2">
+                        {PROMPT_DURATION - (duration % PROMPT_DURATION)}s until next question
+                      </p>
+                    </div>
+                  )}
 
                   {/* Video area */}
                   <div className="bg-white rounded-2xl border border-slate-200 p-5 md:p-6">
@@ -1347,7 +1355,7 @@ export default function ApplyPage() {
                         </div>
                         <p className="text-slate-600 mb-1">Record your {MAX_DURATION}-second response</p>
                         <p className="text-sm text-slate-500 mb-5">
-                          Read through the prompts above, then hit record when you&apos;re ready.
+                          Questions will appear on screen once you start recording.
                         </p>
                         <button
                           onClick={startCamera}
