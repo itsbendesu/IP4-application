@@ -1278,28 +1278,25 @@ export default function ApplyPage() {
 
                   {/* Rules - only show before starting */}
                   {!hasStarted && !hasVideo && (
-                    <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5">
-                      <h3 className="font-semibold text-blue-900 mb-3 flex items-center gap-2 text-sm">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                        </svg>
+                    <div className="bg-slate-900 rounded-2xl p-6">
+                      <h3 className="font-semibold text-white mb-4 text-sm tracking-wide uppercase">
                         How it works
                       </h3>
-                      <ul className="space-y-2 text-sm text-blue-800">
-                        <li>
-                          <span className="font-semibold">{application.prompts.length} questions, {PROMPT_DURATION}s each.</span>{" "}
-                          <span className="text-blue-600">Questions appear one at a time when you start recording.</span>
+                      <ul className="space-y-3 text-sm">
+                        <li className="flex items-start gap-3">
+                          <span className="mt-0.5 w-5 h-5 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 text-xs text-white/70">1</span>
+                          <p className="text-slate-300"><span className="text-white font-medium">{application.prompts.length} questions, {PROMPT_DURATION}s each.</span> Questions appear one at a time when you start recording.</p>
                         </li>
-                        <li>
-                          <span className="font-semibold">One take.</span>{" "}
-                          <span className="text-blue-600">You won&apos;t see the questions beforehand and there are no do-overs.</span>
+                        <li className="flex items-start gap-3">
+                          <span className="mt-0.5 w-5 h-5 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 text-xs text-white/70">2</span>
+                          <p className="text-slate-300"><span className="text-white font-medium">One take.</span> You won&apos;t see the questions beforehand and there are no do-overs.</p>
                         </li>
-                        <li>
-                          <span className="font-semibold">No editing.</span>{" "}
-                          <span className="text-blue-600">We want the real you, not the polished you.</span>
+                        <li className="flex items-start gap-3">
+                          <span className="mt-0.5 w-5 h-5 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 text-xs text-white/70">3</span>
+                          <p className="text-slate-300"><span className="text-white font-medium">No editing.</span> We want the real you, not the polished you.</p>
                         </li>
                       </ul>
-                      <p className="mt-4 text-xs text-blue-600 italic">
+                      <p className="mt-4 text-xs text-slate-500 italic">
                         Tip: Don&apos;t overthink it. When the question changes, just start talking.
                       </p>
                     </div>
