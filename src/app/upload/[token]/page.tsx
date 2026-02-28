@@ -469,13 +469,13 @@ export default function UploadPage() {
           </div>
         )}
 
-        {/* Prompt */}
-        <div className="bg-slate-900 rounded-2xl p-8 mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-sm text-slate-400 font-medium">
-              {isRecording ? `Question ${currentPromptIndex + 1} of ${application.prompts.length}` : "Your prompts"}
-            </p>
-            {isRecording && (
+        {/* Prompt - only visible during recording */}
+        {isRecording && (
+          <div className="bg-slate-900 rounded-2xl p-8 mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm text-slate-400 font-medium">
+                Question {currentPromptIndex + 1} of {application.prompts.length}
+              </p>
               <div className="flex gap-2">
                 {application.prompts.map((_, idx) => (
                   <div
@@ -490,40 +490,23 @@ export default function UploadPage() {
                   />
                 ))}
               </div>
-            )}
-          </div>
-
-          {isRecording ? (
-            <>
-              <p className="text-xl md:text-2xl text-white font-medium leading-relaxed">
-                {application.prompts[currentPromptIndex]?.text}
-              </p>
-              <div className="mt-4 h-1 bg-slate-700 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-white/50 transition-all duration-1000"
-                  style={{
-                    width: `${((duration % PROMPT_DURATION) / PROMPT_DURATION) * 100}%`,
-                  }}
-                />
-              </div>
-              <p className="text-xs text-slate-500 mt-2">
-                {PROMPT_DURATION - (duration % PROMPT_DURATION)}s until next question
-              </p>
-            </>
-          ) : (
-            <div className="space-y-4">
-              {application.prompts.map((prompt, idx) => (
-                <div key={prompt.id} className="flex gap-3">
-                  <span className="text-slate-500 font-mono text-sm">{idx + 1}.</span>
-                  <p className="text-white/80 leading-relaxed">{prompt.text}</p>
-                </div>
-              ))}
-              <p className="text-sm text-slate-500 mt-4">
-                Each question will be shown for {PROMPT_DURATION} seconds during recording.
-              </p>
             </div>
-          )}
-        </div>
+            <p className="text-xl md:text-2xl text-white font-medium leading-relaxed">
+              {application.prompts[currentPromptIndex]?.text}
+            </p>
+            <div className="mt-4 h-1 bg-slate-700 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-white/50 transition-all duration-1000"
+                style={{
+                  width: `${((duration % PROMPT_DURATION) / PROMPT_DURATION) * 100}%`,
+                }}
+              />
+            </div>
+            <p className="text-xs text-slate-500 mt-2">
+              {PROMPT_DURATION - (duration % PROMPT_DURATION)}s until next question
+            </p>
+          </div>
+        )}
 
         {/* Rules - only show before starting */}
         {!hasStarted && (
@@ -537,11 +520,11 @@ export default function UploadPage() {
             <ul className="space-y-3 text-blue-800">
               <li className="flex items-start gap-3">
                 <span className="font-semibold">{application.prompts.length} questions, {PROMPT_DURATION} seconds each.</span>
-                <span className="text-blue-600">Questions will cycle automatically.</span>
+                <span className="text-blue-600">Questions appear one at a time when you start recording.</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="font-semibold">One take only.</span>
-                <span className="text-blue-600">No re-recording after you submit.</span>
+                <span className="font-semibold">No prep.</span>
+                <span className="text-blue-600">You won&apos;t see the questions until you hit record.</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="font-semibold">No editing.</span>
@@ -550,7 +533,6 @@ export default function UploadPage() {
             </ul>
             <p className="mt-5 text-sm text-blue-600 italic">
               Tip: Don&apos;t overthink it. When the question changes, just start talking.
-              Authenticity beats polish every time.
             </p>
           </div>
         )}
@@ -566,7 +548,7 @@ export default function UploadPage() {
               </div>
               <p className="text-slate-600 mb-2">Record your {MAX_DURATION}-second response</p>
               <p className="text-sm text-slate-500 mb-5">
-                Take a breath, read through the prompts above, then hit record when you&apos;re ready.
+                Questions will appear on screen once you start recording.
               </p>
               <button
                 onClick={startCamera}
