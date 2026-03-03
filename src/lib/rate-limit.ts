@@ -86,10 +86,10 @@ export function getRateLimitIdentifier(request: Request): string {
 
 // Preset configurations
 export const RATE_LIMITS = {
-  // Application submission: 3 per hour per IP
+  // Application submission: 10 per hour per IP
   application: {
     windowMs: 60 * 60 * 1000, // 1 hour
-    maxRequests: 3,
+    maxRequests: 10,
   },
   // Presign requests: 10 per 10 minutes per IP
   presign: {

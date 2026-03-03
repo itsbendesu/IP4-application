@@ -896,6 +896,9 @@ export default function ApplyPage() {
                       {formData.ticketType === "local" && (
                         <p className="text-xs text-slate-500 mt-2">Local tickets are for Victoria, BC residents only.</p>
                       )}
+                      {formData.ticketType === "vip" && (
+                        <p className="text-xs text-slate-500 mt-2"><span className="font-bold text-slate-700">Limited to 20 guests.</span></p>
+                      )}
                     </div>
 
                     {formData.ticketType === "local" && (
