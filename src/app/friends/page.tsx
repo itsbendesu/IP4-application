@@ -17,9 +17,9 @@ const COSTS = {
   local: {
     label: "No Hotel (Local)",
     items: [
-      { name: "Food & drink", amount: 800 },
-      { name: "Programming & entertainment", amount: 500 },
-      { name: "Operations & logistics", amount: 400 },
+      { name: "Food & drink", amount: 1100 },
+      { name: "Programming & entertainment", amount: 700 },
+      { name: "Operations & logistics", amount: 600 },
     ],
     regularPrice: 5999,
   },
