@@ -144,7 +144,10 @@ export default function FriendsPage() {
             </p>
             <p>
               We want to be totally transparent about what this event costs to put on.
-              Below is the actual per-person cost breakdown. Pick what feels right for
+              Below is the actual per-person cost breakdown.
+            </p>
+            <p>
+              Pick what feels right for
               you — whether that&apos;s covering our costs or chipping in extra so we can
               offer more scholarship spots to artists and creatives who can&apos;t afford
               the ticket.
@@ -207,10 +210,7 @@ export default function FriendsPage() {
                     {formatPrice(cost)}
                   </span>
                 </div>
-                <p className="mt-3 text-xs text-stone-400">
-                  Regular ticket price: {formatPrice(max)}
-                </p>
-              </div>
+                  </div>
 
               {/* Slider Section */}
               <div className="bg-white rounded-2xl border border-stone-200 p-8 shadow-sm">
