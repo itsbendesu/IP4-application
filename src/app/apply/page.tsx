@@ -30,7 +30,8 @@ export default function ApplyPage() {
     name: "",
     email: "",
     phone: "",
-    ticketType: "" as "" | "local" | "regular" | "vip",
+    ticketType: "" as "" | "local" | "regular" | "vip" | "scholarship",
+    scholarshipAmount: "",
     address: "",
     localSwear: false,
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -261,6 +262,7 @@ export default function ApplyPage() {
           email: formData.email,
           phone: formData.phone,
           ticketType: formData.ticketType,
+          scholarshipAmount: formData.ticketType === "scholarship" ? formData.scholarshipAmount : undefined,
           address: formData.ticketType === "local" ? formData.address : undefined,
           timezone: formData.timezone,
           heardAbout: formData.heardAbout,
@@ -877,6 +879,7 @@ export default function ApplyPage() {
                           { value: "local", label: "Local", price: "$5,999" },
                           { value: "regular", label: "Regular", price: "$9,999" },
                           { value: "vip", label: "VIP", price: "$15,999" },
+                          { value: "scholarship", label: "Scholarship", price: "Flexible" },
                         ] as const).map((tier) => (
                           <button
                             key={tier.value}
@@ -884,12 +887,12 @@ export default function ApplyPage() {
                             onClick={() => setFormData((prev) => ({ ...prev, ticketType: tier.value }))}
                             className={`flex-1 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                               formData.ticketType === tier.value
-                                ? "bg-blue-600 text-white"
+                                ? tier.value === "scholarship" ? "bg-amber-500 text-white" : "bg-blue-600 text-white"
                                 : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                             }`}
                           >
                             <span className="block">{tier.label}</span>
-                            <span className={`block text-xs mt-0.5 ${formData.ticketType === tier.value ? "text-blue-200" : "text-slate-400"}`}>{tier.price}</span>
+                            <span className={`block text-xs mt-0.5 ${formData.ticketType === tier.value ? tier.value === "scholarship" ? "text-amber-200" : "text-blue-200" : "text-slate-400"}`}>{tier.price}</span>
                           </button>
                         ))}
                       </div>
@@ -898,6 +901,21 @@ export default function ApplyPage() {
                       )}
                       {formData.ticketType === "vip" && (
                         <p className="text-xs text-slate-500 mt-2"><span className="font-bold text-slate-700">Limited to 20 guests.</span></p>
+                      )}
+                      {formData.ticketType === "scholarship" && (
+                        <div className="mt-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                          <label className="block text-sm font-medium text-slate-900 mb-2">
+                            How much can you afford to pay?
+                          </label>
+                          <input
+                            type="text"
+                            value={formData.scholarshipAmount}
+                            onChange={(e) => updateField("scholarshipAmount", e.target.value)}
+                            className="w-full px-4 py-3.5 border border-amber-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-shadow bg-white"
+                            placeholder="e.g. $500, $1,000, whatever I can"
+                          />
+                          <p className="text-xs text-slate-500 mt-2">No judgment. We set aside spots for artists, musicians, and creatives who&apos;d make the event better but can&apos;t swing the full price.</p>
+                        </div>
                       )}
                     </div>
 

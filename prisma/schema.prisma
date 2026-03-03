@@ -53,16 +53,17 @@ model PendingApplication {
   name          String
   email         String   @unique
   phone         String   @default("")
-  ticketType    String   @default("")   // "local", "regular", or "vip"
-  address       String?                 // Required only for local ticket type
-  timezone      String
-  roleCompany   String   @default("") // Role & company
-  heardAbout    String   @default("") // How they heard about IP
-  priorEvents   String?  // Prior events attended (optional)
-  threeWords    String   @default("") // Describe yourself in 3 words
-  bio           String
-  links         Json?
-  prompt        Prompt   @relation(fields: [promptId], references: [id])
+  ticketType        String   @default("")   // "local", "regular", "vip", or "scholarship"
+  scholarshipAmount String?                 // How much they can afford (scholarship applicants)
+  address           String?                 // Required only for local ticket type
+  timezone          String
+  roleCompany       String   @default("") // Role & company
+  heardAbout        String   @default("") // How they heard about IP
+  priorEvents       String?  // Prior events attended (optional)
+  threeWords        String   @default("") // Describe yourself in 3 words
+  bio               String
+  links             Json?
+  prompt            Prompt   @relation(fields: [promptId], references: [id])
   promptId      String
   emailVerified Boolean  @default(false)
   expiresAt     DateTime // Application expires if video not uploaded
@@ -82,8 +83,9 @@ model Applicant {
   name        String
   email       String      @unique
   phone       String      @default("")
-  ticketType  String      @default("")   // "local", "regular", or "vip"
-  address     String?                    // Required only for local ticket type
+  ticketType        String      @default("")   // "local", "regular", "vip", or "scholarship"
+  scholarshipAmount String?                     // How much they can afford (scholarship applicants)
+  address           String?                    // Required only for local ticket type
   timezone    String
   roleCompany String      @default("") // Role & company
   heardAbout  String      @default("") // How they heard about IP

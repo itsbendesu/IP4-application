@@ -17,6 +17,7 @@ interface Submission {
     email: string;
     phone: string;
     ticketType: string;
+    scholarshipAmount: string | null;
     address: string | null;
     timezone: string;
     bio: string;
@@ -341,6 +342,13 @@ export default function SubmissionDetailPage({ params }: { params: Promise<{ id:
                     <p className="text-gray-900 capitalize">{submission.applicant.ticketType}</p>
                   </div>
                 </div>
+
+                {submission.applicant.ticketType === "scholarship" && submission.applicant.scholarshipAmount && (
+                  <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                    <p className="text-sm text-gray-500">Can afford to pay</p>
+                    <p className="text-gray-900 font-medium">{submission.applicant.scholarshipAmount}</p>
+                  </div>
+                )}
 
                 {submission.applicant.address && (
                   <div>
