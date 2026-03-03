@@ -21,10 +21,12 @@ interface Submission {
   createdAt: string;
   averageScore: number | null;
   scoring: ScoringResult;
+  videoUrl: string;
   applicant: {
     name: string;
     email: string;
     location: string;
+    ticketType: string;
   };
   prompt: {
     text: string;
@@ -536,7 +538,14 @@ export default function AdminDashboard() {
                   return (
                     <tr key={sub.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4">
-                        <div className="font-medium text-gray-900">{sub.applicant.name}</div>
+                        <div className="font-medium text-gray-900 flex items-center gap-2">
+                          {sub.applicant.name}
+                          {sub.applicant.ticketType?.startsWith("friends-") && (
+                            <span className="px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-medium">
+                              Friend
+                            </span>
+                          )}
+                        </div>
                         <div className="text-sm text-gray-500">{sub.applicant.email}</div>
                       </td>
                       <td className="px-6 py-4 text-gray-600">{sub.applicant.location}</td>

@@ -299,15 +299,33 @@ export default function SubmissionDetailPage({ params }: { params: Promise<{ id:
               <p className="text-gray-700 italic text-lg">&ldquo;{submission.prompt.text}&rdquo;</p>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="font-medium text-gray-900">Video Response</h2>
-                <span className="text-sm text-gray-500">
-                  {submission.videoDurationSec}s
-                </span>
+            {submission.videoUrl === "friend-invite" ? (
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+                <div className="flex items-center gap-3">
+                  <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
+                    Friend Invite
+                  </span>
+                  <p className="text-sm text-blue-600">
+                    Invited by Andrew — no video application required
+                  </p>
+                </div>
+                {submission.applicant.scholarshipAmount && (
+                  <p className="text-sm text-gray-600 mt-3">
+                    Chosen price: <span className="font-medium">{submission.applicant.scholarshipAmount}</span>
+                  </p>
+                )}
               </div>
-              <VideoPlayer src={submission.videoUrl} className="aspect-video rounded-lg overflow-hidden" />
-            </div>
+            ) : (
+              <div className="bg-white rounded-xl shadow-sm p-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="font-medium text-gray-900">Video Response</h2>
+                  <span className="text-sm text-gray-500">
+                    {submission.videoDurationSec}s
+                  </span>
+                </div>
+                <VideoPlayer src={submission.videoUrl} className="aspect-video rounded-lg overflow-hidden" />
+              </div>
+            )}
 
             {/* Applicant Info */}
             <div className="bg-white rounded-xl shadow-sm p-6">
