@@ -6,20 +6,33 @@ import { useState } from "react";
 const ACTUAL_COST = { hotel: 4500, local: 3000 };
 
 const PRICING = {
-  hotel: { min: 0, max: 9999 },
-  local: { min: 0, max: 5999 },
+  hotel: { min: 0, max: 20000 },
+  local: { min: 0, max: 20000 },
 };
+
+const SCHOLARSHIP_DESCRIPTIONS = [
+  "a young creative who couldn't otherwise afford to be here",
+  "an emerging artist or builder who'd never get this chance",
+  "someone early in their career who belongs in the room",
+  "a creator who'll remember this weekend for the rest of their life",
+];
+
+function getDescription(index: number) {
+  return SCHOLARSHIP_DESCRIPTIONS[index % SCHOLARSHIP_DESCRIPTIONS.length];
+}
 
 function getSliderLabel(value: number, type: "hotel" | "local") {
   if (value === 0) return "Completely free";
   const cost = ACTUAL_COST[type];
   const pct = value / cost;
   if (pct < 0.15) return "A little something";
-  if (pct < 0.35) return "That helps more than you think";
+  if (pct < 0.35) return "More than you think";
   if (pct < 0.65) return "Covering a real chunk";
   if (pct < 0.85) return "Nearly covering your seat";
-  if (pct < 1.05) return "Covering your full cost";
-  return "Paying it forward for someone else";
+  if (pct < 1.05) return "Your seat is covered";
+  if (pct < 1.5) return "Someone else gets to be there because of you";
+  if (pct < 2.5) return "Filling the room with people who belong here";
+  return "This is seriously generous";
 }
 
 function formatPrice(amount: number) {
@@ -195,26 +208,7 @@ export default function GratisPage() {
                   </p>
                 </div>
 
-                {/* Cost context bar */}
-                <div className="mb-6">
-                  <div className="flex items-center justify-between text-xs text-stone-400 mb-1.5">
-                    <span>Your contribution</span>
-                    <span>Actual cost: {formatPrice(cost)}/person</span>
-                  </div>
-                  <div className="relative h-1.5 bg-stone-100 rounded-full overflow-hidden">
-                    <div
-                      className="absolute left-0 top-0 h-full bg-blue-500 rounded-full transition-all duration-200"
-                      style={{ width: `${Math.min((value / cost) * 100, 100)}%` }}
-                    />
-                    {/* Cost marker */}
-                    <div
-                      className="absolute top-1/2 -translate-y-1/2 w-0.5 h-3 bg-stone-300"
-                      style={{ left: `${(cost / max) * 100}%` }}
-                    />
-                  </div>
-                </div>
-
-                {/* Slider */}
+                {/* Slider with cost marker */}
                 <div className="relative mb-4">
                   <input
                     type="range"
@@ -228,7 +222,27 @@ export default function GratisPage() {
                       background: `linear-gradient(to right, #2563eb ${pct}%, #e7e5e4 ${pct}%)`,
                     }}
                   />
-                  <div className="flex justify-between mt-2">
+                  {/* Tick marks: seat cost + each additional scholarship */}
+                  {Array.from({ length: Math.floor(max / cost) }).map((_, i) => {
+                    const tickValue = cost * (i + 1);
+                    const tickPct = (tickValue / max) * 100;
+                    const isSeatCost = i === 0;
+                    const scholarshipNum = i; // 0 = seat cost, 1 = +1 person, etc.
+                    const isActive = value >= tickValue;
+                    return (
+                      <div
+                        key={i}
+                        className="absolute top-0 flex flex-col items-center pointer-events-none"
+                        style={{ left: `${tickPct}%`, transform: "translateX(-50%)" }}
+                      >
+                        <div className={`w-px h-5 ${isActive ? "bg-blue-400" : "bg-stone-300"}`} />
+                        <span className={`text-[10px] mt-0.5 whitespace-nowrap ${isActive ? "text-blue-500" : "text-stone-400"}`}>
+                          {isSeatCost ? "You" : `+${scholarshipNum}`}
+                        </span>
+                      </div>
+                    );
+                  })}
+                  <div className="flex justify-between mt-5">
                     <span className="text-xs text-stone-400">$0</span>
                     <span className="text-xs text-stone-400">
                       {formatPrice(max)}
@@ -236,14 +250,72 @@ export default function GratisPage() {
                   </div>
                 </div>
 
-                {/* Scholarship nudge — shows when they contribute anything */}
-                {value > 0 && (
-                  <p className="text-sm text-stone-500 text-center mt-6 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3">
-                    {value >= cost
-                      ? `You're covering your seat and funding ${Math.floor((value - cost) / cost * 10) / 10 >= 1 ? "another scholarship" : "part of a scholarship"} for an artist or creative.`
-                      : `That's ${Math.round((value / cost) * 100)}% of the cost of your seat — every dollar goes toward making this happen.`}
-                  </p>
-                )}
+                {/* Scholarship impact */}
+                {value > 0 && (() => {
+                  const aboveCost = Math.max(0, value - cost);
+                  const scholarshipsFloat = aboveCost / cost;
+                  const fullScholarships = Math.floor(scholarshipsFloat);
+                  const partialPct = Math.round((scholarshipsFloat - fullScholarships) * 100);
+                  const totalPeople = fullScholarships + (partialPct > 0 ? 1 : 0);
+
+                  return (
+                    <div className={`mt-6 rounded-xl px-5 py-5 text-center transition-colors duration-300 ${
+                      value >= cost
+                        ? "bg-emerald-50 border border-emerald-200"
+                        : "bg-stone-50 border border-stone-200"
+                    }`}>
+                      {value < cost ? (
+                        <p className="text-sm text-stone-600">
+                          That covers {Math.round((value / cost) * 100)}% of your seat — every
+                          dollar makes it easier to bring in emerging artists and creators
+                          who&apos;d never get this chance otherwise.
+                        </p>
+                      ) : value === cost ? (
+                        <p className="text-sm text-emerald-700">
+                          You&apos;re covering the full cost of your seat.
+                        </p>
+                      ) : (
+                        <>
+                          {/* Person icons */}
+                          <div className="flex items-center justify-center gap-2 mb-3">
+                            {Array.from({ length: Math.min(totalPeople, 4) }).map((_, i) => (
+                              <div
+                                key={i}
+                                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+                                  i < fullScholarships
+                                    ? "bg-emerald-500 text-white scale-100"
+                                    : "bg-emerald-200 text-emerald-600 scale-95"
+                                }`}
+                              >
+                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                  <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
+                                </svg>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Description */}
+                          <p className="text-sm text-emerald-800 leading-relaxed">
+                            Your seat is covered. The extra <strong>{formatPrice(aboveCost)}</strong>{" "}
+                            {fullScholarships >= 2
+                              ? `puts ${fullScholarships} young creatives in the room who wouldn't be here without you.`
+                              : fullScholarships === 1
+                                ? `puts ${getDescription(0)} in the room.`
+                                : `goes toward bringing ${getDescription(0)} into the room.`
+                            }
+                          </p>
+
+                          <p className="text-lg font-bold text-emerald-700 mt-2">
+                            {fullScholarships >= 1
+                              ? `${fullScholarships} seat${fullScholarships > 1 ? "s" : ""} funded${partialPct > 0 ? ", working on another" : ""}`
+                              : "Working toward a full seat"
+                            }
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  );
+                })()}
 
                 {/* CTA */}
                 <div className="mt-8">
