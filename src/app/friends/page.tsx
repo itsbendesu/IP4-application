@@ -125,7 +125,7 @@ export default function FriendsPage() {
               Pick what feels right for
               you — whether that&apos;s covering our cost or chipping in extra so we can
               offer more scholarship spots to artists and creatives who can&apos;t afford
-              the ticket. All prices are in Canadian dollars.
+              the ticket. All prices are in US dollars.
             </p>
           </div>
         </div>
@@ -176,7 +176,7 @@ export default function FriendsPage() {
                 {/* Big Price Display */}
                 <div className="text-center mb-8">
                   <p className="text-5xl md:text-7xl font-bold text-stone-900 tracking-tight tabular-nums">
-                    {formatPrice(value)} <span className="text-lg text-stone-400 font-medium">CAD</span>
+                    {formatPrice(value)} <span className="text-lg text-stone-400 font-medium">USD</span>
                   </p>
                   <p className="text-sm text-blue-600 font-medium mt-2">{sliderLabel}</p>
                 </div>

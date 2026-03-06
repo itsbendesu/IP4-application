@@ -166,7 +166,7 @@ export default function PatronPage() {
                 {/* Big Price Display */}
                 <div className="text-center mb-8 py-4">
                   <p className="text-5xl md:text-7xl font-bold text-stone-900 tracking-tight tabular-nums">
-                    {formatPrice(value)} <span className="text-lg text-stone-400 font-medium">CAD</span>
+                    {formatPrice(value)} <span className="text-lg text-stone-400 font-medium">USD</span>
                   </p>
                 </div>
 
