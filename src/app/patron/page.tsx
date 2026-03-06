@@ -3,33 +3,19 @@
 import Link from "next/link";
 import { useState } from "react";
 
-const PRICING = {
-  hotel: { min: 4500, max: 9999 },
-  local: { min: 3000, max: 5999 },
-};
-
-function getSliderLabel(value: number, min: number, max: number) {
-  const pct = (value - min) / (max - min);
-  if (pct <= 0.05) return "Our cost";
-  if (pct <= 0.35) return "Chip in a bit extra";
-  if (pct <= 0.65) return "Meet us in the middle";
-  if (pct <= 0.85) return "Almost full price";
-  return "Full ticket price";
-}
-
 function formatPrice(amount: number) {
   return "$" + amount.toLocaleString("en-US");
 }
 
 type Step = "pricing" | "form" | "submitted";
 
-export default function FriendsPage() {
-  const [type, setType] = useState<"hotel" | "local">("hotel");
-  const cost = PRICING[type].min;
-  const max = PRICING[type].max;
-  const [hotelValue, setHotelValue] = useState(PRICING.hotel.min);
-  const [localValue, setLocalValue] = useState(PRICING.local.min);
+const SUGGESTED_AMOUNTS = [10000, 15000, 20000, 25000];
+
+export default function PatronPage() {
   const [step, setStep] = useState<Step>("pricing");
+  const [value, setValue] = useState(10000);
+  const [customInput, setCustomInput] = useState("");
+  const [needsHotel, setNeedsHotel] = useState(true);
 
   // Form state
   const [form, setForm] = useState({
@@ -42,10 +28,11 @@ export default function FriendsPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const value = type === "hotel" ? hotelValue : localValue;
-  const setValue = type === "hotel" ? setHotelValue : setLocalValue;
-  const pct = ((value - cost) / (max - cost)) * 100;
-  const sliderLabel = getSliderLabel(value, cost, max);
+  const handleCustomChange = (raw: string) => {
+    const digits = raw.replace(/[^0-9]/g, "");
+    setCustomInput(digits);
+    if (digits) setValue(Number(digits));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,7 +49,7 @@ export default function FriendsPage() {
           phone: form.phone,
           bio: form.bio,
           links: form.link ? [form.link] : [],
-          ticketType: type === "hotel" ? "friends-hotel" : "friends-local",
+          ticketType: needsHotel ? "patron-hotel" : "patron-local",
           amount: value,
         }),
       });
@@ -111,21 +98,20 @@ export default function FriendsPage() {
       <section className="pt-32 pb-16 md:pt-40 md:pb-20">
         <div className="max-w-3xl mx-auto px-6">
           <p className="text-sm font-medium tracking-[0.15em] text-blue-600 uppercase mb-4">
-            Friends & Family
+            Personal Invitation
           </p>
           <h1 className="text-4xl md:text-6xl font-bold text-stone-900 tracking-tight leading-[1.1] mb-6">
             You&apos;re one of Andrew&apos;s people.
           </h1>
           <div className="text-lg md:text-xl text-stone-600 leading-relaxed space-y-4">
             <p>
-              If you&apos;re here, Andrew personally invited you to IP4. That means you&apos;re
+              Andrew personally invited you to IP4. That means you&apos;re
               already in — no application, no video, no hoops.
             </p>
             <p>
-              Pick what feels right for
-              you — whether that&apos;s covering our cost or chipping in extra so we can
-              offer more scholarship spots to artists and creatives who can&apos;t afford
-              the ticket. All prices are in Canadian dollars.
+              Every dollar above our costs goes directly toward scholarships
+              for artists, creators, and brilliant people who couldn&apos;t
+              otherwise afford to attend.
             </p>
           </div>
         </div>
@@ -135,85 +121,87 @@ export default function FriendsPage() {
       <section className="pb-24 md:pb-32">
         <div className="max-w-2xl mx-auto px-6">
 
-          {/* ── STEP: PRICING ── */}
+          {/* STEP: PRICING */}
           {step === "pricing" && (
             <>
-              {/* Hotel Toggle */}
-              <div className="flex justify-center mb-10">
-                <div className="inline-flex bg-stone-100 rounded-full p-1">
-                  <button
-                    onClick={() => setType("hotel")}
-                    className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
-                      type === "hotel"
-                        ? "bg-white text-stone-900 shadow-sm"
-                        : "text-stone-500 hover:text-stone-700"
-                    }`}
-                  >
-                    I need a hotel
-                  </button>
-                  <button
-                    onClick={() => setType("local")}
-                    className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
-                      type === "local"
-                        ? "bg-white text-stone-900 shadow-sm"
-                        : "text-stone-500 hover:text-stone-700"
-                    }`}
-                  >
-                    I&apos;m local
-                  </button>
-                </div>
-              </div>
-
-              {/* Slider Section */}
               <div className="bg-white rounded-2xl border border-stone-200 p-8 shadow-sm">
                 <p className="text-xs font-medium tracking-[0.2em] text-stone-400 uppercase mb-2">
-                  Choose your price
+                  Name your price
                 </p>
                 <p className="text-sm text-stone-500 mb-8">
-                  Slide to whatever feels right. No judgement, no guilt.
+                  Whatever feels right. Your generosity funds scholarships for people who&apos;d
+                  bring something special but can&apos;t afford the ticket.
                 </p>
 
+                {/* Suggested amounts */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                  {SUGGESTED_AMOUNTS.map((amt) => (
+                    <button
+                      key={amt}
+                      onClick={() => { setValue(amt); setCustomInput(""); }}
+                      className={`px-4 py-3 rounded-xl text-sm font-medium transition-all border ${
+                        value === amt && !customInput
+                          ? "bg-blue-600 text-white border-blue-600"
+                          : "bg-white text-stone-700 border-stone-200 hover:border-blue-300 hover:text-blue-700"
+                      }`}
+                    >
+                      {formatPrice(amt)}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Custom amount */}
+                <div className="relative mb-8">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400 text-lg font-medium">$</span>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={customInput}
+                    onChange={(e) => handleCustomChange(e.target.value)}
+                    placeholder="Or enter a custom amount"
+                    className="w-full pl-9 pr-4 py-3.5 border border-stone-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-lg tabular-nums"
+                  />
+                </div>
+
                 {/* Big Price Display */}
-                <div className="text-center mb-8">
+                <div className="text-center mb-8 py-4">
                   <p className="text-5xl md:text-7xl font-bold text-stone-900 tracking-tight tabular-nums">
                     {formatPrice(value)} <span className="text-lg text-stone-400 font-medium">CAD</span>
                   </p>
-                  <p className="text-sm text-blue-600 font-medium mt-2">{sliderLabel}</p>
                 </div>
 
-                {/* Slider */}
-                <div className="relative mb-4">
-                  <input
-                    type="range"
-                    min={cost}
-                    max={max}
-                    step={100}
-                    value={value}
-                    onChange={(e) => setValue(Number(e.target.value))}
-                    className="w-full h-2 bg-stone-200 rounded-full appearance-none cursor-pointer slider-thumb"
-                    style={{
-                      background: `linear-gradient(to right, #2563eb ${pct}%, #e7e5e4 ${pct}%)`,
-                    }}
-                  />
-                  <div className="flex justify-between mt-2">
-                    <span className="text-xs text-stone-400">{formatPrice(cost)}</span>
-                    <span className="text-xs text-stone-400">{formatPrice(max)}</span>
+                {/* Hotel toggle */}
+                <div className="flex justify-center mb-8">
+                  <div className="inline-flex bg-stone-100 rounded-full p-1">
+                    <button
+                      onClick={() => setNeedsHotel(true)}
+                      className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
+                        needsHotel
+                          ? "bg-white text-stone-900 shadow-sm"
+                          : "text-stone-500 hover:text-stone-700"
+                      }`}
+                    >
+                      I need a hotel
+                    </button>
+                    <button
+                      onClick={() => setNeedsHotel(false)}
+                      className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all ${
+                        !needsHotel
+                          ? "bg-white text-stone-900 shadow-sm"
+                          : "text-stone-500 hover:text-stone-700"
+                      }`}
+                    >
+                      I&apos;m local
+                    </button>
                   </div>
                 </div>
 
-                {/* Scholarship nudge */}
-                {value > cost + (max - cost) * 0.5 && (
-                  <p className="text-sm text-stone-500 text-center mt-6 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3">
-                    Extra above our cost goes toward scholarship spots for
-                    artists &amp; creatives who can&apos;t afford a ticket.
-                  </p>
-                )}
-
                 {/* CTA */}
-                <div className="mt-8">
+                <div>
                   <button
-                    onClick={() => setStep("form")}
-                    className="inline-flex items-center justify-center w-full px-8 py-4 bg-blue-600 text-white rounded-full font-medium text-lg hover:bg-blue-700 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                    onClick={() => { if (value > 0) setStep("form"); }}
+                    disabled={value <= 0}
+                    className="inline-flex items-center justify-center w-full px-8 py-4 bg-blue-600 text-white rounded-full font-medium text-lg hover:bg-blue-700 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:hover:scale-100"
                   >
                     Continue — {formatPrice(value)}
                   </button>
@@ -225,14 +213,14 @@ export default function FriendsPage() {
             </>
           )}
 
-          {/* ── STEP: FORM ── */}
+          {/* STEP: FORM */}
           {step === "form" && (
             <>
               {/* Selected price summary */}
               <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 mb-8 flex items-center justify-between">
                 <div>
                   <p className="text-sm text-blue-600 font-medium">
-                    {type === "hotel" ? "With Hotel" : "Local (No Hotel)"}
+                    {needsHotel ? "With Hotel" : "Local (No Hotel)"}
                   </p>
                   <p className="text-2xl font-bold text-stone-900 tabular-nums">
                     {formatPrice(value)}
@@ -344,7 +332,7 @@ export default function FriendsPage() {
             </>
           )}
 
-          {/* ── STEP: SUBMITTED ── */}
+          {/* STEP: SUBMITTED */}
           {step === "submitted" && (
             <div className="bg-white rounded-2xl border border-stone-200 p-8 md:p-12 shadow-sm text-center">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -371,7 +359,7 @@ export default function FriendsPage() {
             </div>
           )}
 
-          {/* What's included — show on pricing and form steps */}
+          {/* What's included */}
           {step !== "submitted" && (
             <div className="mt-10 bg-stone-50 rounded-2xl border border-stone-200 p-8">
               <p className="text-xs font-medium tracking-[0.2em] text-stone-400 uppercase mb-5">
@@ -384,7 +372,7 @@ export default function FriendsPage() {
                   "Comedy night, storytelling, magic",
                   "Curated dinner groups (skip the small talk)",
                   "Lake swims, late-night conversations, new friendships",
-                  ...(type === "hotel" ? ["3 nights luxury accommodation"] : []),
+                  ...(needsHotel ? ["3 nights luxury accommodation"] : []),
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3 text-stone-600">
                     <svg
@@ -435,38 +423,6 @@ export default function FriendsPage() {
           </div>
         </div>
       </footer>
-
-      {/* Custom slider styles */}
-      <style jsx>{`
-        .slider-thumb::-webkit-slider-thumb {
-          -webkit-appearance: none;
-          appearance: none;
-          width: 28px;
-          height: 28px;
-          border-radius: 50%;
-          background: #2563eb;
-          cursor: pointer;
-          border: 4px solid white;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(37, 99, 235, 0.1);
-          transition: transform 0.15s ease, box-shadow 0.15s ease;
-        }
-        .slider-thumb::-webkit-slider-thumb:hover {
-          transform: scale(1.15);
-          box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3), 0 0 0 1px rgba(37, 99, 235, 0.2);
-        }
-        .slider-thumb::-webkit-slider-thumb:active {
-          transform: scale(1.1);
-        }
-        .slider-thumb::-moz-range-thumb {
-          width: 28px;
-          height: 28px;
-          border-radius: 50%;
-          background: #2563eb;
-          cursor: pointer;
-          border: 4px solid white;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(37, 99, 235, 0.1);
-        }
-      `}</style>
     </main>
   );
 }
