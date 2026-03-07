@@ -88,24 +88,24 @@ function TestimonialBlock({
   bg?: string;
 }) {
   return (
-    <section className={`py-16 md:py-20 ${bg}`}>
+    <section className={`py-10 md:py-14 ${bg}`}>
       <div className="max-w-4xl mx-auto px-6 text-center">
         <p className="text-2xl md:text-3xl lg:text-4xl text-stone-800 leading-relaxed font-serif italic">
           &ldquo;{quote}&rdquo;
         </p>
-        <div className="mt-8 flex flex-col items-center gap-3">
-          <div className="w-16 h-16 rounded-full overflow-hidden relative bg-stone-200 flex-shrink-0">
+        <div className="mt-5 flex flex-col items-center gap-2">
+          <div className="w-12 h-12 rounded-full overflow-hidden relative bg-stone-200 flex-shrink-0">
             <Image
               src={image}
               alt={name}
               fill
               className="object-cover"
-              sizes="64px"
+              sizes="48px"
             />
           </div>
           <div>
-            <p className="font-semibold text-stone-900">{name}</p>
-            <p className="text-sm text-stone-400">{descriptor}</p>
+            <p className="font-semibold text-stone-900 text-sm">{name}</p>
+            <p className="text-xs text-stone-400">{descriptor}</p>
           </div>
         </div>
       </div>
@@ -626,7 +626,7 @@ export default function Home() {
               <p className="text-4xl font-bold text-stone-900 mb-2">$5,999</p>
               <p className="text-xs text-stone-400 mb-6">Victoria residents only</p>
               <p className="text-stone-500 leading-relaxed mb-6 flex-grow text-sm">
-                You live here, you sleep at home. Full access to every session, meal, and activity &mdash; just no hotel room. Must have a Victoria, BC address.
+                You live here, you sleep at home. Full access to every session, meal, and activity &mdash; just no hotel room. Must have a Victoria, BC address and actually live here.
               </p>
               <ul className="text-sm text-stone-600 space-y-2 mb-8">
                 <li className="flex items-start gap-2">
@@ -726,7 +726,7 @@ export default function Home() {
           <div className="mt-8 bg-amber-50 border border-amber-200 rounded-2xl px-8 py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <p className="font-semibold text-stone-900">
-                Interesting but broke?
+                Money tight? We still want you here.
               </p>
               <p className="text-sm text-stone-500 mt-1">
                 We set aside spots for artists, comedians, musicians, and creatives who&apos;d make the event better but can&apos;t swing the price tag. No shame, just a different application.

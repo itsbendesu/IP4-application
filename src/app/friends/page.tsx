@@ -3,18 +3,32 @@
 import Link from "next/link";
 import { useState } from "react";
 
+const ACTUAL_COST = { hotel: 4500, local: 3000 };
+
 const PRICING = {
-  hotel: { min: 4500, max: 9999 },
-  local: { min: 3000, max: 5999 },
+  hotel: { min: 4500, max: 20000 },
+  local: { min: 3000, max: 20000 },
 };
 
-function getSliderLabel(value: number, min: number, max: number) {
-  const pct = (value - min) / (max - min);
-  if (pct <= 0.05) return "Our cost";
-  if (pct <= 0.35) return "Chip in a bit extra";
-  if (pct <= 0.65) return "Meet us in the middle";
-  if (pct <= 0.85) return "Almost full price";
-  return "Full ticket price";
+const SCHOLARSHIP_DESCRIPTIONS = [
+  "a young creative who couldn't otherwise afford to be here",
+  "an emerging artist or builder who'd never get this chance",
+  "someone early in their career who belongs in the room",
+  "a creator who'll remember this weekend for the rest of their life",
+];
+
+function getDescription(index: number) {
+  return SCHOLARSHIP_DESCRIPTIONS[index % SCHOLARSHIP_DESCRIPTIONS.length];
+}
+
+function getSliderLabel(value: number, type: "hotel" | "local") {
+  const cost = ACTUAL_COST[type];
+  const pct = value / cost;
+  if (pct <= 1.02) return "Our cost";
+  if (pct < 1.3) return "Chipping in a bit extra";
+  if (pct < 1.7) return "Someone else gets to be there because of you";
+  if (pct < 2.5) return "Filling the room with people who belong here";
+  return "This is seriously generous";
 }
 
 function formatPrice(amount: number) {
@@ -37,6 +51,7 @@ export default function FriendsPage() {
     email: "",
     phone: "",
     bio: "",
+    teachSkill: "",
     link: "",
   });
   const [submitting, setSubmitting] = useState(false);
@@ -45,7 +60,7 @@ export default function FriendsPage() {
   const value = type === "hotel" ? hotelValue : localValue;
   const setValue = type === "hotel" ? setHotelValue : setLocalValue;
   const pct = ((value - cost) / (max - cost)) * 100;
-  const sliderLabel = getSliderLabel(value, cost, max);
+  const sliderLabel = getSliderLabel(value, type);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,6 +76,7 @@ export default function FriendsPage() {
           email: form.email,
           phone: form.phone,
           bio: form.bio,
+          teachSkill: form.teachSkill || undefined,
           links: form.link ? [form.link] : [],
           ticketType: type === "hotel" ? "friends-hotel" : "friends-local",
           amount: value,
@@ -118,14 +134,14 @@ export default function FriendsPage() {
           </h1>
           <div className="text-lg md:text-xl text-stone-600 leading-relaxed space-y-4">
             <p>
-              If you&apos;re here, Andrew personally invited you to IP4. That means you&apos;re
-              already in — no application, no video, no hoops.
+              If you&apos;re here, Andrew personally invited you to IP4. That
+              means you&apos;re already in — no application, no video, no hoops.
             </p>
             <p>
-              Pick what feels right for
-              you — whether that&apos;s covering our cost or chipping in extra so we can
-              offer more scholarship spots to artists and creatives who can&apos;t afford
-              the ticket. All prices are in US dollars.
+              Pick what feels right for you — whether that&apos;s covering our
+              cost or chipping in extra so we can offer more scholarship spots
+              to artists and creatives who can&apos;t afford the ticket. All
+              prices are in US dollars.
             </p>
           </div>
         </div>
@@ -134,7 +150,6 @@ export default function FriendsPage() {
       {/* Main Content */}
       <section className="pb-24 md:pb-32">
         <div className="max-w-2xl mx-auto px-6">
-
           {/* ── STEP: PRICING ── */}
           {step === "pricing" && (
             <>
@@ -170,18 +185,23 @@ export default function FriendsPage() {
                   Choose your price
                 </p>
                 <p className="text-sm text-stone-500 mb-8">
-                  Slide to whatever feels right. No judgement, no guilt.
+                  Slide to whatever feels right. No judgement.
                 </p>
 
                 {/* Big Price Display */}
                 <div className="text-center mb-8">
                   <p className="text-5xl md:text-7xl font-bold text-stone-900 tracking-tight tabular-nums">
-                    {formatPrice(value)} <span className="text-xs font-medium tracking-[0.2em] text-stone-400 uppercase">USD</span>
+                    {formatPrice(value)}{" "}
+                    <span className="text-xs font-medium tracking-[0.2em] text-stone-400 uppercase">
+                      USD
+                    </span>
                   </p>
-                  <p className="text-sm text-blue-600 font-medium mt-2">{sliderLabel}</p>
+                  <p className="text-sm text-blue-600 font-medium mt-2">
+                    {sliderLabel}
+                  </p>
                 </div>
 
-                {/* Slider */}
+                {/* Slider with tick marks */}
                 <div className="relative mb-4">
                   <input
                     type="range"
@@ -195,19 +215,108 @@ export default function FriendsPage() {
                       background: `linear-gradient(to right, #2563eb ${pct}%, #e7e5e4 ${pct}%)`,
                     }}
                   />
-                  <div className="flex justify-between mt-2">
-                    <span className="text-xs text-stone-400">{formatPrice(cost)}</span>
-                    <span className="text-xs text-stone-400">{formatPrice(max)}</span>
+                  {/* Tick marks for each additional scholarship */}
+                  {Array.from({
+                    length: Math.floor((max - cost) / cost),
+                  }).map((_, i) => {
+                    const tickValue = cost * (i + 2); // +2 because first cost is the seat itself
+                    const tickPct =
+                      ((tickValue - cost) / (max - cost)) * 100;
+                    const scholarshipNum = i + 1;
+                    const isActive = value >= tickValue;
+                    return (
+                      <div
+                        key={i}
+                        className="absolute top-0 flex flex-col items-center pointer-events-none"
+                        style={{
+                          left: `${tickPct}%`,
+                          transform: "translateX(-50%)",
+                        }}
+                      >
+                        <div
+                          className={`w-px h-5 ${
+                            isActive ? "bg-blue-400" : "bg-stone-300"
+                          }`}
+                        />
+                        <span
+                          className={`text-[10px] mt-0.5 whitespace-nowrap ${
+                            isActive ? "text-blue-500" : "text-stone-400"
+                          }`}
+                        >
+                          +{scholarshipNum}
+                        </span>
+                      </div>
+                    );
+                  })}
+                  <div className="flex justify-between mt-5">
+                    <span className="text-xs text-stone-400">
+                      {formatPrice(cost)}
+                    </span>
+                    <span className="text-xs text-stone-400">
+                      {formatPrice(max)}
+                    </span>
                   </div>
                 </div>
 
-                {/* Scholarship nudge */}
-                {value > cost + (max - cost) * 0.5 && (
-                  <p className="text-sm text-stone-500 text-center mt-6 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3">
-                    Extra above our cost goes toward scholarship spots for
-                    artists &amp; creatives who can&apos;t afford a ticket.
-                  </p>
-                )}
+                {/* Scholarship impact */}
+                {value > cost &&
+                  (() => {
+                    const aboveCost = value - cost;
+                    const scholarshipsFloat = aboveCost / cost;
+                    const fullScholarships = Math.floor(scholarshipsFloat);
+                    const partialPct = Math.round(
+                      (scholarshipsFloat - fullScholarships) * 100
+                    );
+                    const totalPeople =
+                      fullScholarships + (partialPct > 0 ? 1 : 0);
+
+                    return (
+                      <div className="mt-6 rounded-xl px-5 py-5 text-center bg-emerald-50 border border-emerald-200 transition-colors duration-300">
+                        {/* Person icons */}
+                        {totalPeople > 0 && (
+                          <div className="flex items-center justify-center gap-2 mb-3">
+                            {Array.from({
+                              length: Math.min(totalPeople, 4),
+                            }).map((_, i) => (
+                              <div
+                                key={i}
+                                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+                                  i < fullScholarships
+                                    ? "bg-emerald-500 text-white scale-100"
+                                    : "bg-emerald-200 text-emerald-600 scale-95"
+                                }`}
+                              >
+                                <svg
+                                  className="w-5 h-5"
+                                  fill="currentColor"
+                                  viewBox="0 0 20 20"
+                                >
+                                  <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
+                                </svg>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Description */}
+                        <p className="text-sm text-emerald-800 leading-relaxed">
+                          Your seat is covered. The extra{" "}
+                          <strong>{formatPrice(aboveCost)}</strong>{" "}
+                          {fullScholarships >= 2
+                            ? `puts ${fullScholarships} young creatives in the room who wouldn't be here without you.`
+                            : fullScholarships === 1
+                              ? `puts ${getDescription(0)} in the room.`
+                              : `goes toward bringing ${getDescription(0)} into the room.`}
+                        </p>
+
+                        <p className="text-lg font-bold text-emerald-700 mt-2">
+                          {fullScholarships >= 1
+                            ? `${fullScholarships} seat${fullScholarships > 1 ? "s" : ""} funded${partialPct > 0 ? ", working on another" : ""}`
+                            : "Working toward a full seat"}
+                        </p>
+                      </div>
+                    );
+                  })()}
 
                 {/* CTA */}
                 <div className="mt-8">
@@ -264,7 +373,9 @@ export default function FriendsPage() {
                       type="text"
                       required
                       value={form.name}
-                      onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, name: e.target.value }))
+                      }
                       className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                       placeholder="Your full name"
                     />
@@ -278,7 +389,9 @@ export default function FriendsPage() {
                       type="email"
                       required
                       value={form.email}
-                      onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, email: e.target.value }))
+                      }
                       className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                       placeholder="you@example.com"
                     />
@@ -292,7 +405,9 @@ export default function FriendsPage() {
                       type="tel"
                       required
                       value={form.phone}
-                      onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, phone: e.target.value }))
+                      }
                       className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                       placeholder="+1 (555) 000-0000"
                     />
@@ -305,7 +420,9 @@ export default function FriendsPage() {
                     <textarea
                       required
                       value={form.bio}
-                      onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value }))}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, bio: e.target.value }))
+                      }
                       rows={3}
                       className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
                       placeholder="What do you do? What are you into? A sentence or two is fine."
@@ -314,13 +431,34 @@ export default function FriendsPage() {
 
                   <div>
                     <label className="block text-sm font-medium text-stone-700 mb-1.5">
-                      Website or social link{" "}
+                      A skill I&apos;d be open to sharing with or teaching the group{" "}
                       <span className="text-stone-400 font-normal">(optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={form.teachSkill}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, teachSkill: e.target.value }))
+                      }
+                      maxLength={300}
+                      className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                      placeholder="e.g. Improv comedy, close-up magic, how to tell a story that lands"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                      Website or social link{" "}
+                      <span className="text-stone-400 font-normal">
+                        (optional)
+                      </span>
                     </label>
                     <input
                       type="url"
                       value={form.link}
-                      onChange={(e) => setForm((f) => ({ ...f, link: e.target.value }))}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, link: e.target.value }))
+                      }
                       className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                       placeholder="https://..."
                     />
@@ -337,7 +475,9 @@ export default function FriendsPage() {
                     disabled={submitting}
                     className="inline-flex items-center justify-center w-full px-8 py-4 bg-blue-600 text-white rounded-full font-medium text-lg hover:bg-blue-700 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:hover:scale-100"
                   >
-                    {submitting ? "Registering..." : `Register — ${formatPrice(value)}`}
+                    {submitting
+                      ? "Registering..."
+                      : `Register — ${formatPrice(value)}`}
                   </button>
                 </form>
               </div>
@@ -355,16 +495,26 @@ export default function FriendsPage() {
                   stroke="currentColor"
                   strokeWidth={2}
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
               </div>
               <h2 className="text-2xl md:text-3xl font-bold text-stone-900 mb-3">
                 You&apos;re on the list.
               </h2>
               <p className="text-stone-500 leading-relaxed max-w-md mx-auto mb-2">
-                We&apos;ve got your details. Andrew&apos;s team will be in touch with
-                next steps and payment info.
+                We&apos;ve got your details. Andrew&apos;s team will be in touch
+                with next steps and payment info.
               </p>
+              {value > cost && (
+                <p className="text-sm text-emerald-600 font-medium mb-2">
+                  Thank you for contributing an extra{" "}
+                  {formatPrice(value - cost)} toward scholarships.
+                </p>
+              )}
               <p className="text-sm text-stone-400">
                 July 27–30, 2026 &middot; Victoria, Canada
               </p>
@@ -380,13 +530,18 @@ export default function FriendsPage() {
               <ul className="space-y-3">
                 {[
                   "All sessions, workshops & activities",
-                  "Every meal & drink for 3 days",
+                  "All food, drinks & transportation for 3 days",
                   "Comedy night, storytelling, magic",
                   "Curated dinner groups (skip the small talk)",
                   "Lake swims, late-night conversations, new friendships",
-                  ...(type === "hotel" ? ["3 nights luxury accommodation"] : []),
+                  ...(type === "hotel"
+                    ? ["3 nights luxury accommodation"]
+                    : []),
                 ].map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-stone-600">
+                  <li
+                    key={item}
+                    className="flex items-start gap-3 text-stone-600"
+                  >
                     <svg
                       className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0"
                       fill="none"
@@ -394,7 +549,11 @@ export default function FriendsPage() {
                       stroke="currentColor"
                       strokeWidth={2}
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                     {item}
                   </li>
@@ -447,12 +606,14 @@ export default function FriendsPage() {
           background: #2563eb;
           cursor: pointer;
           border: 4px solid white;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(37, 99, 235, 0.1);
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2),
+            0 0 0 1px rgba(37, 99, 235, 0.1);
           transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
         .slider-thumb::-webkit-slider-thumb:hover {
           transform: scale(1.15);
-          box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3), 0 0 0 1px rgba(37, 99, 235, 0.2);
+          box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3),
+            0 0 0 1px rgba(37, 99, 235, 0.2);
         }
         .slider-thumb::-webkit-slider-thumb:active {
           transform: scale(1.1);
@@ -464,7 +625,8 @@ export default function FriendsPage() {
           background: #2563eb;
           cursor: pointer;
           border: 4px solid white;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(37, 99, 235, 0.1);
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2),
+            0 0 0 1px rgba(37, 99, 235, 0.1);
         }
       `}</style>
     </main>

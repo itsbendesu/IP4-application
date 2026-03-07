@@ -40,6 +40,7 @@ export default function ApplyPage() {
     priorEventsWhich: [] as string[],
     threeWords: "",
     bio: "",
+    teachSkill: "",
     socials: {
       instagram: "",
       x: "",
@@ -271,6 +272,7 @@ export default function ApplyPage() {
             : "No",
           threeWords: formData.threeWords,
           bio: formData.bio,
+          teachSkill: formData.teachSkill || undefined,
           links: allLinks.length ? allLinks : undefined,
           website: formData.website, // Honeypot
         }),
@@ -662,8 +664,9 @@ export default function ApplyPage() {
       {/* Nav */}
       <nav className="border-b border-slate-100">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="font-serif text-xl font-bold text-slate-900 tracking-tight">
-            IP4
+          <Link href="/" className="flex items-center gap-1 font-bold text-lg text-stone-900 tracking-tight">
+            Interesting People
+            <sup className="text-blue-600 text-sm font-bold ml-0.5">4</sup>
           </Link>
           <Link
             href="/"
@@ -679,10 +682,10 @@ export default function ApplyPage() {
         {/* Hero */}
         <div className="text-center mb-6 md:mb-8">
           <h1 className="font-serif text-4xl md:text-5xl font-bold text-slate-900 tracking-tight mb-2">
-            Apply to IP4
+            Apply to Interesting People
           </h1>
           <p className="text-lg md:text-xl text-slate-500">
-            No resume, no LinkedIn. Just you.
+            Be interesting. Be nice. That&apos;s basically it.
           </p>
         </div>
 
@@ -727,20 +730,6 @@ export default function ApplyPage() {
           </div>
         </div>
 
-        {/* Quote */}
-        <div className="mb-6 md:mb-8 max-w-xl mx-auto text-center">
-          <svg className="w-6 h-6 text-blue-200 mx-auto mb-2" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
-          </svg>
-          <p className="text-base text-slate-600 leading-relaxed italic mb-2">
-            &ldquo;The application process itself told me this wasn&apos;t going to be
-            another boring conference. I was nervous recording my video, and
-            that&apos;s exactly why it worked.&rdquo;
-          </p>
-          <p className="text-sm text-slate-400">
-            &mdash; Priya R., IP3 Attendee
-          </p>
-        </div>
 
         {/* CTA */}
         <div className="text-center">
@@ -812,7 +801,7 @@ export default function ApplyPage() {
                     {step === "verification" && "Verify your email."}
                   </h2>
                   <p className="text-slate-500">
-                    {step === "basics" && "No resume, no LinkedIn. We want to know what makes you interesting."}
+                    {step === "basics" && "No cover letter. No credentials. We want to know what makes you interesting."}
                     {step === "questions" && "Just a couple things so we can get to know you better."}
                     {step === "story" && "This is the fun part\u2014tell us what lights you up."}
                     {step === "verification" && "Check your inbox for a 6-digit code."}
@@ -1103,6 +1092,24 @@ export default function ApplyPage() {
                       maxLength={500}
                       className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow resize-none bg-white"
                       placeholder="I spend my weekends building mechanical keyboards and arguing about which pizza style is best..."
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-900 mb-1">
+                      A skill I&apos;d be open to sharing with or teaching the group{" "}
+                      <span className="text-slate-400 font-normal">(optional)</span>
+                    </label>
+                    <p className="text-sm text-slate-500 mb-3">
+                      Pottery, poker, bread baking, stand-up comedy, whatever you&apos;ve got.
+                    </p>
+                    <input
+                      type="text"
+                      value={formData.teachSkill}
+                      onChange={(e) => updateField("teachSkill", e.target.value)}
+                      maxLength={300}
+                      className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-white"
+                      placeholder="e.g. Improv comedy, close-up magic, how to tell a story that lands"
                     />
                   </div>
 

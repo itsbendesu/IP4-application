@@ -62,6 +62,7 @@ model PendingApplication {
   priorEvents       String?  // Prior events attended (optional)
   threeWords        String   @default("") // Describe yourself in 3 words
   bio               String
+  teachSkill        String?  // Optional: a skill they'd share with the group
   links             Json?
   prompt            Prompt   @relation(fields: [promptId], references: [id])
   promptId      String
@@ -92,6 +93,7 @@ model Applicant {
   priorEvents String?     // Prior events attended (optional)
   threeWords  String      @default("") // Describe yourself in 3 words
   bio         String
+  teachSkill  String?     // Optional: a skill they'd share with the group
   links       Json?       // Array of URLs: ["https://...", "https://..."]
   createdAt   DateTime    @default(now())
   submission  Submission?

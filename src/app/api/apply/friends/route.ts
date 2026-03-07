@@ -8,6 +8,7 @@ const friendsSchema = z.object({
   email: z.string().email("Invalid email"),
   phone: z.string().min(1, "Phone is required").max(50),
   bio: z.string().min(3, "Tell us a little about yourself").max(500),
+  teachSkill: z.string().max(300).optional(),
   links: z.array(z.string().url()).optional().default([]),
   ticketType: z.enum(["friends-hotel", "friends-local", "patron-hotel", "patron-local", "gratis-hotel", "gratis-local"]),
   amount: z.number().min(0),
@@ -54,6 +55,7 @@ export async function POST(request: NextRequest) {
           heardAbout: "Friend of Andrew (invited)",
           threeWords: "",
           bio: data.bio,
+          teachSkill: data.teachSkill || undefined,
           links: data.links.length > 0 ? data.links : undefined,
         },
       });

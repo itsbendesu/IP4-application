@@ -18,7 +18,7 @@ const lora = Lora({
 });
 
 export const metadata: Metadata = {
-  title: "Interesting People 4 — A Gathering for the Genuinely Curious",
+  title: "Interesting People 4 — Victoria, July 2026",
   description:
     "Not a conference. Not a networking event. A curated gathering of 150 people selected for curiosity, depth, and emotional intelligence. Apply now.",
 };

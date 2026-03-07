@@ -55,6 +55,7 @@ export default function GratisPage() {
     email: "",
     phone: "",
     bio: "",
+    teachSkill: "",
     link: "",
   });
   const [submitting, setSubmitting] = useState(false);
@@ -80,6 +81,7 @@ export default function GratisPage() {
           email: form.email,
           phone: form.phone,
           bio: form.bio,
+          teachSkill: form.teachSkill || undefined,
           links: form.link ? [form.link] : [],
           ticketType: type === "hotel" ? "gratis-hotel" : "gratis-local",
           amount: value,
@@ -432,6 +434,23 @@ export default function GratisPage() {
 
                   <div>
                     <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                      A skill I&apos;d be open to sharing with or teaching the group{" "}
+                      <span className="text-stone-400 font-normal">(optional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={form.teachSkill}
+                      onChange={(e) =>
+                        setForm((f) => ({ ...f, teachSkill: e.target.value }))
+                      }
+                      maxLength={300}
+                      className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                      placeholder="e.g. Improv comedy, close-up magic, how to tell a story that lands"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-stone-700 mb-1.5">
                       Website or social link{" "}
                       <span className="text-stone-400 font-normal">
                         (optional)
@@ -516,7 +535,7 @@ export default function GratisPage() {
               <ul className="space-y-3">
                 {[
                   "All sessions, workshops & activities",
-                  "Every meal & drink for 3 days",
+                  "All food, drinks & transportation for 3 days",
                   "Comedy night, storytelling, magic",
                   "Curated dinner groups (skip the small talk)",
                   "Lake swims, late-night conversations, new friendships",
