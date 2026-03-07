@@ -85,7 +85,8 @@ export async function POST(request: NextRequest) {
             email: data.email,
             phone: data.phone,
             ticket_type: data.ticketType,
-            scholarship_amount: `$${data.amount.toLocaleString("en-US")}`,
+            price_override: data.amount,
+            heard_about: "Friend of Andrew (invited)",
             timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
             bio: data.bio,
             links: data.links,
@@ -93,7 +94,6 @@ export async function POST(request: NextRequest) {
             video_duration_sec: 0,
             prompt_text: null,
             source_id: result.submission.id,
-            source: "friends-invite",
           }),
         });
       } catch {
