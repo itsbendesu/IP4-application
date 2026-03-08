@@ -26,10 +26,10 @@ function getSliderLabel(value: number, type: "hotel" | "local") {
   const cost = ACTUAL_COST[type];
   const pct = value / cost;
   if (pct < 0.15) return "A little something";
-  if (pct < 0.35) return "More than you think";
-  if (pct < 0.65) return "Covering a real chunk";
-  if (pct < 0.85) return "Nearly covering your seat";
-  if (pct < 1.05) return "Your seat is covered";
+  if (pct < 0.35) return "A meaningful contribution";
+  if (pct < 0.65) return "Covering a real chunk of your seat";
+  if (pct < 1) return "Nearly covering your seat";
+  if (pct < 1.02) return "Your seat is covered";
   if (pct < 1.5) return "Someone else gets to be there because of you";
   if (pct < 2.5) return "Filling the room with people who belong here";
   return "This is seriously generous";
