@@ -82,7 +82,7 @@ export default function GratisPage() {
           phone: form.phone,
           bio: form.bio,
           teachSkill: form.teachSkill || undefined,
-          links: form.link ? [form.link] : [],
+          links: form.link ? [/^https?:\/\//i.test(form.link) ? form.link : `https://${form.link}`] : [],
           ticketType: type === "hotel" ? "gratis-hotel" : "gratis-local",
           amount: value,
         }),
@@ -457,13 +457,13 @@ export default function GratisPage() {
                       </span>
                     </label>
                     <input
-                      type="url"
+                      type="text"
                       value={form.link}
                       onChange={(e) =>
                         setForm((f) => ({ ...f, link: e.target.value }))
                       }
                       className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                      placeholder="https://..."
+                      placeholder="twitter.com/you, linkedin.com/in/you, etc."
                     />
                   </div>
 

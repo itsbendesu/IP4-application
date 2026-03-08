@@ -18,7 +18,7 @@ const startApplicationSchema = z.object({
   threeWords: z.string().min(1, "Please describe yourself in 3 words").max(100),
   bio: z.string().min(10, "Bio must be at least 10 characters").max(500, "Bio must be under 500 characters"),
   teachSkill: z.string().max(300).optional(),
-  links: z.array(z.string().url()).max(10).optional(),
+  links: z.array(z.string().min(1)).max(10).optional(),
   // Honeypot field - should be empty
   website: z.string().max(0, "Invalid submission").optional(),
 }).refine(

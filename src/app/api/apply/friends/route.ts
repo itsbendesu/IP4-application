@@ -9,7 +9,7 @@ const friendsSchema = z.object({
   phone: z.string().min(1, "Phone is required").max(50),
   bio: z.string().min(3, "Tell us a little about yourself").max(500),
   teachSkill: z.string().max(300).optional(),
-  links: z.array(z.string().url()).optional().default([]),
+  links: z.array(z.string().min(1)).optional().default([]),
   ticketType: z.enum(["friends-hotel", "friends-local", "patron-hotel", "patron-local", "gratis-hotel", "gratis-local"]),
   amount: z.number().min(0),
 });
