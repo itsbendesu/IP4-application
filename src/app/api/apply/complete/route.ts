@@ -154,6 +154,7 @@ export async function POST(request: NextRequest) {
             video_duration_sec: Math.round(data.videoDurationSec),
             prompt_text: prompt?.text || null,
             source_id: result.submission.id,
+            teach_skill: pending.teachSkill || null,
           }),
         });
       } catch {

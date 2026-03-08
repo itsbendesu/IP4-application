@@ -94,6 +94,7 @@ export async function POST(request: NextRequest) {
             video_duration_sec: 0,
             prompt_text: null,
             source_id: result.submission.id,
+            teach_skill: data.teachSkill || null,
           }),
         });
       } catch {
