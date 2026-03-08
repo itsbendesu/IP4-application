@@ -104,7 +104,7 @@ export default function FriendsPage() {
             className="flex items-center gap-1 font-bold text-lg text-stone-900 tracking-tight"
           >
             Interesting People
-            <sup className="text-blue-600 text-sm font-bold ml-0.5">4</sup>
+            <sup className="text-blue-600 text-sm font-bold">4</sup>
           </Link>
           <div className="flex items-center gap-8">
             <Link
@@ -573,7 +573,7 @@ export default function FriendsPage() {
             <div>
               <p className="text-lg font-bold text-stone-900 mb-1">
                 Interesting People
-                <sup className="text-blue-600 text-xs ml-0.5">4</sup>
+                <sup className="text-blue-600 text-xs">4</sup>
               </p>
               <p className="text-sm text-stone-400">
                 A gathering for the genuinely curious.

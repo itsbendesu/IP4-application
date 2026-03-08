@@ -666,7 +666,7 @@ export default function ApplyPage() {
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-1 font-bold text-lg text-stone-900 tracking-tight">
             Interesting People
-            <sup className="text-blue-600 text-sm font-bold ml-0.5">4</sup>
+            <sup className="text-blue-600 text-sm font-bold">4</sup>
           </Link>
           <Link
             href="/"

@@ -147,7 +147,7 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-lg border-b border-stone-100">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-1 font-bold text-lg text-stone-900 tracking-tight">
-            Interesting People<sup className="text-blue-600 text-sm font-bold ml-0.5">4</sup>
+            Interesting People<sup className="text-blue-600 text-sm font-bold">4</sup>
           </Link>
           <div className="flex items-center gap-8">
             <Link
@@ -776,7 +776,7 @@ export default function Home() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
             <div>
               <p className="text-lg font-bold text-stone-900 mb-1">
-                Interesting People<sup className="text-blue-600 text-xs ml-0.5">4</sup>
+                Interesting People<sup className="text-blue-600 text-xs">4</sup>
               </p>
               <p className="text-sm text-stone-400">
                 A gathering for the genuinely curious.
