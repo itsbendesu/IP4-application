@@ -129,6 +129,7 @@ export default function GratisPage() {
       </nav>
 
       {/* Hero */}
+      {step !== "submitted" && (
       <section className="pt-32 pb-16 md:pt-40 md:pb-20">
         <div className="max-w-3xl mx-auto px-6">
           <p className="text-sm font-medium tracking-[0.15em] text-blue-600 uppercase mb-4">
@@ -151,9 +152,10 @@ export default function GratisPage() {
           </div>
         </div>
       </section>
+      )}
 
       {/* Main Content */}
-      <section className="pb-24 md:pb-32">
+      <section className={`pb-24 md:pb-32 ${step === "submitted" ? "pt-32 md:pt-40" : ""}`}>
         <div className="max-w-2xl mx-auto px-6">
 
           {/* ── STEP: PRICING ── */}
