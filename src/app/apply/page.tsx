@@ -46,6 +46,7 @@ export default function ApplyPage() {
       x: "",
       tiktok: "",
       youtube: "",
+      linkedin: "",
       website: "",
     },
     projectLinks: [""],
@@ -141,6 +142,7 @@ export default function ApplyPage() {
       x: `https://x.com/${handle}`,
       tiktok: `https://tiktok.com/@${handle}`,
       youtube: `https://youtube.com/@${handle}`,
+      linkedin: `https://linkedin.com/in/${handle}`,
       website: `https://${v}`,
     };
     return bases[platform] || `https://${v}`;
@@ -1124,6 +1126,7 @@ export default function ApplyPage() {
                       {([
                         { key: "instagram", label: "Instagram", placeholder: "yourhandle" },
                         { key: "x", label: "X (Twitter)", placeholder: "yourhandle" },
+                        { key: "linkedin", label: "LinkedIn", placeholder: "yourhandle" },
                         { key: "tiktok", label: "TikTok", placeholder: "yourhandle" },
                         { key: "youtube", label: "YouTube", placeholder: "yourchannel" },
                         { key: "website", label: "Personal Website", placeholder: "yoursite.com" },

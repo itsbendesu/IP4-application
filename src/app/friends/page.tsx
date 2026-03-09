@@ -52,8 +52,25 @@ export default function FriendsPage() {
     phone: "",
     bio: "",
     teachSkill: "",
-    link: "",
+    socials: { instagram: "", x: "", tiktok: "", youtube: "", linkedin: "", website: "" },
   });
+
+  const normalizeSocialUrl = (platform: string, value: string): string => {
+    const v = value.trim();
+    if (!v) return "";
+    if (/^https?:\/\//i.test(v)) return v;
+    if (v.includes(".")) return `https://${v}`;
+    const handle = v.replace(/^@/, "");
+    const bases: Record<string, string> = {
+      instagram: `https://instagram.com/${handle}`,
+      x: `https://x.com/${handle}`,
+      tiktok: `https://tiktok.com/@${handle}`,
+      youtube: `https://youtube.com/@${handle}`,
+      linkedin: `https://linkedin.com/in/${handle}`,
+      website: `https://${v}`,
+    };
+    return bases[platform] || `https://${v}`;
+  };
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -77,7 +94,9 @@ export default function FriendsPage() {
           phone: form.phone,
           bio: form.bio,
           teachSkill: form.teachSkill || undefined,
-          links: form.link ? [/^https?:\/\//i.test(form.link) ? form.link : `https://${form.link}`] : [],
+          links: Object.entries(form.socials)
+            .filter(([, v]) => v.trim())
+            .map(([platform, value]) => normalizeSocialUrl(platform, value)),
           ticketType: type === "hotel" ? "friends-hotel" : "friends-local",
           amount: value,
         }),
@@ -450,20 +469,34 @@ export default function FriendsPage() {
 
                   <div>
                     <label className="block text-sm font-medium text-stone-700 mb-1.5">
-                      Website or social link{" "}
+                      Social profiles{" "}
                       <span className="text-stone-400 font-normal">
-                        (optional)
+                        (optional — share at least one so we can get to know you)
                       </span>
                     </label>
-                    <input
-                      type="text"
-                      value={form.link}
-                      onChange={(e) =>
-                        setForm((f) => ({ ...f, link: e.target.value }))
-                      }
-                      className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                      placeholder="twitter.com/you, linkedin.com/in/you, etc."
-                    />
+                    <div className="space-y-2">
+                      {([
+                        { key: "instagram", label: "Instagram", placeholder: "yourhandle" },
+                        { key: "x", label: "X (Twitter)", placeholder: "yourhandle" },
+                        { key: "linkedin", label: "LinkedIn", placeholder: "yourhandle" },
+                        { key: "tiktok", label: "TikTok", placeholder: "yourhandle" },
+                        { key: "youtube", label: "YouTube", placeholder: "yourchannel" },
+                        { key: "website", label: "Website", placeholder: "yoursite.com" },
+                      ] as const).map((platform) => (
+                        <div key={platform.key} className="flex items-center gap-3">
+                          <span className="text-sm text-stone-500 w-24 flex-shrink-0">{platform.label}</span>
+                          <input
+                            type="text"
+                            value={form.socials[platform.key]}
+                            onChange={(e) =>
+                              setForm((f) => ({ ...f, socials: { ...f.socials, [platform.key]: e.target.value } }))
+                            }
+                            className="flex-1 px-4 py-2.5 border border-stone-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm"
+                            placeholder={platform.placeholder}
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
                   {error && (
