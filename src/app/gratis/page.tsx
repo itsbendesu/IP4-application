@@ -546,7 +546,7 @@ export default function GratisPage() {
                 You&apos;re in.
               </h2>
               <p className="text-stone-500 leading-relaxed max-w-md mx-auto mb-2">
-                We&apos;ve got your details. Andrew&apos;s team will be in touch
+                We&apos;ve got your details. We&apos;ll be in touch
                 with everything you need to know.
               </p>
               {value > 0 && (

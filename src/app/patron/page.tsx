@@ -406,7 +406,7 @@ export default function PatronPage() {
                 You&apos;re on the list.
               </h2>
               <p className="text-stone-500 leading-relaxed max-w-md mx-auto mb-2">
-                We&apos;ve got your details. Andrew&apos;s team will be in touch with
+                We&apos;ve got your details. We&apos;ll be in touch with
                 next steps and payment info.
               </p>
               <p className="text-sm text-stone-400">
