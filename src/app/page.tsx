@@ -72,6 +72,14 @@ const faqs = [
     q: "What if I\u2019m not a founder or executive?",
     a: "Good. We\u2019re not selecting for titles. Teachers, artists, scientists, writers, community organizers \u2014 some of the most interesting people at IP3 had nothing to do with startups.",
   },
+  {
+    q: "What is the weather generally like during this time of year?",
+    a: "Pretty much perfect. Late July is Victoria\u2019s sweet spot \u2014 the driest, sunniest stretch of the year. Expect warm, sunny days in the mid-to-upper 20s\u00b0C (mid-to-upper 70s\u00b0F) with low humidity and almost no rain. Evenings cool down to around 12\u00b0C (54\u00b0F), so bring a layer. It\u2019s the kind of weather where you never check the forecast and it never matters.",
+  },
+  {
+    q: "What do I pack?",
+    a: "Whatever makes you feel like you. The weekend covers a lot of ground \u2014 a casual cocktail party the first night, a sauna and swimming, dinner and an evening of entertainment, a day on the lake and sand, and watersports. Think one or two things you can get wet in, something you\u2019d wear to a nice dinner, and layers for the evenings \u2014 we\u2019re on an island on the Pacific Coast, and it cools down once the sun drops. No dress code. No one\u2019s checking.",
+  },
 ];
 
 function TestimonialBlock({
@@ -119,7 +127,7 @@ function AnglePhotos({
   images: { src: string; alt: string; rotate: string }[];
 }) {
   return (
-    <div className="pt-2 pb-8 md:pt-4 md:pb-12 overflow-hidden">
+    <div className="py-16 md:py-24 bg-white overflow-hidden">
       <div className="max-w-5xl mx-auto px-6 flex justify-center items-center gap-4 md:gap-8">
         {images.map((img, i) => (
           <div
@@ -151,16 +159,16 @@ export default function Home() {
           </Link>
           <div className="flex items-center gap-8">
             <Link
-              href="#about"
-              className="hidden md:block text-sm text-stone-500 hover:text-stone-900 transition-colors"
-            >
-              About
-            </Link>
-            <Link
               href="#people"
               className="hidden md:block text-sm text-stone-500 hover:text-stone-900 transition-colors"
             >
               People
+            </Link>
+            <Link
+              href="#about"
+              className="hidden md:block text-sm text-stone-500 hover:text-stone-900 transition-colors"
+            >
+              About
             </Link>
             <Link
               href="#process"
@@ -225,10 +233,52 @@ export default function Home() {
       </section>
 
       {/* Testimonial — Shaan Puri */}
-      <TestimonialBlock {...featuredTestimonials[1]} />
+      <TestimonialBlock {...featuredTestimonials[1]} bg="bg-stone-50" />
+
+      {/* Alumni Grid */}
+      <section className="bg-white py-24 md:py-32" id="people">
+        <div className="max-w-6xl mx-auto px-6">
+          <h2 className="text-3xl md:text-5xl font-bold text-stone-900 tracking-tight mb-4">
+            Some of our alumni.
+          </h2>
+          <p className="text-lg text-stone-500 max-w-2xl mb-12">
+            Founders, comedians, scientists, storytellers, artists, investors. The only thing they have in common is that they&apos;re interesting.
+          </p>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 md:gap-8">
+            {notablePeople.map((person) => (
+              <div key={person.name} className="text-center group">
+                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden mx-auto mb-3 relative bg-stone-200 ring-2 ring-transparent group-hover:ring-blue-300 transition-all">
+                  <Image
+                    src={person.image}
+                    alt={person.name}
+                    fill
+                    className="object-cover grayscale"
+                    sizes="96px"
+                  />
+                </div>
+                <p className="font-semibold text-stone-900 text-sm">{person.name}</p>
+                <p className="text-xs text-stone-400">{person.role}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonial — Steph Smith */}
+      <TestimonialBlock {...featuredTestimonials[0]} bg="bg-stone-50" />
+
+      {/* Angled photos — performances & speakers */}
+      <AnglePhotos
+        images={[
+          { src: "/images/ip3/comedy-night-wide.jpeg", alt: "Comedy night at IP3", rotate: "-rotate-3" },
+          { src: "/images/ip3/outdoor-hangout.jpeg", alt: "Outdoor hangout at IP3", rotate: "rotate-2" },
+          { src: "/images/ip3/animated-conversation.jpeg", alt: "Animated conversation at IP3", rotate: "-rotate-1" },
+        ]}
+      />
 
       {/* A Note from Andrew */}
-      <section className="bg-stone-50 pt-14 md:pt-20 pb-24 md:pb-32" id="about">
+      <section className="bg-stone-50 py-24 md:py-32" id="about">
         <div className="max-w-6xl mx-auto px-6">
           <div className="max-w-3xl">
             <h2 className="text-3xl md:text-5xl font-bold text-stone-900 tracking-tight mb-4">How it all started.</h2>
@@ -277,54 +327,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Angled photos — performances & speakers */}
-      <AnglePhotos
-        images={[
-          { src: "/images/ip3/comedy-night-wide.jpeg", alt: "Comedy night at IP3", rotate: "-rotate-3" },
-          { src: "/images/ip3/outdoor-hangout.jpeg", alt: "Outdoor hangout at IP3", rotate: "rotate-2" },
-          { src: "/images/ip3/animated-conversation.jpeg", alt: "Animated conversation at IP3", rotate: "-rotate-1" },
-        ]}
-      />
-
       {/* Photo Gallery */}
       <section className="py-16 md:py-24">
         <div className="max-w-6xl mx-auto px-6">
           <p className="text-2xl md:text-3xl font-bold text-stone-900 tracking-tight mb-1">What happens when 150 interesting people put their phones away.</p>
           <p className="text-sm text-stone-400 mb-4">Show and tell. Comedy. Music. Incredible food. Magic (yes, literally).</p>
           <PhotoGallery />
-        </div>
-      </section>
-
-      {/* Testimonial — Steph Smith */}
-      <TestimonialBlock {...featuredTestimonials[0]} bg="bg-stone-50" />
-
-      {/* Alumni Grid */}
-      <section className="bg-white py-24 md:py-32" id="people">
-        <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-3xl md:text-5xl font-bold text-stone-900 tracking-tight mb-4">
-            Some of our alumni.
-          </h2>
-          <p className="text-lg text-stone-500 max-w-2xl mb-12">
-            Founders, comedians, scientists, storytellers, artists, investors. The only thing they have in common is that they&apos;re interesting.
-          </p>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 md:gap-8">
-            {notablePeople.map((person) => (
-              <div key={person.name} className="text-center group">
-                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden mx-auto mb-3 relative bg-stone-200 ring-2 ring-transparent group-hover:ring-blue-300 transition-all">
-                  <Image
-                    src={person.image}
-                    alt={person.name}
-                    fill
-                    className="object-cover grayscale"
-                    sizes="96px"
-                  />
-                </div>
-                <p className="font-semibold text-stone-900 text-sm">{person.name}</p>
-                <p className="text-xs text-stone-400">{person.role}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -406,100 +414,6 @@ export default function Home() {
           </Link>
         </div>
       </div>
-
-      {/* What We Look For */}
-      <section className="py-24 md:py-32 bg-stone-50">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row md:items-start md:gap-16 mb-16">
-            <div className="md:flex-1">
-              <h2 className="text-3xl md:text-5xl font-bold text-stone-900 tracking-tight mb-6">
-                What gets you in.
-              </h2>
-              <p className="text-lg text-stone-500 mb-6">
-                When we review applications, we ask one question: did this person make us
-                feel warm and gooey inside?
-              </p>
-              <p className="text-lg text-stone-500 mb-6">
-                We immediately cross people off when we see red flags like:{" "}
-                <span className="text-stone-700 font-medium">&ldquo;Chief Innovation Officer.&rdquo;</span>{" "}
-                <span className="text-stone-700 font-medium">&ldquo;Futurist.&rdquo;</span>{" "}
-                <span className="text-stone-700 font-medium">&ldquo;Catalyst.&rdquo;</span>{" "}
-                <span className="text-stone-700 font-medium">&ldquo;Change Maker.&rdquo;</span>{" "}
-                And the most dreaded of all:{" "}
-                <span className="text-stone-700 font-medium">&ldquo;Forbes 30 Under 30.&rdquo;</span>
-              </p>
-              <p className="text-lg text-stone-500">
-                We&apos;re not looking for titles. We&apos;re looking for three things.
-              </p>
-            </div>
-
-            {/* Fake LinkedIn card with red sharpie slashes */}
-            <div className="hidden md:block md:w-72 lg:w-80 flex-shrink-0 mt-8 md:mt-4">
-              <div className="relative bg-white rounded-xl shadow-lg border border-stone-200 overflow-hidden rotate-2">
-                {/* LinkedIn-style header */}
-                <div className="h-16 bg-gradient-to-r from-blue-700 to-blue-500" />
-                <div className="px-5 pb-5">
-                  {/* Avatar */}
-                  <div className="w-16 h-16 rounded-full bg-stone-300 border-4 border-white -mt-8 mb-3 overflow-hidden relative">
-                    <Image
-                      src="/images/chad-worthington.jpg"
-                      alt="Chad Worthington III"
-                      fill
-                      className="object-cover"
-                      sizes="64px"
-                    />
-                  </div>
-                  <p className="font-bold text-stone-900 text-sm">Chad Worthington III</p>
-                  <p className="text-xs text-stone-500 mt-0.5">Chief Innovation Officer</p>
-                  <p className="text-xs text-stone-400 mt-0.5">Forbes 30 Under 30 | TEDx Speaker</p>
-                  <p className="text-xs text-stone-400">Disruptor | Thought Leader | Catalyst</p>
-                  <div className="mt-3 flex gap-2">
-                    <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">500+ connections</span>
-                  </div>
-                </div>
-                {/* NOPE stamp */}
-                <div className="absolute top-12 right-3 pointer-events-none">
-                  <div className="border-4 border-red-600 rounded-md px-4 py-1.5 rotate-[-12deg] opacity-90">
-                    <span className="text-red-600 text-2xl font-black tracking-widest uppercase">NOPE</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="group">
-              <span className="number-accent text-5xl md:text-6xl font-bold">01</span>
-              <h3 className="text-2xl font-semibold text-stone-900 mt-4 mb-4">Curiosity</h3>
-              <p className="text-stone-500 leading-relaxed">
-                The kind of person who makes you lean in at dinner. Who asks surprising
-                questions. Who has depth, not just credentials. Who goes down rabbit
-                holes for the joy of it.
-              </p>
-            </div>
-
-            <div className="group">
-              <span className="number-accent text-5xl md:text-6xl font-bold">02</span>
-              <h3 className="text-2xl font-semibold text-stone-900 mt-4 mb-4">Generosity</h3>
-              <p className="text-stone-500 leading-relaxed">
-                Interesting people make others feel interesting too. They remember
-                the small detail you mentioned in passing. They show up fully and
-                contribute rather than spectate.
-              </p>
-            </div>
-
-            <div className="group">
-              <span className="number-accent text-5xl md:text-6xl font-bold">03</span>
-              <h3 className="text-2xl font-semibold text-stone-900 mt-4 mb-4">Good Energy</h3>
-              <p className="text-stone-500 leading-relaxed">
-                People who read rooms. Who can disagree without making it personal.
-                Who connect without performing. Who make the space better just by
-                being in it.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Testimonial — Matthew Dicks */}
       <TestimonialBlock {...featuredTestimonials[2]} />
@@ -607,8 +521,102 @@ export default function Home() {
         </div>
       </section>
 
+      {/* What We Look For */}
+      <section className="py-24 md:py-32 bg-stone-50">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="flex flex-col md:flex-row md:items-start md:gap-16 mb-16">
+            <div className="md:flex-1">
+              <h2 className="text-3xl md:text-5xl font-bold text-stone-900 tracking-tight mb-6">
+                What gets you in.
+              </h2>
+              <p className="text-lg text-stone-500 mb-6">
+                When we review applications, we ask one question: did this person make us
+                feel warm and gooey inside?
+              </p>
+              <p className="text-lg text-stone-500 mb-6">
+                We immediately cross people off when we see red flags like:{" "}
+                <span className="text-stone-700 font-medium">&ldquo;Chief Innovation Officer.&rdquo;</span>{" "}
+                <span className="text-stone-700 font-medium">&ldquo;Futurist.&rdquo;</span>{" "}
+                <span className="text-stone-700 font-medium">&ldquo;Catalyst.&rdquo;</span>{" "}
+                <span className="text-stone-700 font-medium">&ldquo;Change Maker.&rdquo;</span>{" "}
+                And the most dreaded of all:{" "}
+                <span className="text-stone-700 font-medium">&ldquo;Forbes 30 Under 30.&rdquo;</span>
+              </p>
+              <p className="text-lg text-stone-500">
+                We&apos;re not looking for titles. We&apos;re looking for three things.
+              </p>
+            </div>
+
+            {/* Fake LinkedIn card with red sharpie slashes */}
+            <div className="hidden md:block md:w-72 lg:w-80 flex-shrink-0 mt-8 md:mt-4">
+              <div className="relative bg-white rounded-xl shadow-lg border border-stone-200 overflow-hidden rotate-2">
+                {/* LinkedIn-style header */}
+                <div className="h-16 bg-gradient-to-r from-blue-700 to-blue-500" />
+                <div className="px-5 pb-5">
+                  {/* Avatar */}
+                  <div className="w-16 h-16 rounded-full bg-stone-300 border-4 border-white -mt-8 mb-3 overflow-hidden relative">
+                    <Image
+                      src="/images/chad-worthington.jpg"
+                      alt="Chad Worthington III"
+                      fill
+                      className="object-cover"
+                      sizes="64px"
+                    />
+                  </div>
+                  <p className="font-bold text-stone-900 text-sm">Chad Worthington III</p>
+                  <p className="text-xs text-stone-500 mt-0.5">Chief Innovation Officer</p>
+                  <p className="text-xs text-stone-400 mt-0.5">Forbes 30 Under 30 | TEDx Speaker</p>
+                  <p className="text-xs text-stone-400">Disruptor | Thought Leader | Catalyst</p>
+                  <div className="mt-3 flex gap-2">
+                    <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">500+ connections</span>
+                  </div>
+                </div>
+                {/* NOPE stamp */}
+                <div className="absolute top-12 right-3 pointer-events-none">
+                  <div className="border-4 border-red-600 rounded-md px-4 py-1.5 rotate-[-12deg] opacity-90">
+                    <span className="text-red-600 text-2xl font-black tracking-widest uppercase">NOPE</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="group">
+              <span className="number-accent text-5xl md:text-6xl font-bold">01</span>
+              <h3 className="text-2xl font-semibold text-stone-900 mt-4 mb-4">Curiosity</h3>
+              <p className="text-stone-500 leading-relaxed">
+                The kind of person who makes you lean in at dinner. Who asks surprising
+                questions. Who has depth, not just credentials. Who goes down rabbit
+                holes for the joy of it.
+              </p>
+            </div>
+
+            <div className="group">
+              <span className="number-accent text-5xl md:text-6xl font-bold">02</span>
+              <h3 className="text-2xl font-semibold text-stone-900 mt-4 mb-4">Generosity</h3>
+              <p className="text-stone-500 leading-relaxed">
+                Interesting people make others feel interesting too. They remember
+                the small detail you mentioned in passing. They show up fully and
+                contribute rather than spectate.
+              </p>
+            </div>
+
+            <div className="group">
+              <span className="number-accent text-5xl md:text-6xl font-bold">03</span>
+              <h3 className="text-2xl font-semibold text-stone-900 mt-4 mb-4">Good Energy</h3>
+              <p className="text-stone-500 leading-relaxed">
+                People who read rooms. Who can disagree without making it personal.
+                Who connect without performing. Who make the space better just by
+                being in it.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Pricing */}
-      <section className="bg-stone-50 py-24 md:py-32" id="pricing">
+      <section className="bg-white py-24 md:py-32" id="pricing">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold text-stone-900 tracking-tight mb-4">
@@ -743,7 +751,7 @@ export default function Home() {
       </section>
 
       {/* FAQ */}
-      <section className="py-24 md:py-32 bg-white" id="faq">
+      <section className="py-24 md:py-32 bg-stone-50" id="faq">
         <div className="max-w-3xl mx-auto px-6">
           <h2 className="text-3xl md:text-5xl font-bold text-stone-900 tracking-tight mb-16">
             Questions we hear a lot.

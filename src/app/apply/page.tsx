@@ -221,6 +221,13 @@ export default function ApplyPage() {
 
   const infoSteps: Step[] = ["basics", "questions", "story"];
 
+  const findFirstIncompleteStep = (): Step => {
+    for (const s of infoSteps) {
+      if (validateStep(s)) return s;
+    }
+    return "story"; // All complete — land on story for final review
+  };
+
   const handleNext = () => {
     const err = validateStep(step);
     if (err) {
@@ -763,7 +770,7 @@ export default function ApplyPage() {
         {/* CTA */}
         <div className="text-center">
           <button
-            onClick={() => setModalOpen(true)}
+            onClick={() => { setStep(findFirstIncompleteStep()); setModalOpen(true); }}
             className="px-10 py-3.5 bg-blue-600 text-white rounded-full font-medium text-lg hover:bg-blue-700 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-blue-600/25"
           >
             Get Started
@@ -1074,7 +1081,7 @@ export default function ApplyPage() {
 
                     <div>
                       <label htmlFor="apply-three-words" className="block text-sm font-medium text-slate-900 mb-2">
-                        Describe yourself in 3 words
+                        Describe yourself in 3 words <span className="text-red-500">*</span>
                       </label>
                       <input
                         id="apply-three-words"
@@ -1082,7 +1089,6 @@ export default function ApplyPage() {
                         value={formData.threeWords}
                         onChange={(e) => updateField("threeWords", e.target.value)}
                         className="w-full px-4 py-3.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-white"
-                        placeholder="Curious, restless, optimistic"
                       />
                     </div>
                   </div>
@@ -1153,10 +1159,10 @@ export default function ApplyPage() {
 
                   <div>
                     <label className="block text-sm font-medium text-slate-900 mb-1">
-                      Social Profiles
+                      Social Profiles <span className="text-red-500">*</span>
                     </label>
                     <p className="text-sm text-slate-500 mb-3">
-                      Share at least one to help us get to know you better.
+                      At least one required.
                     </p>
                     <div className="space-y-3">
                       {([
