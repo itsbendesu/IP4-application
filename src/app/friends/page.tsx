@@ -387,10 +387,11 @@ export default function FriendsPage() {
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                    <label htmlFor="friends-name" className="block text-sm font-medium text-stone-700 mb-1.5">
                       Name
                     </label>
                     <input
+                      id="friends-name"
                       type="text"
                       required
                       value={form.name}
@@ -403,10 +404,11 @@ export default function FriendsPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                    <label htmlFor="friends-email" className="block text-sm font-medium text-stone-700 mb-1.5">
                       Email
                     </label>
                     <input
+                      id="friends-email"
                       type="email"
                       required
                       value={form.email}
@@ -419,10 +421,11 @@ export default function FriendsPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                    <label htmlFor="friends-phone" className="block text-sm font-medium text-stone-700 mb-1.5">
                       Phone
                     </label>
                     <input
+                      id="friends-phone"
                       type="tel"
                       required
                       value={form.phone}
@@ -435,10 +438,11 @@ export default function FriendsPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                    <label htmlFor="friends-bio" className="block text-sm font-medium text-stone-700 mb-1.5">
                       About you
                     </label>
                     <textarea
+                      id="friends-bio"
                       required
                       value={form.bio}
                       onChange={(e) =>
@@ -451,11 +455,12 @@ export default function FriendsPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                    <label htmlFor="friends-teach-skill" className="block text-sm font-medium text-stone-700 mb-1.5">
                       A skill I&apos;d be open to sharing with or teaching the group{" "}
                       <span className="text-stone-400 font-normal">(optional)</span>
                     </label>
                     <input
+                      id="friends-teach-skill"
                       type="text"
                       value={form.teachSkill}
                       onChange={(e) =>
@@ -484,8 +489,9 @@ export default function FriendsPage() {
                         { key: "website", label: "Website", placeholder: "yoursite.com" },
                       ] as const).map((platform) => (
                         <div key={platform.key} className="flex items-center gap-3">
-                          <span className="text-sm text-stone-500 w-24 flex-shrink-0">{platform.label}</span>
+                          <label htmlFor={`friends-social-${platform.key}`} className="text-sm text-stone-500 w-24 flex-shrink-0">{platform.label}</label>
                           <input
+                            id={`friends-social-${platform.key}`}
                             type="text"
                             value={form.socials[platform.key]}
                             onChange={(e) =>

@@ -133,9 +133,11 @@ export async function POST(request: NextRequest) {
     after(async () => {
       try {
         const prompt = await prisma.prompt.findUnique({ where: { id: pending.promptId } });
+        const headers: Record<string, string> = { "Content-Type": "application/json" };
+        if (process.env.WEBHOOK_SECRET) headers["x-webhook-secret"] = process.env.WEBHOOK_SECRET;
         await fetch(`${ipBrainUrl}/api/events/ip4/applications`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers,
           body: JSON.stringify({
             name: pending.name,
             email: pending.email,

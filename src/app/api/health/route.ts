@@ -39,7 +39,8 @@ export async function GET() {
     health.checks.database.latencyMs = Date.now() - dbStart;
   } catch (error) {
     health.checks.database.status = "error";
-    health.checks.database.error = error instanceof Error ? error.message : "Unknown error";
+    console.error("Health check DB error:", error);
+    health.checks.database.error = "Database unavailable";
     health.status = "unhealthy";
   }
 

@@ -40,6 +40,7 @@ export default function UploadPage() {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isRecording, setIsRecording] = useState(false);
   const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
+  const [recordedUrl, setRecordedUrl] = useState<string | null>(null);
   const [duration, setDuration] = useState(0);
   const [currentPromptIndex, setCurrentPromptIndex] = useState(0);
 
@@ -138,6 +139,7 @@ export default function UploadPage() {
     mediaRecorder.onstop = () => {
       const blob = new Blob(chunksRef.current, { type: "video/webm" });
       setRecordedBlob(blob);
+      setRecordedUrl(URL.createObjectURL(blob));
       stopCamera();
     };
 
@@ -376,7 +378,9 @@ export default function UploadPage() {
   };
 
   const clearVideo = () => {
+    if (recordedUrl) URL.revokeObjectURL(recordedUrl);
     setRecordedBlob(null);
+    setRecordedUrl(null);
     setUploadProgress(0);
     setVideoDuration(0);
     setDuration(0);
@@ -620,6 +624,18 @@ export default function UploadPage() {
                   <p className="text-sm text-emerald-600">{formatTime(videoDuration || duration)} — ready to submit</p>
                 </div>
               </div>
+
+              {/* Video preview */}
+              {recordedUrl && (
+                <div className="bg-slate-900 rounded-xl overflow-hidden">
+                  <video
+                    src={recordedUrl}
+                    controls
+                    playsInline
+                    className="w-full aspect-video"
+                  />
+                </div>
+              )}
             </div>
           )}
 

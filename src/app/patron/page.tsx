@@ -268,10 +268,11 @@ export default function PatronPage() {
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                    <label htmlFor="patron-name" className="block text-sm font-medium text-stone-700 mb-1.5">
                       Name
                     </label>
                     <input
+                      id="patron-name"
                       type="text"
                       required
                       value={form.name}
@@ -282,10 +283,11 @@ export default function PatronPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                    <label htmlFor="patron-email" className="block text-sm font-medium text-stone-700 mb-1.5">
                       Email
                     </label>
                     <input
+                      id="patron-email"
                       type="email"
                       required
                       value={form.email}
@@ -296,10 +298,11 @@ export default function PatronPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                    <label htmlFor="patron-phone" className="block text-sm font-medium text-stone-700 mb-1.5">
                       Phone
                     </label>
                     <input
+                      id="patron-phone"
                       type="tel"
                       required
                       value={form.phone}
@@ -310,10 +313,11 @@ export default function PatronPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                    <label htmlFor="patron-bio" className="block text-sm font-medium text-stone-700 mb-1.5">
                       About you
                     </label>
                     <textarea
+                      id="patron-bio"
                       required
                       value={form.bio}
                       onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value }))}
@@ -324,11 +328,12 @@ export default function PatronPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                    <label htmlFor="patron-teach-skill" className="block text-sm font-medium text-stone-700 mb-1.5">
                       A skill I&apos;d be open to sharing with or teaching the group{" "}
                       <span className="text-stone-400 font-normal">(optional)</span>
                     </label>
                     <input
+                      id="patron-teach-skill"
                       type="text"
                       value={form.teachSkill}
                       onChange={(e) => setForm((f) => ({ ...f, teachSkill: e.target.value }))}
@@ -355,8 +360,9 @@ export default function PatronPage() {
                         { key: "website", label: "Website", placeholder: "yoursite.com" },
                       ] as const).map((platform) => (
                         <div key={platform.key} className="flex items-center gap-3">
-                          <span className="text-sm text-stone-500 w-24 flex-shrink-0">{platform.label}</span>
+                          <label htmlFor={`patron-social-${platform.key}`} className="text-sm text-stone-500 w-24 flex-shrink-0">{platform.label}</label>
                           <input
+                            id={`patron-social-${platform.key}`}
                             type="text"
                             value={form.socials[platform.key]}
                             onChange={(e) =>

@@ -82,6 +82,24 @@ export default function ApplyPage() {
   const MAX_DURATION = 90;
   const PROMPT_DURATION = 45;
 
+  // Warn before leaving if form has data
+  useEffect(() => {
+    const hasData = Object.entries(formData).some(([key, val]) => {
+      if (key === "timezone" || key === "localSwear" || key === "priorEvents") return false;
+      if (key === "priorEventsWhich" || key === "projectLinks") return (val as string[]).some((v) => v.trim());
+      if (key === "socials") return Object.values(val as Record<string, string>).some((v) => v.trim());
+      return typeof val === "string" && val.trim() !== "";
+    });
+
+    if (!hasData || step === "confirmation") return;
+
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, [formData, step]);
+
   // Lock body scroll and handle Escape key when modal is open
   useEffect(() => {
     if (!modalOpen) return;
@@ -379,8 +397,17 @@ export default function ApplyPage() {
       setStream(mediaStream);
       setError(null);
       setHasStarted(true);
-    } catch {
-      setError("Could not access camera. Please grant permission and try again.");
+    } catch (err) {
+      const name = err instanceof DOMException ? err.name : "";
+      if (name === "NotAllowedError") {
+        setError("Camera access denied. Please allow camera access in your browser settings and try again.");
+      } else if (name === "NotFoundError") {
+        setError("No camera found. Please connect a camera and try again.");
+      } else if (name === "NotReadableError") {
+        setError("Camera is in use by another application. Please close other apps using the camera.");
+      } else {
+        setError("Could not access camera. Please check your browser settings.");
+      }
     }
   }, []);
 
@@ -823,10 +850,11 @@ export default function ApplyPage() {
                 <div className="space-y-8">
                   <div className="space-y-6">
                     <div>
-                      <label className="block text-sm font-medium text-slate-900 mb-2">
+                      <label htmlFor="apply-name" className="block text-sm font-medium text-slate-900 mb-2">
                         Full Name
                       </label>
                       <input
+                        id="apply-name"
                         type="text"
                         value={formData.name}
                         onChange={(e) => updateField("name", e.target.value)}
@@ -836,10 +864,11 @@ export default function ApplyPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-slate-900 mb-2">
+                      <label htmlFor="apply-email" className="block text-sm font-medium text-slate-900 mb-2">
                         Email
                       </label>
                       <input
+                        id="apply-email"
                         type="email"
                         value={formData.email}
                         onChange={(e) => updateField("email", e.target.value)}
@@ -849,10 +878,11 @@ export default function ApplyPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-slate-900 mb-2">
+                      <label htmlFor="apply-phone" className="block text-sm font-medium text-slate-900 mb-2">
                         Phone Number
                       </label>
                       <input
+                        id="apply-phone"
                         type="tel"
                         value={formData.phone}
                         onChange={(e) => updateField("phone", e.target.value)}
@@ -862,7 +892,7 @@ export default function ApplyPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-slate-900 mb-2">
+                      <label id="apply-ticket-type-label" className="block text-sm font-medium text-slate-900 mb-2">
                         Ticket Type
                       </label>
                       <div className="flex gap-3">
@@ -895,10 +925,11 @@ export default function ApplyPage() {
                       )}
                       {formData.ticketType === "scholarship" && (
                         <div className="mt-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
-                          <label className="block text-sm font-medium text-slate-900 mb-2">
+                          <label htmlFor="apply-scholarship-amount" className="block text-sm font-medium text-slate-900 mb-2">
                             How much can you afford to pay?
                           </label>
                           <input
+                            id="apply-scholarship-amount"
                             type="text"
                             value={formData.scholarshipAmount}
                             onChange={(e) => updateField("scholarshipAmount", e.target.value)}
@@ -913,10 +944,11 @@ export default function ApplyPage() {
                     {formData.ticketType === "local" && (
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-sm font-medium text-slate-900 mb-2">
+                          <label htmlFor="apply-address" className="block text-sm font-medium text-slate-900 mb-2">
                             Street Address
                           </label>
                           <input
+                            id="apply-address"
                             type="text"
                             value={formData.address}
                             onChange={(e) => updateField("address", e.target.value)}
@@ -969,10 +1001,11 @@ export default function ApplyPage() {
                 <div className="space-y-8">
                   <div className="space-y-6">
                     <div>
-                      <label className="block text-sm font-medium text-slate-900 mb-2">
+                      <label htmlFor="apply-heard-about" className="block text-sm font-medium text-slate-900 mb-2">
                         How did you hear about Interesting People?
                       </label>
                       <input
+                        id="apply-heard-about"
                         type="text"
                         value={formData.heardAbout}
                         onChange={(e) => updateField("heardAbout", e.target.value)}
@@ -1040,10 +1073,11 @@ export default function ApplyPage() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-slate-900 mb-2">
+                      <label htmlFor="apply-three-words" className="block text-sm font-medium text-slate-900 mb-2">
                         Describe yourself in 3 words
                       </label>
                       <input
+                        id="apply-three-words"
                         type="text"
                         value={formData.threeWords}
                         onChange={(e) => updateField("threeWords", e.target.value)}
@@ -1076,7 +1110,7 @@ export default function ApplyPage() {
               {step === "story" && (
                 <form onSubmit={handleSubmitInfo} className="space-y-8">
                   <div>
-                    <label className="block text-sm font-medium text-slate-900 mb-1">
+                    <label htmlFor="apply-bio" className="block text-sm font-medium text-slate-900 mb-1">
                       Short Bio
                     </label>
                     <div className="flex items-center justify-between mb-3">
@@ -1088,6 +1122,7 @@ export default function ApplyPage() {
                       </span>
                     </div>
                     <textarea
+                      id="apply-bio"
                       value={formData.bio}
                       onChange={(e) => updateField("bio", e.target.value)}
                       rows={4}
@@ -1098,7 +1133,7 @@ export default function ApplyPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-slate-900 mb-1">
+                    <label htmlFor="apply-teach-skill" className="block text-sm font-medium text-slate-900 mb-1">
                       A skill I&apos;d be open to sharing with or teaching the group{" "}
                       <span className="text-slate-400 font-normal">(optional)</span>
                     </label>
@@ -1106,6 +1141,7 @@ export default function ApplyPage() {
                       Pottery, poker, bread baking, stand-up comedy, whatever you&apos;ve got.
                     </p>
                     <input
+                      id="apply-teach-skill"
                       type="text"
                       value={formData.teachSkill}
                       onChange={(e) => updateField("teachSkill", e.target.value)}
@@ -1132,8 +1168,9 @@ export default function ApplyPage() {
                         { key: "website", label: "Personal Website", placeholder: "yoursite.com" },
                       ] as const).map((platform) => (
                         <div key={platform.key} className="flex items-center gap-3">
-                          <span className="text-sm text-slate-500 w-32 flex-shrink-0">{platform.label}</span>
+                          <label htmlFor={`apply-social-${platform.key}`} className="text-sm text-slate-500 w-32 flex-shrink-0">{platform.label}</label>
                           <input
+                            id={`apply-social-${platform.key}`}
                             type="text"
                             value={formData.socials[platform.key]}
                             onChange={(e) => updateSocial(platform.key, e.target.value)}
@@ -1243,10 +1280,11 @@ export default function ApplyPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-slate-900 mb-2">
+                    <label htmlFor="apply-verification-code" className="block text-sm font-medium text-slate-900 mb-2">
                       Verification Code
                     </label>
                     <input
+                      id="apply-verification-code"
                       type="text"
                       value={verificationCode}
                       onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
@@ -1458,6 +1496,18 @@ export default function ApplyPage() {
                             <p className="text-sm text-emerald-600">{formatTime(videoDuration || duration)} — ready to submit</p>
                           </div>
                         </div>
+
+                        {/* Video preview */}
+                        {recordedUrl && (
+                          <div className="bg-slate-900 rounded-xl overflow-hidden">
+                            <video
+                              src={recordedUrl}
+                              controls
+                              playsInline
+                              className="w-full aspect-video"
+                            />
+                          </div>
+                        )}
                       </div>
                     )}
 

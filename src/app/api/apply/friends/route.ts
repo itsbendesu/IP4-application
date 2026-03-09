@@ -77,9 +77,11 @@ export async function POST(request: NextRequest) {
     const ipBrainUrl = process.env.IP_BRAIN_URL || "https://ipevents.co";
     after(async () => {
       try {
+        const headers: Record<string, string> = { "Content-Type": "application/json" };
+        if (process.env.WEBHOOK_SECRET) headers["x-webhook-secret"] = process.env.WEBHOOK_SECRET;
         await fetch(`${ipBrainUrl}/api/events/ip4/applications`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers,
           body: JSON.stringify({
             name: data.name,
             email: data.email,

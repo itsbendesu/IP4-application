@@ -10,7 +10,7 @@ export interface SessionData {
 }
 
 export const sessionOptions: SessionOptions = {
-  password: process.env.SESSION_SECRET || "complex_password_at_least_32_characters_long_for_dev",
+  password: process.env.SESSION_SECRET || "complex_password_at_least_32_characters_long_for_dev_only",
   cookieName: "interesting-people-session",
   cookieOptions: {
     secure: process.env.NODE_ENV === "production",

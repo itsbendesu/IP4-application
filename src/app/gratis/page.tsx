@@ -390,10 +390,11 @@ export default function GratisPage() {
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                    <label htmlFor="gratis-name" className="block text-sm font-medium text-stone-700 mb-1.5">
                       Name
                     </label>
                     <input
+                      id="gratis-name"
                       type="text"
                       required
                       value={form.name}
@@ -406,10 +407,11 @@ export default function GratisPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                    <label htmlFor="gratis-email" className="block text-sm font-medium text-stone-700 mb-1.5">
                       Email
                     </label>
                     <input
+                      id="gratis-email"
                       type="email"
                       required
                       value={form.email}
@@ -422,10 +424,11 @@ export default function GratisPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                    <label htmlFor="gratis-phone" className="block text-sm font-medium text-stone-700 mb-1.5">
                       Phone
                     </label>
                     <input
+                      id="gratis-phone"
                       type="tel"
                       required
                       value={form.phone}
@@ -438,10 +441,11 @@ export default function GratisPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                    <label htmlFor="gratis-bio" className="block text-sm font-medium text-stone-700 mb-1.5">
                       About you
                     </label>
                     <textarea
+                      id="gratis-bio"
                       required
                       value={form.bio}
                       onChange={(e) =>
@@ -454,11 +458,12 @@ export default function GratisPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-stone-700 mb-1.5">
+                    <label htmlFor="gratis-teach-skill" className="block text-sm font-medium text-stone-700 mb-1.5">
                       A skill I&apos;d be open to sharing with or teaching the group{" "}
                       <span className="text-stone-400 font-normal">(optional)</span>
                     </label>
                     <input
+                      id="gratis-teach-skill"
                       type="text"
                       value={form.teachSkill}
                       onChange={(e) =>
@@ -487,8 +492,9 @@ export default function GratisPage() {
                         { key: "website", label: "Website", placeholder: "yoursite.com" },
                       ] as const).map((platform) => (
                         <div key={platform.key} className="flex items-center gap-3">
-                          <span className="text-sm text-stone-500 w-24 flex-shrink-0">{platform.label}</span>
+                          <label htmlFor={`gratis-social-${platform.key}`} className="text-sm text-stone-500 w-24 flex-shrink-0">{platform.label}</label>
                           <input
+                            id={`gratis-social-${platform.key}`}
                             type="text"
                             value={form.socials[platform.key]}
                             onChange={(e) =>
