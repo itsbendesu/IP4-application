@@ -11,10 +11,10 @@ const PRICING = {
 };
 
 const SCHOLARSHIP_DESCRIPTIONS = [
-  "a young creative who couldn't otherwise afford to be here",
-  "an emerging artist or builder who'd never get this chance",
+  "someone brilliant who couldn't otherwise afford to be here",
+  "an interesting person who'd never get this chance",
   "someone early in their career who belongs in the room",
-  "a creator who'll remember this weekend for the rest of their life",
+  "a brilliant person who'll remember this weekend for the rest of their life",
 ];
 
 function getDescription(index: number) {
@@ -160,7 +160,7 @@ export default function FriendsPage() {
             <p>
               Pick what feels right for you — whether that&apos;s covering our
               cost or chipping in extra so we can offer more scholarship spots
-              to artists and creatives who can&apos;t afford the ticket. All
+              to brilliant people who couldn&apos;t otherwise attend. All
               prices are in US dollars.
             </p>
           </div>
@@ -324,7 +324,7 @@ export default function FriendsPage() {
                           Your seat is covered. The extra{" "}
                           <strong>{formatPrice(aboveCost)}</strong>{" "}
                           {fullScholarships >= 2
-                            ? `puts ${fullScholarships} young creatives in the room who wouldn't be here without you.`
+                            ? `puts ${fullScholarships} brilliant people in the room who wouldn't be here without you.`
                             : fullScholarships === 1
                               ? `puts ${getDescription(0)} in the room.`
                               : `goes toward bringing ${getDescription(0)} into the room.`}
@@ -557,7 +557,7 @@ export default function FriendsPage() {
                 </p>
               )}
               <p className="text-sm text-stone-400">
-                July 27–30, 2026 &middot; Victoria, Canada
+                July 27–29, 2026 &middot; Victoria, Canada
               </p>
             </div>
           )}
@@ -631,6 +631,12 @@ export default function FriendsPage() {
               >
                 Privacy
               </Link>
+              <a
+                href="mailto:hello@ipevents.co"
+                className="text-stone-500 hover:text-stone-900 transition-colors"
+              >
+                hello@ipevents.co
+              </a>
             </div>
           </div>
         </div>

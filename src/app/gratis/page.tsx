@@ -11,10 +11,10 @@ const PRICING = {
 };
 
 const SCHOLARSHIP_DESCRIPTIONS = [
-  "a young creative who couldn't otherwise afford to be here",
-  "an emerging artist or builder who'd never get this chance",
+  "someone brilliant who couldn't otherwise afford to be here",
+  "an interesting person who'd never get this chance",
   "someone early in their career who belongs in the room",
-  "a creator who'll remember this weekend for the rest of their life",
+  "a brilliant person who'll remember this weekend for the rest of their life",
 ];
 
 function getDescription(index: number) {
@@ -165,7 +165,7 @@ export default function GratisPage() {
             <p>
               That said, each seat costs us {formatPrice(cost)} to produce. If you&apos;re
               in a position to contribute — any amount at all — it helps us offer
-              more scholarship spots to artists and creatives who otherwise
+              more scholarship spots to interesting people who otherwise
               couldn&apos;t attend.
             </p>
           </div>
@@ -290,7 +290,7 @@ export default function GratisPage() {
                       {value < cost ? (
                         <p className="text-sm text-stone-600">
                           That covers {Math.round((value / cost) * 100)}% of your seat — every
-                          dollar makes it easier to bring in emerging artists and creators
+                          dollar makes it easier to bring in interesting people
                           who&apos;d never get this chance otherwise.
                         </p>
                       ) : value === cost ? (
@@ -321,7 +321,7 @@ export default function GratisPage() {
                           <p className="text-sm text-emerald-800 leading-relaxed">
                             Your seat is covered. The extra <strong>{formatPrice(aboveCost)}</strong>{" "}
                             {fullScholarships >= 2
-                              ? `puts ${fullScholarships} young creatives in the room who wouldn't be here without you.`
+                              ? `puts ${fullScholarships} brilliant people in the room who wouldn't be here without you.`
                               : fullScholarships === 1
                                 ? `puts ${getDescription(0)} in the room.`
                                 : `goes toward bringing ${getDescription(0)} into the room.`
@@ -562,7 +562,7 @@ export default function GratisPage() {
                 </p>
               )}
               <p className="text-sm text-stone-400">
-                July 27–30, 2026 &middot; Victoria, Canada
+                July 27–29, 2026 &middot; Victoria, Canada
               </p>
             </div>
           )}
@@ -636,6 +636,12 @@ export default function GratisPage() {
               >
                 Privacy
               </Link>
+              <a
+                href="mailto:hello@ipevents.co"
+                className="text-stone-500 hover:text-stone-900 transition-colors"
+              >
+                hello@ipevents.co
+              </a>
             </div>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { verifyUpload, deleteUpload, isR2Configured } from "@/lib/r2";
 import { isEmailVerificationEnabled } from "@/lib/email-verification";
+import { sendEmail, applicationConfirmationEmail } from "@/lib/email";
 
 const completeSchema = z.object({
   token: z.string().min(1),
@@ -132,7 +133,10 @@ export async function POST(request: NextRequest) {
     const ipBrainUrl = process.env.IP_BRAIN_URL || "https://ipevents.co";
     after(async () => {
       try {
-        const prompt = await prisma.prompt.findUnique({ where: { id: pending.promptId } });
+        const [prompt, allActivePrompts] = await Promise.all([
+          prisma.prompt.findUnique({ where: { id: pending.promptId } }),
+          prisma.prompt.findMany({ where: { active: true }, select: { text: true } }),
+        ]);
         const headers: Record<string, string> = { "Content-Type": "application/json" };
         if (process.env.WEBHOOK_SECRET) headers["x-webhook-secret"] = process.env.WEBHOOK_SECRET;
         await fetch(`${ipBrainUrl}/api/events/ip4/applications`, {
@@ -155,12 +159,25 @@ export async function POST(request: NextRequest) {
             video_url: data.videoUrl,
             video_duration_sec: Math.round(data.videoDurationSec),
             prompt_text: prompt?.text || null,
+            prompt_texts: allActivePrompts.map((p) => p.text),
             source_id: result.submission.id,
             teach_skill: pending.teachSkill || null,
           }),
         });
       } catch {
         // Silently ignore — IPHQ being down shouldn't block the user
+      }
+
+      // Send confirmation email to applicant
+      try {
+        const confirmation = applicationConfirmationEmail(pending.name);
+        await sendEmail({
+          to: pending.email,
+          subject: confirmation.subject,
+          html: confirmation.html,
+        });
+      } catch (emailErr) {
+        console.error("Failed to send confirmation email:", emailErr);
       }
     });
 

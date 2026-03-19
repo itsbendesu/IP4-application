@@ -55,6 +55,8 @@ export default function ApplyPage() {
   });
 
   const [consentGiven, setConsentGiven] = useState(false);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const errorRef = useRef<HTMLDivElement>(null);
 
   const [verificationCode, setVerificationCode] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
@@ -82,6 +84,13 @@ export default function ApplyPage() {
   const MAX_DURATION = 90;
   const PROMPT_DURATION = 45;
 
+  // Scroll error into view when it appears
+  useEffect(() => {
+    if (error && errorRef.current) {
+      errorRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [error]);
+
   // Warn before leaving if form has data
   useEffect(() => {
     const hasData = Object.entries(formData).some(([key, val]) => {
@@ -107,12 +116,8 @@ export default function ApplyPage() {
     document.body.style.overflow = "hidden";
 
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        if (step === "confirmation") {
-          setModalOpen(false);
-        } else if (step === "basics" && !formData.name && !formData.email.trim()) {
-          setModalOpen(false);
-        }
+      if (e.key === "Escape" && step === "confirmation") {
+        setModalOpen(false);
       }
     };
 
@@ -598,6 +603,7 @@ export default function ApplyPage() {
       }
 
       setStep("confirmation");
+      setHasSubmitted(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -771,11 +777,18 @@ export default function ApplyPage() {
         <div className="text-center">
           <button
             onClick={() => { setStep(findFirstIncompleteStep()); setModalOpen(true); }}
-            className="px-10 py-3.5 bg-blue-600 text-white rounded-full font-medium text-lg hover:bg-blue-700 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-blue-600/25"
+            disabled={hasSubmitted}
+            className={`px-10 py-3.5 rounded-full font-medium text-lg transition-all shadow-lg ${
+              hasSubmitted
+                ? "bg-slate-300 text-slate-500 cursor-not-allowed shadow-none"
+                : "bg-blue-600 text-white hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98] shadow-blue-600/25"
+            }`}
           >
-            Get Started
+            {hasSubmitted ? "Application Submitted" : "Get Started"}
           </button>
-          <p className="mt-2 text-sm text-slate-400">Takes about 5 minutes</p>
+          <p className="mt-2 text-sm text-slate-400">
+            {hasSubmitted ? "You\u2019ve already submitted your application." : "Takes about 5 minutes"}
+          </p>
         </div>
       </div>
 
@@ -783,7 +796,6 @@ export default function ApplyPage() {
       {modalOpen && (
         <div
           className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 sm:p-6"
-          onClick={canCloseModal ? handleCloseModal : undefined}
         >
           <div
             className="bg-white w-full max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl relative transition-[max-width] duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]"
@@ -847,7 +859,7 @@ export default function ApplyPage() {
 
               {/* Error banner */}
               {error && step !== "confirmation" && (
-                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+                <div ref={errorRef} className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
                   {error}
                 </div>
               )}
@@ -943,7 +955,7 @@ export default function ApplyPage() {
                             className="w-full px-4 py-3.5 border border-amber-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-shadow bg-white"
                             placeholder="e.g. $500, $1,000, whatever I can"
                           />
-                          <p className="text-xs text-slate-500 mt-2">No judgment. We set aside spots for artists, musicians, and creatives who&apos;d make the event better but can&apos;t swing the full price.</p>
+                          <p className="text-xs text-slate-500 mt-2">No judgment. We set aside spots for brilliant people who&apos;d make the event better but can&apos;t swing the full price.</p>
                         </div>
                       )}
                     </div>
@@ -1441,7 +1453,7 @@ export default function ApplyPage() {
                     {/* Recording view */}
                     {stream && !recordedBlob && (
                       <div className="space-y-5">
-                        <div className="relative bg-black rounded-xl overflow-hidden aspect-video">
+                        <div className="relative bg-black rounded-xl overflow-hidden aspect-[3/4] sm:aspect-video">
                           <video
                             ref={videoRef}
                             autoPlay
@@ -1510,7 +1522,7 @@ export default function ApplyPage() {
                               src={recordedUrl}
                               controls
                               playsInline
-                              className="w-full aspect-video"
+                              className="w-full aspect-[3/4] sm:aspect-video"
                             />
                           </div>
                         )}
@@ -1545,7 +1557,7 @@ export default function ApplyPage() {
                         {submitting ? "Submitting..." : "Submit Application"}
                       </button>
                       <p className="text-center text-sm text-slate-500">
-                        By submitting, you confirm this is your final take.
+                        Reminder: you can only submit your application once.
                       </p>
                     </div>
                   )}

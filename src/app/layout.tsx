@@ -23,6 +23,12 @@ export const metadata: Metadata = {
     "Not a conference. Not a networking event. A curated gathering of 150 people selected for curiosity, depth, and emotional intelligence. Apply now.",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{

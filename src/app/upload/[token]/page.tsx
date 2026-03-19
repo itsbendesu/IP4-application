@@ -563,7 +563,7 @@ export default function UploadPage() {
           {/* Recording view */}
           {stream && !recordedBlob && (
             <div className="space-y-6">
-              <div className="relative bg-black rounded-xl overflow-hidden aspect-video">
+              <div className="relative bg-black rounded-xl overflow-hidden aspect-[3/4] sm:aspect-video">
                 <video
                   ref={videoRef}
                   autoPlay
@@ -632,7 +632,7 @@ export default function UploadPage() {
                     src={recordedUrl}
                     controls
                     playsInline
-                    className="w-full aspect-video"
+                    className="w-full aspect-[3/4] sm:aspect-video"
                   />
                 </div>
               )}
@@ -668,7 +668,7 @@ export default function UploadPage() {
               {submitting ? "Submitting..." : "Submit Application"}
             </button>
             <p className="text-center text-sm text-slate-500">
-              By submitting, you confirm this is your final take.
+              Reminder: you can only submit your application once.
             </p>
           </div>
         )}

@@ -132,8 +132,7 @@ export default function PatronPage() {
             </p>
             <p>
               Every dollar above our costs goes directly toward scholarships
-              for artists, creators, and brilliant people who couldn&apos;t
-              otherwise afford to attend.
+              for interesting people who couldn&apos;t otherwise attend.
             </p>
           </div>
         </div>
@@ -152,8 +151,8 @@ export default function PatronPage() {
                   Name your price
                 </p>
                 <p className="text-sm text-stone-500 mb-8">
-                  Whatever feels right. Your generosity funds scholarships for people who&apos;d
-                  bring something special but can&apos;t afford the ticket.
+                  Whatever feels right. Your generosity funds scholarships for brilliant
+                  people who&apos;d make the event better but couldn&apos;t otherwise attend.
                 </p>
 
                 {/* Suggested amounts */}
@@ -416,7 +415,7 @@ export default function PatronPage() {
                 next steps and payment info.
               </p>
               <p className="text-sm text-stone-400">
-                July 27–30, 2026 &middot; Victoria, Canada
+                July 27–29, 2026 &middot; Victoria, Canada
               </p>
             </div>
           )}
@@ -481,6 +480,12 @@ export default function PatronPage() {
               >
                 Privacy
               </Link>
+              <a
+                href="mailto:hello@ipevents.co"
+                className="text-stone-500 hover:text-stone-900 transition-colors"
+              >
+                hello@ipevents.co
+              </a>
             </div>
           </div>
         </div>

@@ -54,7 +54,7 @@ const faqs = [
   },
   {
     q: "Where and when is IP4?",
-    a: "July 27\u201330, 2026 in Victoria, Canada. Somewhere beautiful, walkable, and away from the noise.",
+    a: "July 27\u201329, 2026 in Victoria, Canada. Somewhere beautiful, walkable, and away from the noise.",
   },
   {
     q: "How many people attend?",
@@ -217,7 +217,7 @@ export default function Home() {
             <span className="text-blue-300 font-medium">being actual humans</span>.
           </p>
           <p className="mt-6 text-sm font-medium tracking-wide text-white/60 uppercase">
-            July 27&ndash;30, 2026 &middot; Victoria, Canada
+            July 27&ndash;29, 2026 &middot; Victoria, Canada
           </p>
           <div className="mt-6 flex flex-col items-start gap-3">
             <Link
@@ -247,8 +247,8 @@ export default function Home() {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 md:gap-8">
             {notablePeople.map((person) => (
-              <div key={person.name} className="text-center group">
-                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden mx-auto mb-3 relative bg-stone-200 ring-2 ring-transparent group-hover:ring-blue-300 transition-all">
+              <div key={person.name} className="text-center">
+                <div className="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden mx-auto mb-3 relative bg-stone-200">
                   <Image
                     src={person.image}
                     alt={person.name}
@@ -737,7 +737,7 @@ export default function Home() {
                 Money tight? We still want you here.
               </p>
               <p className="text-sm text-stone-500 mt-1">
-                We set aside spots for artists, comedians, musicians, and creatives who&apos;d make the event better but can&apos;t swing the price tag. No shame, just a different application.
+                We set aside spots for interesting people who&apos;d make the event better but can&apos;t swing the price tag. No shame, just a different application.
               </p>
             </div>
             <Link
@@ -803,6 +803,9 @@ export default function Home() {
               <Link href="#faq" className="text-stone-500 hover:text-stone-900 transition-colors">
                 FAQ
               </Link>
+              <a href="mailto:hello@ipevents.co" className="text-stone-500 hover:text-stone-900 transition-colors">
+                hello@ipevents.co
+              </a>
             </div>
           </div>
           <div className="mt-8 pt-8 border-t border-stone-100 text-sm text-stone-400">
