@@ -214,9 +214,8 @@ export default function Home() {
             They&apos;re about sitting. Making awkward small talk. Bragging at the bar. Status.{" "}
             <span className="text-white font-medium">They suck.</span>{" "}
             This is not that. This is 150 people selected for{" "}
-            <span className="text-blue-300 font-medium">curiosity</span>,{" "}
-            <span className="text-blue-300 font-medium">depth</span>, and{" "}
-            <span className="text-blue-300 font-medium">being actual humans</span>.
+            <span className="text-white font-bold">curiosity</span> and{" "}
+            <span className="text-white font-bold">warmth</span>.
           </p>
           <p className="mt-6 text-sm font-medium tracking-wide text-white/60 uppercase">
             July 27&ndash;29, 2026 &middot; Victoria, Canada
@@ -306,8 +305,7 @@ export default function Home() {
               <p>
                 So I built the opposite. Like Harvard, but instead of needing a trust
                 fund and a last name that&apos;s on a building somewhere, you just need to
-                be interesting and nice. No agenda. No pressure. Just 150 genuinely curious
-                humans and the space to connect like actual people.
+                be interesting and nice.
               </p>
             </div>
             <div className="mt-10 flex items-center gap-4">
@@ -417,30 +415,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Testimonial — Matthew Dicks */}
-      <section className="py-10 md:py-14 bg-white">
-        <div className="max-w-5xl mx-auto px-6 text-center">
-          <p className="text-2xl md:text-3xl lg:text-4xl text-stone-800 leading-relaxed font-serif italic">
-            &ldquo;Met a roomful of people who were genuinely incredible human beings: Smart. Kind. Generous. Curious. Open minded. A collection of damn unicorns.&rdquo;
-          </p>
-          <div className="mt-5 flex flex-col items-center gap-2">
-            <div className="w-12 h-12 rounded-full overflow-hidden relative bg-stone-200 flex-shrink-0">
-              <Image
-                src={featuredTestimonials[2].image}
-                alt={featuredTestimonials[2].name}
-                fill
-                className="object-cover"
-                sizes="48px"
-              />
-            </div>
-            <div>
-              <p className="font-semibold text-stone-900 text-sm not-italic">{featuredTestimonials[2].name}</p>
-              <p className="text-xs text-stone-400 not-italic">{featuredTestimonials[2].descriptor}</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* The IP Difference — red/green treatment */}
       <section className="py-24 md:py-32 bg-stone-50 overflow-hidden">
         <div className="max-w-6xl mx-auto px-6">
@@ -479,6 +453,30 @@ export default function Home() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonial — Matthew Dicks */}
+      <section className="py-10 md:py-14 bg-white">
+        <div className="max-w-5xl mx-auto px-6 text-center">
+          <p className="text-2xl md:text-3xl lg:text-4xl text-stone-800 leading-relaxed font-serif italic">
+            &ldquo;Met a roomful of people who were genuinely incredible human beings: Smart. Kind. Generous. Curious. Open minded. A collection of damn unicorns.&rdquo;
+          </p>
+          <div className="mt-5 flex flex-col items-center gap-2">
+            <div className="w-12 h-12 rounded-full overflow-hidden relative bg-stone-200 flex-shrink-0">
+              <Image
+                src={featuredTestimonials[2].image}
+                alt={featuredTestimonials[2].name}
+                fill
+                className="object-cover"
+                sizes="48px"
+              />
+            </div>
+            <div>
+              <p className="font-semibold text-stone-900 text-sm not-italic">{featuredTestimonials[2].name}</p>
+              <p className="text-xs text-stone-400 not-italic">{featuredTestimonials[2].descriptor}</p>
+            </div>
           </div>
         </div>
       </section>
@@ -617,7 +615,7 @@ export default function Home() {
 
             <div className="group">
               <span className="number-accent text-5xl md:text-6xl font-bold">02</span>
-              <h3 className="text-2xl font-semibold text-stone-900 mt-4 mb-4">Generosity</h3>
+              <h3 className="text-2xl font-semibold text-stone-900 mt-4 mb-4">Warmth</h3>
               <p className="text-stone-500 leading-relaxed">
                 Interesting people make others feel interesting too. They remember
                 the small detail you mentioned in passing. They show up fully and
@@ -627,7 +625,7 @@ export default function Home() {
 
             <div className="group">
               <span className="number-accent text-5xl md:text-6xl font-bold">03</span>
-              <h3 className="text-2xl font-semibold text-stone-900 mt-4 mb-4">Good Energy</h3>
+              <h3 className="text-2xl font-semibold text-stone-900 mt-4 mb-4">Not Being a Douche</h3>
               <p className="text-stone-500 leading-relaxed">
                 People who read rooms. Who can disagree without making it personal.
                 Who connect without performing. Who make the space better just by
