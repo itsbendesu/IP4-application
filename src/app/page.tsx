@@ -26,21 +26,21 @@ const notablePeople = [
 const featuredTestimonials = [
   {
     quote:
-      "A super well run event. I had a blast.",
-    name: "Shaan Puri",
-    descriptor: "Co-host, My First Million",
-    image: "/images/speakers/shaan-puri.jpg",
+      "I\u2019ve been to Davos, Sun Valley, TED \u2014 this was better.",
+    name: "IP3 Attendee",
+    descriptor: "",
+    image: "",
   },
   {
     quote:
-      "Interesting People is exactly what a conference should be, but often isn\u2019t. A small, curated group with programming focused on connection instead of cookie-cutter content.",
+      "Interesting People is exactly what a conference should be, but often isn\u2019t.",
     name: "Steph Smith",
     descriptor: "Creator of Internet Pipes, a16z Podcast Host",
     image: "/images/speakers/steph-smith.jpg",
   },
   {
     quote:
-      "Met a roomful of people who were genuinely incredible human beings: Smart. Kind. Generous. Curious. Open minded. A collection of damn unicorns!",
+      "Met a roomful of people who were genuinely incredible human beings: Smart. Kind. Generous. Curious. Open minded. A collection of damn unicorns.",
     name: "Matthew Dicks",
     descriptor: "Author of Storyworthy",
     image: "/images/speakers/matthew-dicks.jpg",
@@ -98,22 +98,24 @@ function TestimonialBlock({
   return (
     <section className={`py-10 md:py-14 ${bg}`}>
       <div className="max-w-4xl mx-auto px-6 text-center">
-        <p className="text-2xl md:text-3xl lg:text-4xl text-stone-800 leading-relaxed font-serif italic">
+        <p className="text-2xl md:text-3xl lg:text-4xl text-stone-800 leading-relaxed font-serif italic text-balance">
           &ldquo;{quote}&rdquo;
         </p>
         <div className="mt-5 flex flex-col items-center gap-2">
-          <div className="w-12 h-12 rounded-full overflow-hidden relative bg-stone-200 flex-shrink-0">
-            <Image
-              src={image}
-              alt={name}
-              fill
-              className="object-cover"
-              sizes="48px"
-            />
-          </div>
+          {image && (
+            <div className="w-12 h-12 rounded-full overflow-hidden relative bg-stone-200 flex-shrink-0">
+              <Image
+                src={image}
+                alt={name}
+                fill
+                className="object-cover"
+                sizes="48px"
+              />
+            </div>
+          )}
           <div>
-            <p className="font-semibold text-stone-900 text-sm">{name}</p>
-            <p className="text-xs text-stone-400">{descriptor}</p>
+            <p className="font-semibold text-stone-900 text-sm">{image ? name : `\u2014 ${name}`}</p>
+            {descriptor && <p className="text-xs text-stone-400">{descriptor}</p>}
           </div>
         </div>
       </div>
@@ -345,21 +347,21 @@ export default function Home() {
 
           {/* Hero quote */}
           <div className="text-center mb-16">
-            <p className="text-3xl md:text-4xl lg:text-5xl font-serif italic text-white/70 leading-snug max-w-3xl mx-auto">
-              &ldquo;I&apos;ve been to Davos, Sun Valley, TED &mdash; this was better.&rdquo;
+            <p className="text-3xl md:text-4xl lg:text-5xl font-serif italic text-white/70 leading-snug max-w-3xl mx-auto text-balance">
+              &ldquo;I usually find events a waste of time, but Interesting People was the opposite.&rdquo;
             </p>
             <p className="text-white/40 text-sm mt-6">
-              &mdash; IP3 Attendee
+              &mdash; Greg Isenberg, CEO, Late Checkout
             </p>
           </div>
 
           {/* Quote grid — 2x2, big and juicy */}
           <div className="grid md:grid-cols-2 gap-6 md:gap-8 mb-20">
             {[
-              { quote: "I usually find events a waste of time, but Interesting People was the opposite.", name: "Greg Isenberg", role: "CEO, Late Checkout", image: "/images/speakers/greg-isenberg.jpg" },
               { quote: "It\u2019s rare that you go to an event where the bulk of people aren\u2019t on their phone.", name: "Jayson Gaignard", role: "Founder, Mastermind Talks", image: "/images/speakers/jayson-gaignard.avif" },
               { quote: "A great collection of smart people working on interesting things.", name: "Nick Gray", role: "Author & Founder", image: "/images/speakers/nick-gray.jpg" },
               { quote: "So many inspiring conversations, connections made, learnings and insight.", name: "Tessa McLoughlin", role: "Founder & Director, KWENCH", image: "/images/speakers/tessa-mcloughlin.avif" },
+              { quote: "I had a blast.", name: "Shaan Puri", role: "Co-host, My First Million", image: "/images/speakers/shaan-puri.jpg" },
             ].map((t, i) => (
               <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-8 md:p-10">
                 <p className="text-xl md:text-2xl text-white leading-relaxed mb-8">
@@ -401,14 +403,14 @@ export default function Home() {
       </section>
 
       {/* Scarcity bar */}
-      <div className="bg-blue-600 py-4">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-center gap-3 text-center">
-          <p className="text-white font-medium">
+      <div className="bg-blue-600 py-6">
+        <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-center gap-4 text-center">
+          <p className="text-white font-medium text-lg md:text-xl">
             Only 150 spots. Over 6,000 applications last year.
           </p>
           <Link
             href="/apply"
-            className="text-sm text-blue-100 underline underline-offset-2 hover:text-white transition-colors"
+            className="text-base text-blue-100 underline underline-offset-2 hover:text-white transition-colors"
           >
             Apply before it&apos;s too late &rarr;
           </Link>
@@ -416,7 +418,28 @@ export default function Home() {
       </div>
 
       {/* Testimonial — Matthew Dicks */}
-      <TestimonialBlock {...featuredTestimonials[2]} />
+      <section className="py-10 md:py-14 bg-white">
+        <div className="max-w-5xl mx-auto px-6 text-center">
+          <p className="text-2xl md:text-3xl lg:text-4xl text-stone-800 leading-relaxed font-serif italic">
+            &ldquo;Met a roomful of people who were genuinely incredible human beings: Smart. Kind. Generous. Curious. Open minded. A collection of damn unicorns.&rdquo;
+          </p>
+          <div className="mt-5 flex flex-col items-center gap-2">
+            <div className="w-12 h-12 rounded-full overflow-hidden relative bg-stone-200 flex-shrink-0">
+              <Image
+                src={featuredTestimonials[2].image}
+                alt={featuredTestimonials[2].name}
+                fill
+                className="object-cover"
+                sizes="48px"
+              />
+            </div>
+            <div>
+              <p className="font-semibold text-stone-900 text-sm not-italic">{featuredTestimonials[2].name}</p>
+              <p className="text-xs text-stone-400 not-italic">{featuredTestimonials[2].descriptor}</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* The IP Difference — red/green treatment */}
       <section className="py-24 md:py-32 bg-stone-50 overflow-hidden">
