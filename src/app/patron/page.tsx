@@ -9,11 +9,11 @@ function formatPrice(amount: number) {
 
 type Step = "pricing" | "form" | "submitted";
 
-const SUGGESTED_AMOUNTS = [10000, 15000, 20000, 25000];
+const SUGGESTED_AMOUNTS = [19999, 24999, 34999, 49999];
 
 export default function PatronPage() {
   const [step, setStep] = useState<Step>("pricing");
-  const [value, setValue] = useState(10000);
+  const [value, setValue] = useState(19999);
   const [customInput, setCustomInput] = useState("");
   const [needsHotel, setNeedsHotel] = useState(true);
 
@@ -120,19 +120,20 @@ export default function PatronPage() {
       <section className="pt-32 pb-16 md:pt-40 md:pb-20">
         <div className="max-w-3xl mx-auto px-6">
           <p className="text-sm font-medium tracking-[0.15em] text-blue-600 uppercase mb-4">
-            Personal Invitation
+            Patron Program
           </p>
           <h1 className="text-4xl md:text-6xl font-bold text-stone-900 tracking-tight leading-[1.1] mb-6">
-            You&apos;re one of Andrew&apos;s people.
+            The room gets better when you&apos;re in it.
           </h1>
           <div className="text-lg md:text-xl text-stone-600 leading-relaxed space-y-4">
             <p>
-              Andrew personally invited you to IP4. That means you&apos;re
-              already in — no application, no video, no hoops.
+              Some of the most interesting people we know are artists, writers, teachers, and founders who can&apos;t drop $10k on a conference. As a patron, every dollar above our costs goes directly toward bringing those people into the room.
             </p>
             <p>
-              Every dollar above our costs goes directly toward scholarships
-              for interesting people who couldn&apos;t otherwise attend.
+              Last year, patron-funded scholarships brought in a Moth champion storyteller, an Antarctic researcher, and a 22-year-old who&apos;d built a school in rural Kenya. They made the event better for everyone — including the patrons who funded them.
+            </p>
+            <p>
+              You&apos;ll still go through the application process — we want to get to know you. Choose your level below, then apply.
             </p>
           </div>
         </div>
@@ -148,26 +149,31 @@ export default function PatronPage() {
             <>
               <div className="bg-white rounded-2xl border border-stone-200 p-8 shadow-sm">
                 <p className="text-xs font-medium tracking-[0.2em] text-stone-400 uppercase mb-2">
-                  Name your price
+                  Choose your impact
                 </p>
                 <p className="text-sm text-stone-500 mb-8">
-                  Whatever feels right. Your generosity funds scholarships for brilliant
-                  people who&apos;d make the event better but couldn&apos;t otherwise attend.
+                  You get the full VIP experience at every level. The difference is how many people you bring with you.
                 </p>
 
                 {/* Suggested amounts */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-                  {SUGGESTED_AMOUNTS.map((amt) => (
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                  {([
+                    { amt: 19999, label: "1 scholarship" },
+                    { amt: 24999, label: "1–2 scholarships" },
+                    { amt: 34999, label: "2–3 scholarships" },
+                    { amt: 49999, label: "4+ scholarships" },
+                  ] as const).map(({ amt, label }) => (
                     <button
                       key={amt}
                       onClick={() => { setValue(amt); setCustomInput(""); }}
-                      className={`px-4 py-3 rounded-xl text-sm font-medium transition-all border ${
+                      className={`px-4 py-3 rounded-xl text-sm font-medium transition-all border flex flex-col items-center gap-0.5 ${
                         value === amt && !customInput
                           ? "bg-blue-600 text-white border-blue-600"
                           : "bg-white text-stone-700 border-stone-200 hover:border-blue-300 hover:text-blue-700"
                       }`}
                     >
-                      {formatPrice(amt)}
+                      <span>{formatPrice(amt)}</span>
+                      <span className={`text-xs ${value === amt && !customInput ? "text-blue-100" : "text-stone-400"}`}>{label}</span>
                     </button>
                   ))}
                 </div>
@@ -186,9 +192,22 @@ export default function PatronPage() {
                 </div>
 
                 {/* Big Price Display */}
-                <div className="text-center mb-8 py-4">
+                <div className="text-center mb-4 py-4">
                   <p className="text-5xl md:text-7xl font-bold text-stone-900 tracking-tight tabular-nums">
                     {formatPrice(value)} <span className="text-xs font-medium tracking-[0.2em] text-stone-400 uppercase">USD</span>
+                  </p>
+                </div>
+
+                {/* Impact message */}
+                <div className="text-center mb-8 bg-green-50 border border-green-100 rounded-xl px-6 py-4">
+                  <p className="text-sm font-medium text-green-800">
+                    {value >= 49999
+                      ? "🎓 Funds 4+ full scholarships — you're filling a dinner table with people who wouldn't be here without you."
+                      : value >= 34999
+                      ? "🎓 Funds 2–3 full scholarships — that's a filmmaker, a scientist, and a founder who'll remember this forever."
+                      : value >= 24999
+                      ? "🎓 Funds 1–2 full scholarships — enough to change someone's trajectory."
+                      : "🎓 Funds 1 full scholarship — one person gets to be in the room because of you."}
                   </p>
                 </div>
 
@@ -228,7 +247,7 @@ export default function PatronPage() {
                     Continue — {formatPrice(value)}
                   </button>
                   <p className="text-xs text-stone-400 text-center mt-3">
-                    You&apos;ll fill out a short form next. No video required.
+                    Short application next — we want to get to know you.
                   </p>
                 </div>
               </div>
@@ -262,7 +281,7 @@ export default function PatronPage() {
                   Almost there
                 </p>
                 <p className="text-sm text-stone-500 mb-8">
-                  Just the basics so we know who&apos;s coming.
+                  Tell us about yourself so we can get to know you.
                 </p>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
@@ -408,10 +427,10 @@ export default function PatronPage() {
                 </svg>
               </div>
               <h2 className="text-2xl md:text-3xl font-bold text-stone-900 mb-3">
-                You&apos;re on the list.
+                Application received.
               </h2>
               <p className="text-stone-500 leading-relaxed max-w-md mx-auto mb-2">
-                We&apos;ve got your details. We&apos;ll be in touch with
+                We&apos;ll review your application and be in touch with
                 next steps and payment info.
               </p>
               <p className="text-sm text-stone-400">

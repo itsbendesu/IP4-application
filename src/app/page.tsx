@@ -26,7 +26,7 @@ const notablePeople = [
 const featuredTestimonials = [
   {
     quote:
-      "I\u2019ve been to Davos, Sun Valley, TED \u2014 this was better.",
+      "I\u2019ve been to Davos, Sun Valley, and TED \u2014 this was better.",
     name: "IP3 Attendee",
     descriptor: "",
     image: "",
@@ -197,22 +197,22 @@ export default function Home() {
       {/* Hero */}
       <section className="relative w-full min-h-screen flex items-end">
         <Image
-          src="/images/ip3/outdoor-gathering.jpeg"
-          alt="Attendees gathered lakeside at golden hour with string lights at IP3"
+          src="/images/ip3/lakefront-sunset.jpeg"
+          alt="Lakefront sunset at IP3"
           fill
           className="object-cover"
           priority
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
         <div className="relative z-10 max-w-6xl mx-auto px-6 pb-12 md:pb-20 w-full">
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-[1.05] tracking-tight max-w-4xl drop-shadow-lg [text-shadow:_0_2px_20px_rgba(0,0,0,0.5)]">
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-[1.05] tracking-tight max-w-4xl drop-shadow-lg [text-shadow:_0_4px_30px_rgba(0,0,0,0.8),_0_1px_6px_rgba(0,0,0,0.9)]">
             We hate
             <br />
             conferences.
           </h1>
-          <p className="mt-6 text-lg md:text-xl text-white/80 leading-relaxed max-w-2xl [text-shadow:_0_1px_8px_rgba(0,0,0,0.4)]">
+          <p className="mt-6 text-lg md:text-xl text-white/80 leading-relaxed max-w-2xl [text-shadow:_0_2px_16px_rgba(0,0,0,0.7),_0_1px_4px_rgba(0,0,0,0.8)]">
             They&apos;re about sitting. Making awkward small talk. Bragging at the bar. Status.{" "}
-            <span className="text-white font-medium">They suck.</span>{" "}
+            They suck.{" "}
             This is not that. This is 150 people selected for{" "}
             <span className="text-white font-bold">curiosity</span> and{" "}
             <span className="text-white font-bold">warmth</span>.
@@ -223,7 +223,7 @@ export default function Home() {
           <div className="mt-6 flex flex-col items-start gap-3">
             <Link
               href="/apply"
-              className="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white rounded-full font-medium text-lg hover:bg-blue-700 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white rounded-full font-medium text-lg hover:bg-blue-700 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_30px_rgba(59,130,246,0.5)] hover:shadow-[0_0_40px_rgba(59,130,246,0.6)]"
             >
               Apply for IP4
             </Link>
@@ -331,7 +331,7 @@ export default function Home() {
       <section className="py-16 md:py-24">
         <div className="max-w-6xl mx-auto px-6">
           <p className="text-2xl md:text-3xl font-bold text-stone-900 tracking-tight mb-1">What happens when 150 interesting people put their phones away.</p>
-          <p className="text-sm text-stone-400 mb-4">Show and tell. Comedy. Music. Incredible food. Magic (yes, literally).</p>
+          <p className="text-base text-stone-400 mb-4">Show and tell. Comedy. Music. Incredible food. Magic (yes, literally).</p>
           <PhotoGallery />
         </div>
       </section>
@@ -651,7 +651,7 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-6">
             {/* Local */}
             <div className="bg-white rounded-2xl border border-stone-200 p-8 flex flex-col">
-              <p className="text-sm font-medium tracking-[0.2em] text-stone-400 uppercase mb-2">Local</p>
+              <p className="text-sm font-medium tracking-[0.2em] text-stone-400 uppercase mb-2"><span className="mr-1.5">🏠</span>Local</p>
               <p className="text-4xl font-bold text-stone-900 mb-2">$5,999</p>
               <p className="text-xs text-stone-400 mb-6">Victoria residents only</p>
               <p className="text-stone-500 leading-relaxed mb-6 flex-grow text-sm">
@@ -681,7 +681,7 @@ export default function Home() {
 
             {/* Regular */}
             <div className="bg-white rounded-2xl border border-stone-200 p-8 flex flex-col">
-              <p className="text-sm font-medium tracking-[0.2em] text-stone-400 uppercase mb-2">Regular</p>
+              <p className="text-sm font-medium tracking-[0.2em] text-stone-400 uppercase mb-2"><span className="mr-1.5">🎟️</span>Regular</p>
               <p className="text-4xl font-bold text-stone-900 mb-2">$9,999</p>
               <p className="text-xs text-stone-400 mb-6">The full experience</p>
               <p className="text-stone-500 leading-relaxed mb-6 flex-grow text-sm">
@@ -714,7 +714,7 @@ export default function Home() {
               <span className="absolute -top-3 left-8 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
                 The Full Treatment
               </span>
-              <p className="text-sm font-medium tracking-[0.2em] text-blue-600 uppercase mb-2">VIP</p>
+              <p className="text-sm font-medium tracking-[0.2em] text-blue-600 uppercase mb-2"><span className="mr-1.5">✨</span>VIP</p>
               <p className="text-4xl font-bold text-stone-900 mb-2">$15,999</p>
               <p className="text-xs text-stone-400 mb-6">Limited to 20 guests</p>
               <p className="text-stone-500 leading-relaxed mb-6 flex-grow text-sm">
@@ -751,22 +751,40 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Scholarship bar */}
-          <div className="mt-8 bg-amber-50 border border-amber-200 rounded-2xl px-8 py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <p className="font-semibold text-stone-900">
-                Money tight? We still want you here.
-              </p>
-              <p className="text-sm text-stone-500 mt-1">
-                We set aside spots for interesting people who&apos;d make the event better but can&apos;t swing the price tag. No shame, just a different application.
-              </p>
+          {/* Patron & Scholarship */}
+          <div className="mt-8 grid md:grid-cols-2 gap-4">
+            <div className="bg-blue-50/50 border border-blue-100 rounded-2xl px-8 py-6 flex flex-col justify-between">
+              <div>
+                <p className="font-semibold text-stone-900">
+                  <span className="mr-1.5">💛</span>Become a Patron &mdash; $20k+
+                </p>
+                <p className="text-sm text-stone-500 mt-1">
+                  Get the full VIP experience. Every dollar above cost funds seats for artists, writers, and builders who&apos;d make the room better but can&apos;t afford it.
+                </p>
+              </div>
+              <Link
+                href="/patron"
+                className="inline-flex items-center justify-center px-6 py-3 bg-stone-900 text-white rounded-full font-medium text-sm hover:bg-stone-800 transition-all mt-5 w-full"
+              >
+                Learn More
+              </Link>
             </div>
-            <Link
-              href="/apply"
-              className="inline-flex items-center justify-center px-6 py-3 bg-amber-500 text-white rounded-full font-medium text-sm hover:bg-amber-600 transition-all whitespace-nowrap flex-shrink-0"
-            >
-              Apply for a Scholarship
-            </Link>
+            <div className="bg-amber-50/50 border border-amber-100 rounded-2xl px-8 py-6 flex flex-col justify-between">
+              <div>
+                <p className="font-semibold text-stone-900">
+                  <span className="mr-1.5">🎓</span>Money tight? We still want you here.
+                </p>
+                <p className="text-sm text-stone-500 mt-1">
+                  We set aside spots for people who&apos;d make the event better but can&apos;t swing the price tag. No shame, just a different application.
+                </p>
+              </div>
+              <Link
+                href="/apply"
+                className="inline-flex items-center justify-center px-6 py-3 bg-stone-900 text-white rounded-full font-medium text-sm hover:bg-stone-800 transition-all mt-5 w-full"
+              >
+                Apply for a Scholarship
+              </Link>
+            </div>
           </div>
         </div>
       </section>

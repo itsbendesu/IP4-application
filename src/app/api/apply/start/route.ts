@@ -8,7 +8,7 @@ const startApplicationSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),
   email: z.string().email("Invalid email"),
   phone: z.string().min(1, "Phone number is required").max(30),
-  ticketType: z.enum(["local", "regular", "vip", "scholarship"], { message: "Please select a ticket type" }),
+  ticketType: z.enum(["local", "regular", "vip", "patron", "scholarship"], { message: "Please select a ticket type" }),
   scholarshipAmount: z.string().max(200).optional(),
   address: z.string().max(300).optional(),
   timezone: z.string().min(1, "Timezone is required"),

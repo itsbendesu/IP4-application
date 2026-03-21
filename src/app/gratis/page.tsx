@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { useState } from "react";
 
-const ACTUAL_COST = { hotel: 4500, local: 3000 };
+const ACTUAL_COST = { hotel: 4499, local: 2999 };
 
 const PRICING = {
-  hotel: { min: 0, max: 20000 },
-  local: { min: 0, max: 20000 },
+  hotel: { min: 0, max: 19999 },
+  local: { min: 0, max: 19999 },
 };
 
 const SCHOLARSHIP_DESCRIPTIONS = [

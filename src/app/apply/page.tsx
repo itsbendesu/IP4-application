@@ -30,7 +30,8 @@ export default function ApplyPage() {
     name: "",
     email: "",
     phone: "",
-    ticketType: "" as "" | "local" | "regular" | "vip" | "scholarship",
+    ticketType: "" as "" | "local" | "regular" | "vip" | "patron" | "scholarship",
+    patronAmount: 19999,
     scholarshipAmount: "",
     address: "",
     localSwear: false,
@@ -295,7 +296,7 @@ export default function ApplyPage() {
           email: formData.email,
           phone: formData.phone,
           ticketType: formData.ticketType,
-          scholarshipAmount: formData.ticketType === "scholarship" ? formData.scholarshipAmount : undefined,
+          scholarshipAmount: formData.ticketType === "scholarship" ? formData.scholarshipAmount : formData.ticketType === "patron" ? `$${formData.patronAmount.toLocaleString("en-US")}` : undefined,
           address: formData.ticketType === "local" ? formData.address : undefined,
           timezone: formData.timezone,
           heardAbout: formData.heardAbout,
@@ -919,6 +920,7 @@ export default function ApplyPage() {
                           { value: "local", label: "Local", price: "$5,999" },
                           { value: "regular", label: "Regular", price: "$9,999" },
                           { value: "vip", label: "VIP", price: "$15,999" },
+                          { value: "patron", label: "Patron", price: "$19,999+" },
                           { value: "scholarship", label: "Scholarship", price: "Flexible" },
                         ] as const).map((tier) => (
                           <button
@@ -927,20 +929,57 @@ export default function ApplyPage() {
                             onClick={() => setFormData((prev) => ({ ...prev, ticketType: tier.value }))}
                             className={`flex-1 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                               formData.ticketType === tier.value
-                                ? tier.value === "scholarship" ? "bg-amber-500 text-white" : "bg-blue-600 text-white"
+                                ? tier.value === "scholarship" ? "bg-amber-500 text-white" : tier.value === "patron" ? "bg-stone-900 text-white" : "bg-blue-600 text-white"
                                 : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                             }`}
                           >
                             <span className="block">{tier.label}</span>
-                            <span className={`block text-xs mt-0.5 ${formData.ticketType === tier.value ? tier.value === "scholarship" ? "text-amber-200" : "text-blue-200" : "text-slate-400"}`}>{tier.price}</span>
+                            <span className={`block text-xs mt-0.5 ${formData.ticketType === tier.value ? tier.value === "scholarship" ? "text-amber-200" : tier.value === "patron" ? "text-stone-400" : "text-blue-200" : "text-slate-400"}`}>{tier.price}</span>
                           </button>
                         ))}
                       </div>
                       {formData.ticketType === "local" && (
-                        <p className="text-xs text-slate-500 mt-2">Local tickets are for Victoria, BC residents only.</p>
+                        <p className="text-xs text-slate-500 mt-2">All sessions, meals &amp; activities. No hotel — Victoria residents only.</p>
+                      )}
+                      {formData.ticketType === "regular" && (
+                        <p className="text-xs text-slate-500 mt-2">All sessions, meals, activities &amp; 3 nights luxury accommodation.</p>
                       )}
                       {formData.ticketType === "vip" && (
-                        <p className="text-xs text-slate-500 mt-2"><span className="font-bold text-slate-700">Limited to 20 guests.</span></p>
+                        <p className="text-xs text-slate-500 mt-2">Everything in Regular + upgraded room, black car, private dinner with speakers. <span className="font-bold text-slate-700">Limited to 20.</span></p>
+                      )}
+                      {formData.ticketType === "patron" && (
+                        <div className="mt-3 p-4 bg-blue-50 border border-blue-100 rounded-xl space-y-4">
+                          <p className="text-sm text-slate-700">
+                            <span className="font-bold text-slate-900">💛 Thank you.</span> You get the full VIP experience. Every dollar above our costs funds scholarships for people who&apos;d make the room better but can&apos;t afford the ticket.
+                          </p>
+                          <div>
+                            <label className="block text-sm font-medium text-slate-900 mb-2">
+                              Choose your level
+                            </label>
+                            <div className="grid grid-cols-2 gap-2">
+                              {([
+                                { amt: 19999, label: "1 scholarship" },
+                                { amt: 24999, label: "1–2 scholarships" },
+                                { amt: 34999, label: "2–3 scholarships" },
+                                { amt: 49999, label: "4+ scholarships" },
+                              ] as const).map(({ amt, label }) => (
+                                <button
+                                  key={amt}
+                                  type="button"
+                                  onClick={() => setFormData((prev) => ({ ...prev, patronAmount: amt }))}
+                                  className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all border flex flex-col items-center ${
+                                    formData.patronAmount === amt
+                                      ? "bg-stone-900 text-white border-stone-900"
+                                      : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
+                                  }`}
+                                >
+                                  <span>${amt.toLocaleString("en-US")}</span>
+                                  <span className={`text-xs ${formData.patronAmount === amt ? "text-stone-400" : "text-slate-400"}`}>{label}</span>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
                       )}
                       {formData.ticketType === "scholarship" && (
                         <div className="mt-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
@@ -983,7 +1022,7 @@ export default function ApplyPage() {
                             className="mt-0.5 h-5 w-5 text-slate-900 border-slate-300 rounded focus:ring-slate-900"
                           />
                           <span className="text-sm text-slate-600 leading-relaxed">
-                            I solemnly swear I actually live here, in Victoria, as my primary residence.
+                            I solemnly swear I actually live here, in Victoria, as my primary residence. (This will be verified by our team.)
                           </span>
                         </label>
                       </div>
