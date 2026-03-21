@@ -915,7 +915,7 @@ export default function ApplyPage() {
                       <label id="apply-ticket-type-label" className="block text-sm font-medium text-slate-900 mb-2">
                         Ticket Type
                       </label>
-                      <div className="flex gap-3">
+                      <div className="grid grid-cols-3 md:grid-cols-5 gap-2 md:gap-3">
                         {([
                           { value: "local", label: "Local", price: "$5,999" },
                           { value: "regular", label: "Regular", price: "$9,999" },
@@ -927,7 +927,7 @@ export default function ApplyPage() {
                             key={tier.value}
                             type="button"
                             onClick={() => setFormData((prev) => ({ ...prev, ticketType: tier.value }))}
-                            className={`flex-1 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                            className={`px-3 md:px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                               formData.ticketType === tier.value
                                 ? tier.value === "scholarship" ? "bg-amber-500 text-white" : tier.value === "patron" ? "bg-stone-900 text-white" : "bg-blue-600 text-white"
                                 : "bg-slate-100 text-slate-500 hover:bg-slate-200"

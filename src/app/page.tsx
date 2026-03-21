@@ -215,7 +215,7 @@ export default function Home() {
             They suck.{" "}
             This is not that. This is 150 people selected for{" "}
             <span className="text-white font-bold">curiosity</span> and{" "}
-            <span className="text-white font-bold">warmth</span>.
+            <span className="text-white font-bold">warmth</span> hanging out in one of the world&apos;s most beautiful places.
           </p>
           <p className="mt-6 text-sm font-medium tracking-wide text-white/60 uppercase">
             July 27&ndash;29, 2026 &middot; Victoria, Canada
@@ -223,7 +223,7 @@ export default function Home() {
           <div className="mt-6 flex flex-col items-start gap-3">
             <Link
               href="/apply"
-              className="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white rounded-full font-medium text-lg hover:bg-blue-700 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_30px_rgba(59,130,246,0.5)] hover:shadow-[0_0_40px_rgba(59,130,246,0.6)]"
+              className="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white rounded-full font-medium text-lg hover:bg-blue-700 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-[0_4px_30px_rgba(0,0,0,0.5)] hover:shadow-[0_4px_40px_rgba(0,0,0,0.6)] cursor-pointer"
             >
               Apply for IP4
             </Link>
@@ -418,14 +418,19 @@ export default function Home() {
       {/* The IP Difference — red/green treatment */}
       <section className="py-24 md:py-32 bg-stone-50 overflow-hidden">
         <div className="max-w-6xl mx-auto px-6">
-          {/* Column headers as the heading */}
-          <div className="grid md:grid-cols-2 gap-4 md:gap-0 mb-2">
+          {/* Column headers — desktop only */}
+          <div className="hidden md:grid md:grid-cols-2 md:gap-0 mb-2">
             <div className="md:pr-8 md:border-r md:border-stone-200">
               <h2 className="text-2xl md:text-3xl font-bold text-stone-400 tracking-tight">Most Conferences</h2>
             </div>
             <div className="md:pl-8">
               <h2 className="text-2xl md:text-3xl font-bold text-blue-600 tracking-tight">Interesting People</h2>
             </div>
+          </div>
+
+          {/* Mobile heading */}
+          <div className="md:hidden mb-6">
+            <h2 className="text-2xl font-bold text-stone-900 tracking-tight">This is not that.</h2>
           </div>
 
           <div className="space-y-0 divide-y divide-stone-200 border-t border-stone-200">
@@ -438,18 +443,18 @@ export default function Home() {
               { theirs: "Fluorescent-lit convention centers with no windows", ours: "Beautiful venues surrounded by nature in Victoria, BC" },
               { theirs: "Optimized for sponsors and optics", ours: "Optimized for genuine human connection" },
             ].map((row, i) => (
-              <div key={i} className="grid md:grid-cols-2 gap-4 md:gap-0">
-                <div className="py-5 md:py-6 md:pr-8 md:border-r md:border-stone-200 flex items-center gap-3">
+              <div key={i} className="grid md:grid-cols-2 gap-1 md:gap-0 py-4 md:py-0">
+                <div className="md:py-6 md:pr-8 md:border-r md:border-stone-200 flex items-center gap-3">
                   <svg className="w-5 h-5 text-red-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>
-                  <p className="text-red-400 line-through decoration-red-300">{row.theirs}</p>
+                  <p className="text-red-400 line-through decoration-red-300 text-sm md:text-base">{row.theirs}</p>
                 </div>
-                <div className="pb-5 md:py-6 md:pl-8 flex items-center gap-3">
+                <div className="md:py-6 md:pl-8 flex items-center gap-3">
                   <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
-                  <p className="text-stone-900 font-medium">{row.ours}</p>
+                  <p className="text-stone-900 font-medium text-sm md:text-base">{row.ours}</p>
                 </div>
               </div>
             ))}
@@ -756,7 +761,7 @@ export default function Home() {
             <div className="bg-blue-50/50 border border-blue-100 rounded-2xl px-8 py-6 flex flex-col justify-between">
               <div>
                 <p className="font-semibold text-stone-900">
-                  <span className="mr-1.5">💛</span>Become a Patron &mdash; $20k+
+                  <span className="mr-1.5">💛</span>Become a Patron &mdash; $19k+
                 </p>
                 <p className="text-sm text-stone-500 mt-1">
                   Get the full VIP experience. Every dollar above cost funds seats for artists, writers, and builders who&apos;d make the room better but can&apos;t afford it.

@@ -147,7 +147,7 @@ export default function PatronPage() {
           {/* STEP: PRICING */}
           {step === "pricing" && (
             <>
-              <div className="bg-white rounded-2xl border border-stone-200 p-8 shadow-sm">
+              <div className="bg-white rounded-2xl border border-stone-200 p-5 md:p-8 shadow-sm">
                 <p className="text-xs font-medium tracking-[0.2em] text-stone-400 uppercase mb-2">
                   Choose your impact
                 </p>
@@ -276,7 +276,7 @@ export default function PatronPage() {
               </div>
 
               {/* Registration Form */}
-              <div className="bg-white rounded-2xl border border-stone-200 p-8 shadow-sm">
+              <div className="bg-white rounded-2xl border border-stone-200 p-5 md:p-8 shadow-sm">
                 <p className="text-xs font-medium tracking-[0.2em] text-stone-400 uppercase mb-2">
                   Almost there
                 </p>
@@ -378,7 +378,7 @@ export default function PatronPage() {
                         { key: "website", label: "Website", placeholder: "yoursite.com" },
                       ] as const).map((platform) => (
                         <div key={platform.key} className="flex items-center gap-3">
-                          <label htmlFor={`patron-social-${platform.key}`} className="text-sm text-stone-500 w-24 flex-shrink-0">{platform.label}</label>
+                          <label htmlFor={`patron-social-${platform.key}`} className="text-sm text-stone-500 w-20 md:w-24 flex-shrink-0">{platform.label}</label>
                           <input
                             id={`patron-social-${platform.key}`}
                             type="text"
