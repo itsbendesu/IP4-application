@@ -33,23 +33,29 @@ export async function GET() {
   };
 
   // Check database connectivity using direct pg connection (bypasses Prisma adapter)
-  try {
-    const dbStart = Date.now();
-    const pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      max: 1,
-      connectionTimeoutMillis: 10000,
-      ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : undefined,
-    });
-    const result = await pool.query("SELECT 1 as ok");
-    await pool.end();
-    health.checks.database.latencyMs = Date.now() - dbStart;
-  } catch (error) {
+  const dbUrl = process.env.DATABASE_URL;
+  if (!dbUrl) {
     health.checks.database.status = "error";
     health.status = "unhealthy";
-    const errMsg = error instanceof Error ? error.message : String(error);
-    console.error("Health check DB error:", errMsg);
-    health.checks.database.error = errMsg.slice(0, 500);
+    health.checks.database.error = "DATABASE_URL not set";
+  } else {
+    try {
+      const dbStart = Date.now();
+      const pool = new Pool({
+        connectionString: dbUrl,
+        max: 1,
+        connectionTimeoutMillis: 10000,
+        ssl: { rejectUnauthorized: false },
+      });
+      await pool.query("SELECT 1 as ok");
+      await pool.end();
+      health.checks.database.latencyMs = Date.now() - dbStart;
+    } catch (error) {
+      health.checks.database.status = "error";
+      health.status = "unhealthy";
+      const errMsg = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+      health.checks.database.error = `pg error: ${errMsg}`.slice(0, 500);
+    }
   }
 
   // Check storage configuration
