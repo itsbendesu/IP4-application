@@ -25,7 +25,7 @@ export async function GET() {
   const health: HealthCheck = {
     status: "healthy",
     timestamp: new Date().toISOString(),
-    version: process.env.npm_package_version || "1.0.0",
+    version: "2.0.0-hardened",
     checks: {
       database: { status: "ok" },
       storage: { status: "unconfigured" },
