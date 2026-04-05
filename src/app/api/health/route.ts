@@ -44,7 +44,12 @@ export async function GET() {
     const errName = error instanceof Error ? error.name : "unknown";
     const errStack = error instanceof Error ? (error.stack || "").split("\n").slice(0, 3).join(" | ") : "";
     console.error("Health check DB error:", errName, errMsg);
-    health.checks.database.error = `${errName}: ${errMsg}`.slice(0, 500);
+    // Check for Prisma-specific error properties
+    const cause = (error as Record<string, unknown>)?.cause;
+    const code = (error as Record<string, unknown>)?.code;
+    const meta = (error as Record<string, unknown>)?.meta;
+    const causeStr = cause instanceof Error ? cause.message : cause ? String(cause) : "";
+    health.checks.database.error = `${errName}: ${errMsg}${code ? ` [code=${code}]` : ""}${causeStr ? ` cause=${causeStr}` : ""}${meta ? ` meta=${JSON.stringify(meta)}` : ""}`.slice(0, 500);
   }
 
   // Check storage configuration
