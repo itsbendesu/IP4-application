@@ -40,7 +40,7 @@ export async function GET() {
   } catch (error) {
     health.checks.database.status = "error";
     console.error("Health check DB error:", error);
-    health.checks.database.error = error instanceof Error ? error.message : "Database unavailable";
+    health.checks.database.error = error instanceof Error ? error.message : typeof error === 'object' && error !== null ? JSON.stringify(error).slice(0, 500) : String(error);
     health.status = "unhealthy";
   }
 
