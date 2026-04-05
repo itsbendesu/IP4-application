@@ -53,8 +53,9 @@ export async function GET() {
     } catch (error) {
       health.checks.database.status = "error";
       health.status = "unhealthy";
-      const errMsg = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
-      health.checks.database.error = `pg error: ${errMsg}`.slice(0, 500);
+      const errMsg = error instanceof Error ? `${error.constructor?.name || error.name}: ${error.message}` : String(error);
+      const errCode = (error as Record<string, unknown>)?.code;
+      health.checks.database.error = `pg[${errCode || '?'}]: ${errMsg}`.slice(0, 500);
     }
   }
 
