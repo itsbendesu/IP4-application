@@ -39,9 +39,12 @@ export async function GET() {
     health.checks.database.latencyMs = Date.now() - dbStart;
   } catch (error) {
     health.checks.database.status = "error";
-    console.error("Health check DB error:", error);
-    health.checks.database.error = error instanceof Error ? error.message : typeof error === 'object' && error !== null ? JSON.stringify(error).slice(0, 500) : String(error);
-    health.status = "unhealthy";
+    // Capture full error details for debugging
+    const errMsg = error instanceof Error ? error.message : String(error);
+    const errName = error instanceof Error ? error.name : "unknown";
+    const errStack = error instanceof Error ? (error.stack || "").split("\n").slice(0, 3).join(" | ") : "";
+    console.error("Health check DB error:", errName, errMsg);
+    health.checks.database.error = `${errName}: ${errMsg}`.slice(0, 500);
   }
 
   // Check storage configuration
