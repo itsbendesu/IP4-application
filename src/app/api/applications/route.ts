@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
 
     if (existing) {
       return NextResponse.json(
-        { error: "An application with this email already exists" },
+        { error: "Unable to process your application. Please contact hello@ipevents.co if you need help." },
         { status: 400 }
       );
     }

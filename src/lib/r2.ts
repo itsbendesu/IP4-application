@@ -7,17 +7,32 @@ export const MAX_FILE_SIZE = 500 * 1024 * 1024; // 500MB
 export const MAX_DURATION_SEC = 120; // Hard cap
 export const TARGET_DURATION_SEC = 90; // Soft target
 
-// Initialize S3-compatible client for R2
-const r2Client = new S3Client({
-  region: "auto",
-  endpoint: process.env.R2_ENDPOINT!,
-  credentials: {
-    accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
-  },
-});
+// Lazy-initialize S3-compatible client for R2 (avoids crash on import when env vars aren't set)
+let _r2Client: S3Client | null = null;
 
-const BUCKET = process.env.R2_BUCKET_NAME!;
+function getR2Client(): S3Client {
+  if (!_r2Client) {
+    if (!isR2Configured()) {
+      throw new Error(
+        "R2 is not configured. Set R2_ENDPOINT, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET_NAME, and R2_PUBLIC_URL."
+      );
+    }
+    _r2Client = new S3Client({
+      region: "auto",
+      endpoint: process.env.R2_ENDPOINT!,
+      credentials: {
+        accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!,
+      },
+      requestHandler: { requestTimeout: 10_000 },
+    });
+  }
+  return _r2Client;
+}
+
+function getBucket(): string {
+  return process.env.R2_BUCKET_NAME!;
+}
 
 export interface PresignedUploadResult {
   uploadUrl: string;
@@ -54,13 +69,13 @@ export async function createPresignedUpload(
   // Note: ContentLength omitted from signing — R2 enforces exact match
   // which breaks if recorded blob size differs from estimate
   const command = new PutObjectCommand({
-    Bucket: BUCKET,
+    Bucket: getBucket(),
     Key: key,
     ContentType: contentType,
   });
 
   const expiresIn = 30 * 60; // 30 minutes
-  const uploadUrl = await getSignedUrl(r2Client, command, { expiresIn });
+  const uploadUrl = await getSignedUrl(getR2Client(), command, { expiresIn });
 
   // Public URL for accessing the video after upload
   const publicUrl = `${process.env.R2_PUBLIC_URL}/${key}`;
@@ -83,11 +98,11 @@ export async function verifyUpload(key: string): Promise<{
 }> {
   try {
     const command = new HeadObjectCommand({
-      Bucket: BUCKET,
+      Bucket: getBucket(),
       Key: key,
     });
 
-    const response = await r2Client.send(command);
+    const response = await getR2Client().send(command);
 
     return {
       exists: true,
@@ -107,11 +122,11 @@ export async function verifyUpload(key: string): Promise<{
  */
 export async function deleteUpload(key: string): Promise<void> {
   const command = new DeleteObjectCommand({
-    Bucket: BUCKET,
+    Bucket: getBucket(),
     Key: key,
   });
 
-  await r2Client.send(command);
+  await getR2Client().send(command);
 }
 
 /**

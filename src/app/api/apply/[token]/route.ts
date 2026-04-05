@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { isEmailVerificationEnabled } from "@/lib/email-verification";
 
 // GET - Get pending application details for upload page
 export async function GET(
@@ -35,25 +34,13 @@ export async function GET(
       );
     }
 
-    // Check if email verification is required but not completed
-    if (isEmailVerificationEnabled() && !pending.emailVerified) {
-      return NextResponse.json(
-        {
-          error: "Email not verified",
-          requiresVerification: true,
-          email: pending.email,
-        },
-        { status: 403 }
-      );
-    }
-
-    // Fetch 3 random prompts for the interview
+    // Fetch 2 random prompts for the interview
     const allPrompts = await prisma.prompt.findMany({
       where: { active: true },
       select: { id: true, text: true },
     });
 
-    // Shuffle and take 3 (or all if fewer than 3)
+    // Shuffle and take 2 (or all if fewer than 2)
     const shuffled = allPrompts.sort(() => Math.random() - 0.5);
     const prompts = shuffled.slice(0, 2);
 

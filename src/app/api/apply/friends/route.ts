@@ -12,7 +12,11 @@ const friendsSchema = z.object({
   links: z.array(z.string().min(1)).optional().default([]),
   ticketType: z.enum(["friends-hotel", "friends-local", "patron-hotel", "patron-local", "gratis-hotel", "gratis-local"]),
   amount: z.number().min(0),
-});
+  timezone: z.string().max(100).optional().default(""),
+}).refine(
+  (data) => !data.ticketType.startsWith("patron") || data.amount >= 1,
+  { message: "Patron tickets require an amount of at least $1", path: ["amount"] }
+);
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,7 +29,7 @@ export async function POST(request: NextRequest) {
     });
     if (existing) {
       return NextResponse.json(
-        { error: "Someone with this email has already registered" },
+        { error: "Unable to process your registration. Please contact hello@ipevents.co if you need help." },
         { status: 400 }
       );
     }
@@ -50,7 +54,7 @@ export async function POST(request: NextRequest) {
           phone: data.phone,
           ticketType: data.ticketType,
           scholarshipAmount: `$${data.amount.toLocaleString("en-US")}`,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          timezone: data.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
           roleCompany: "",
           heardAbout: "Friend of Andrew (invited)",
           threeWords: "",
@@ -89,7 +93,7 @@ export async function POST(request: NextRequest) {
             ticket_type: data.ticketType,
             price_override: data.amount,
             heard_about: "Friend of Andrew (invited)",
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            timezone: data.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
             bio: data.bio,
             links: data.links,
             video_url: null,
@@ -98,9 +102,10 @@ export async function POST(request: NextRequest) {
             source_id: result.submission.id,
             teach_skill: data.teachSkill || null,
           }),
+          signal: AbortSignal.timeout(5000),
         });
-      } catch {
-        // IPHQ being down shouldn't block the user
+      } catch (err) {
+        console.warn("IPHQ webhook failed:", err instanceof Error ? err.message : "unknown");
       }
     });
 

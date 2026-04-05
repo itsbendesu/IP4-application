@@ -18,6 +18,26 @@ interface ApplicationData {
 }
 
 
+function getSupportedMimeType(): string {
+  const types = [
+    "video/webm;codecs=vp9,opus",
+    "video/webm;codecs=vp8,opus",
+    "video/webm",
+    "video/mp4",
+  ];
+  for (const type of types) {
+    if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported(type)) {
+      return type;
+    }
+  }
+  return "";
+}
+
+function getExtensionForMimeType(mimeType: string): string {
+  if (mimeType.startsWith("video/mp4")) return "mp4";
+  return "webm";
+}
+
 export default function UploadPage() {
   const router = useRouter();
   const params = useParams();
@@ -36,6 +56,7 @@ export default function UploadPage() {
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const isRecordingRef = useRef(false);
+  const mimeTypeRef = useRef("");
 
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -59,10 +80,6 @@ export default function UploadPage() {
         const data = await res.json();
 
         if (!res.ok) {
-          if (data.requiresVerification) {
-            router.push("/apply");
-            return;
-          }
           throw new Error(data.error || "Application not found");
         }
 
@@ -126,9 +143,15 @@ export default function UploadPage() {
     setCurrentPromptIndex(0);
     setRecordedBlob(null);
 
-    const mediaRecorder = new MediaRecorder(stream, {
-      mimeType: "video/webm;codecs=vp9,opus",
-    });
+    const supportedMimeType = getSupportedMimeType();
+    mimeTypeRef.current = supportedMimeType;
+
+    const recorderOptions: MediaRecorderOptions = {};
+    if (supportedMimeType) {
+      recorderOptions.mimeType = supportedMimeType;
+    }
+
+    const mediaRecorder = new MediaRecorder(stream, recorderOptions);
 
     mediaRecorder.ondataavailable = (e) => {
       if (e.data.size > 0) {
@@ -137,10 +160,21 @@ export default function UploadPage() {
     };
 
     mediaRecorder.onstop = () => {
-      const blob = new Blob(chunksRef.current, { type: "video/webm" });
+      const blob = new Blob(chunksRef.current, { type: supportedMimeType || "video/webm" });
+      const url = URL.createObjectURL(blob);
       setRecordedBlob(blob);
-      setRecordedUrl(URL.createObjectURL(blob));
+      setRecordedUrl(url);
       stopCamera();
+
+      // Get actual duration from blob metadata instead of relying on interval timer
+      const tempVideo = document.createElement("video");
+      tempVideo.preload = "metadata";
+      tempVideo.onloadedmetadata = () => {
+        if (tempVideo.duration && isFinite(tempVideo.duration)) {
+          setVideoDuration(Math.round(tempVideo.duration));
+        }
+      };
+      tempVideo.src = url;
     };
 
     mediaRecorderRef.current = mediaRecorder;
@@ -193,14 +227,19 @@ export default function UploadPage() {
   const uploadRecordedVideo = async (): Promise<{ key: string; url: string } | null> => {
     if (!recordedBlob) return null;
 
+    const contentType = mimeTypeRef.current || "video/webm";
+    const ext = getExtensionForMimeType(contentType);
+    const filename = `recording.${ext}`;
+
     try {
       // Check if we should use local mode
       const presignRes = await fetch("/api/upload/presign", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          fileName: "recording.webm",
-          contentType: "video/webm",
+          token,
+          fileName: filename,
+          contentType,
           contentLength: recordedBlob.size || 1,
           email: application?.email || "unknown@unknown.com",
           durationSec: Math.max(1, Math.round(videoDuration || duration || 1)),
@@ -217,7 +256,7 @@ export default function UploadPage() {
       // Handle local upload mode (development)
       if (presignData.localMode) {
         const formData = new FormData();
-        formData.append("file", new File([recordedBlob], "recording.webm", { type: "video/webm" }));
+        formData.append("file", new File([recordedBlob], filename, { type: contentType }));
 
         const localRes = await fetch("/api/upload/local", {
           method: "POST",
@@ -236,7 +275,7 @@ export default function UploadPage() {
 
       // Handle Vercel Blob upload (manual token exchange + direct PUT)
       if (presignData.blobMode) {
-        const pathname = `recordings/${Date.now()}.webm`;
+        const pathname = `recordings/${Date.now()}.${ext}`;
 
         // Step 1: Get client token from our server
         const tokenRes = await fetch("/api/upload/blob", {
@@ -263,6 +302,9 @@ export default function UploadPage() {
 
         // Extract store URL from token: vercel_blob_client_{storeId}_...
         const parts = clientToken.split("_");
+        if (parts.length < 4 || !parts[3]) {
+          throw new Error("Invalid upload token format. Please try again or contact support.");
+        }
         const storeId = parts[3];
         const blobUploadUrl = `https://${storeId.toLowerCase()}.public.blob.vercel-storage.com/${pathname}`;
 
@@ -288,7 +330,7 @@ export default function UploadPage() {
 
           xhr.open("PUT", blobUploadUrl);
           xhr.setRequestHeader("authorization", `Bearer ${clientToken}`);
-          xhr.setRequestHeader("x-content-type", "video/webm");
+          xhr.setRequestHeader("x-content-type", contentType);
           xhr.setRequestHeader("x-api-version", "7");
           xhr.send(recordedBlob);
         });
@@ -319,7 +361,7 @@ export default function UploadPage() {
         xhr.onerror = () => reject(new Error("Upload failed — network error"));
 
         xhr.open("PUT", uploadUrl);
-        xhr.setRequestHeader("Content-Type", "video/webm");
+        xhr.setRequestHeader("Content-Type", contentType);
         xhr.send(recordedBlob);
       });
 
@@ -332,6 +374,11 @@ export default function UploadPage() {
   const handleSubmit = async () => {
     if (!recordedBlob) {
       setError("Please record a video first");
+      return;
+    }
+
+    if (videoDuration < 5) {
+      setError("Recording too short. Please record at least 5 seconds.");
       return;
     }
 
@@ -441,18 +488,9 @@ export default function UploadPage() {
               <span className="hidden sm:inline text-slate-400">Info</span>
             </span>
             <div className="w-8 h-px bg-slate-200" />
-            <span className="flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-emerald-100 text-xs flex items-center justify-center text-emerald-600 font-medium">
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                </svg>
-              </span>
-              <span className="hidden sm:inline text-slate-400">Verify</span>
-            </span>
-            <div className="w-8 h-px bg-slate-200" />
             <span className="flex items-center gap-2 text-slate-900 font-medium">
               <span className="w-6 h-6 rounded-full bg-slate-900 text-white text-xs flex items-center justify-center font-medium">
-                3
+                2
               </span>
               <span className="hidden sm:inline">Record</span>
             </span>

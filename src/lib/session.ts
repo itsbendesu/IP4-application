@@ -9,8 +9,20 @@ export interface SessionData {
   isLoggedIn: boolean;
 }
 
+function getSessionPassword(): string {
+  const secret = process.env.SESSION_SECRET;
+  if (!secret) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("SESSION_SECRET environment variable is required in production");
+    }
+    // In development, use a deterministic dev secret
+    return "dev-only-session-secret-not-for-production-use-1234567890";
+  }
+  return secret;
+}
+
 export const sessionOptions: SessionOptions = {
-  password: process.env.SESSION_SECRET || "complex_password_at_least_32_characters_long_for_dev_only",
+  password: getSessionPassword(),
   cookieName: "interesting-people-session",
   cookieOptions: {
     secure: process.env.NODE_ENV === "production",

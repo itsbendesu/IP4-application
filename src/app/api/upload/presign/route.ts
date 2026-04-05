@@ -7,6 +7,7 @@ import {
   MAX_FILE_SIZE,
   MAX_DURATION_SEC,
 } from "@/lib/r2";
+import { prisma } from "@/lib/prisma";
 
 const presignSchema = z.object({
   contentType: z.string().refine((t) => ALLOWED_TYPES.includes(t), {
@@ -65,15 +66,39 @@ export async function POST(request: NextRequest) {
     body.email = body.email || "unknown@unknown.com";
     body.durationSec = Number(body.durationSec || body.duration) || 1;
 
-    console.log("Presign body received:", JSON.stringify(body));
-
     const data = presignSchema.parse(body);
 
-    // Generate presigned upload URL
+    // Validate pending application token
+    if (!body.token) {
+      return NextResponse.json(
+        { error: "Application token is required" },
+        { status: 403 }
+      );
+    }
+
+    const pending = await prisma.pendingApplication.findUnique({
+      where: { token: body.token },
+    });
+
+    if (!pending) {
+      return NextResponse.json(
+        { error: "Invalid or expired application" },
+        { status: 403 }
+      );
+    }
+
+    if (pending.expiresAt < new Date()) {
+      return NextResponse.json(
+        { error: "Application expired. Please start a new application." },
+        { status: 410 }
+      );
+    }
+
+    // Generate presigned upload URL — use validated email from the pending application
     const result = await createPresignedUpload(
       data.contentType,
       data.contentLength,
-      data.email
+      pending.email
     );
 
     return NextResponse.json({

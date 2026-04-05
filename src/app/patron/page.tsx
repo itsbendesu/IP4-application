@@ -72,6 +72,7 @@ export default function PatronPage() {
             .map(([platform, value]) => normalizeSocialUrl(platform, value)),
           ticketType: needsHotel ? "patron-hotel" : "patron-local",
           amount: value,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         }),
       });
 

@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
 
-type Step = "basics" | "questions" | "story" | "verification" | "record" | "confirmation";
+type Step = "basics" | "questions" | "story" | "record" | "confirmation";
 
 interface Prompt {
   id: string;
@@ -18,14 +18,32 @@ interface ApplicationData {
   expiresAt: string;
 }
 
+function getSupportedMimeType(): string {
+  const types = [
+    "video/webm;codecs=vp9,opus",
+    "video/webm;codecs=vp8,opus",
+    "video/webm",
+    "video/mp4",
+  ];
+  for (const type of types) {
+    if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported(type)) {
+      return type;
+    }
+  }
+  return "";
+}
+
+function getExtensionForMimeType(mimeType: string): string {
+  if (mimeType.startsWith("video/mp4")) return "mp4";
+  return "webm";
+}
+
 export default function ApplyPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [step, setStep] = useState<Step>("basics");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  const [email, setEmail] = useState("");
-
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -59,9 +77,6 @@ export default function ApplyPage() {
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const errorRef = useRef<HTMLDivElement>(null);
 
-  const [verificationCode, setVerificationCode] = useState("");
-  const [resendCooldown, setResendCooldown] = useState(0);
-
   // Recording state
   const [application, setApplication] = useState<ApplicationData | null>(null);
   const [hasStarted, setHasStarted] = useState(false);
@@ -81,6 +96,7 @@ export default function ApplyPage() {
   const chunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const isRecordingRef = useRef(false);
+  const mimeTypeRef = useRef("");
 
   const MAX_DURATION = 90;
   const PROMPT_DURATION = 45;
@@ -318,83 +334,10 @@ export default function ApplyPage() {
       }
 
       setToken(data.token);
-      setEmail(formData.email);
 
-      if (data.requiresVerification) {
-        setStep("verification");
-      } else {
-        await fetchApplicationAndRecord(data.token);
-      }
+      await fetchApplicationAndRecord(data.token);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerify = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!token) return;
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch("/api/apply/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          token,
-          code: verificationCode,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Verification failed");
-      }
-
-      await fetchApplicationAndRecord(token);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Verification failed");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleResend = async () => {
-    if (!token || resendCooldown > 0) return;
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch("/api/apply/verify", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to resend code");
-      }
-
-      // Start cooldown
-      setResendCooldown(60);
-      const interval = setInterval(() => {
-        setResendCooldown((prev) => {
-          if (prev <= 1) {
-            clearInterval(interval);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to resend code");
     } finally {
       setLoading(false);
     }
@@ -439,9 +382,15 @@ export default function ApplyPage() {
     setCurrentPromptIndex(0);
     setRecordedBlob(null);
 
-    const mediaRecorder = new MediaRecorder(stream, {
-      mimeType: "video/webm;codecs=vp9,opus",
-    });
+    const supportedMimeType = getSupportedMimeType();
+    mimeTypeRef.current = supportedMimeType;
+
+    const recorderOptions: MediaRecorderOptions = {};
+    if (supportedMimeType) {
+      recorderOptions.mimeType = supportedMimeType;
+    }
+
+    const mediaRecorder = new MediaRecorder(stream, recorderOptions);
 
     mediaRecorder.ondataavailable = (e) => {
       if (e.data.size > 0) {
@@ -450,10 +399,21 @@ export default function ApplyPage() {
     };
 
     mediaRecorder.onstop = () => {
-      const blob = new Blob(chunksRef.current, { type: "video/webm" });
+      const blob = new Blob(chunksRef.current, { type: supportedMimeType || "video/webm" });
+      const url = URL.createObjectURL(blob);
       setRecordedBlob(blob);
-      setRecordedUrl(URL.createObjectURL(blob));
+      setRecordedUrl(url);
       stopCamera();
+
+      // Get actual duration from blob metadata instead of relying on interval timer
+      const tempVideo = document.createElement("video");
+      tempVideo.preload = "metadata";
+      tempVideo.onloadedmetadata = () => {
+        if (tempVideo.duration && isFinite(tempVideo.duration)) {
+          setVideoDuration(Math.round(tempVideo.duration));
+        }
+      };
+      tempVideo.src = url;
     };
 
     mediaRecorderRef.current = mediaRecorder;
@@ -504,12 +464,17 @@ export default function ApplyPage() {
   const uploadRecordedVideo = async (): Promise<{ key: string; url: string } | null> => {
     if (!recordedBlob) return null;
 
+    const contentType = mimeTypeRef.current || "video/webm";
+    const ext = getExtensionForMimeType(contentType);
+    const filename = `recording.${ext}`;
+
     const presignRes = await fetch("/api/upload/presign", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        filename: "recording.webm",
-        contentType: "video/webm",
+        token,
+        filename,
+        contentType,
         size: recordedBlob.size,
       }),
     });
@@ -523,7 +488,7 @@ export default function ApplyPage() {
 
     if (presignData.localMode) {
       const uploadData = new FormData();
-      uploadData.append("file", new File([recordedBlob], "recording.webm", { type: "video/webm" }));
+      uploadData.append("file", new File([recordedBlob], filename, { type: contentType }));
 
       const localRes = await fetch("/api/upload/local", {
         method: "POST",
@@ -562,7 +527,7 @@ export default function ApplyPage() {
       xhr.onerror = () => reject(new Error("Upload failed"));
 
       xhr.open("PUT", uploadUrl);
-      xhr.setRequestHeader("Content-Type", "video/webm");
+      xhr.setRequestHeader("Content-Type", contentType);
       xhr.send(recordedBlob);
     });
 
@@ -572,6 +537,11 @@ export default function ApplyPage() {
   const handleSubmitVideo = async () => {
     if (!recordedBlob) {
       setError("Please record a video first");
+      return;
+    }
+
+    if (videoDuration < 5) {
+      setError("Recording too short. Please record at least 5 seconds.");
       return;
     }
 
@@ -629,7 +599,7 @@ export default function ApplyPage() {
   };
 
   // Modal close logic
-  const canCloseModal = !isRecording && !submitting && step !== "verification";
+  const canCloseModal = !isRecording && !submitting;
 
   const handleCloseModal = () => {
     if (!canCloseModal) return;
@@ -644,7 +614,7 @@ export default function ApplyPage() {
   const modalMaxWidth = step === "record" ? "52rem" : step === "confirmation" ? "36rem" : "42rem";
 
   // Step progress dots
-  const allStepsOrder: Step[] = ["basics", "questions", "story", "verification", "record", "confirmation"];
+  const allStepsOrder: Step[] = ["basics", "questions", "story", "record", "confirmation"];
   const currentStepIdx = allStepsOrder.indexOf(step);
 
   const stepDots = (
@@ -654,19 +624,17 @@ export default function ApplyPage() {
           { key: "basics", label: "Basics", idx: 0 },
           { key: "questions", label: "Details", idx: 1 },
           { key: "story", label: "Story", idx: 2 },
-          { key: "record", label: "Record", idx: 4 },
+          { key: "record", label: "Record", idx: 3 },
         ] as const
       ).map((s, i) => {
         const isConfirmation = step === "confirmation";
-        const isActive =
-          s.key === step ||
-          (s.key === "record" && (step === "verification" || step === "record"));
+        const isActive = s.key === step;
         const isCompleted =
           isConfirmation ||
           (s.key === "basics" && currentStepIdx > 0) ||
           (s.key === "questions" && currentStepIdx > 1) ||
           (s.key === "story" && currentStepIdx > 2) ||
-          (s.key === "record" && currentStepIdx > 4);
+          (s.key === "record" && currentStepIdx > 3);
         return (
           <span key={s.key} className="flex items-center gap-2">
             {i > 0 && <div className="w-4 sm:w-8 h-px bg-slate-200" />}
@@ -746,16 +714,11 @@ export default function ApplyPage() {
               },
               {
                 num: 2,
-                title: "Verify your email",
-                desc: "We\u2019ll send a quick code to confirm it\u2019s really you.",
-              },
-              {
-                num: 3,
                 title: "Record a 90-second video",
                 desc: "Two questions, 45 seconds each. No prep needed\u2014just be yourself.",
               },
               {
-                num: 4,
+                num: 3,
                 title: "We review & respond",
                 desc: "Our team watches every video. We\u2019ll get back to you within a few weeks.",
               },
@@ -840,20 +803,18 @@ export default function ApplyPage() {
 
             {/* Modal body */}
             <div className="px-6 py-8">
-              {/* Step heading (form + verification steps) */}
-              {(step === "basics" || step === "questions" || step === "story" || step === "verification") && (
+              {/* Step heading (form steps) */}
+              {(step === "basics" || step === "questions" || step === "story") && (
                 <div className="mb-8">
                   <h2 className="font-serif text-2xl md:text-3xl font-bold text-slate-900 tracking-tight mb-2">
                     {step === "basics" && "Let\u2019s start with the basics."}
                     {step === "questions" && "A few quick questions."}
                     {step === "story" && "Now tell us your story."}
-                    {step === "verification" && "Verify your email."}
                   </h2>
                   <p className="text-slate-500">
                     {step === "basics" && "No cover letter. No credentials. We want to know what makes you interesting."}
                     {step === "questions" && "Just a couple things so we can get to know you better."}
                     {step === "story" && "This is the fun part\u2014tell us what lights you up."}
-                    {step === "verification" && "Check your inbox for a 6-digit code."}
                   </p>
                 </div>
               )}
@@ -1317,75 +1278,6 @@ export default function ApplyPage() {
                       className="flex-1 px-6 py-4 bg-blue-600 text-white rounded-full font-medium text-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-[1.01] active:scale-[0.99]"
                     >
                       {loading ? "Submitting..." : "Continue to Video"}
-                    </button>
-                  </div>
-                </form>
-              )}
-
-              {/* Verification step */}
-              {step === "verification" && (
-                <form onSubmit={handleVerify} className="space-y-6">
-                  <div className="text-center mb-8">
-                    <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-5">
-                      <svg className="w-8 h-8 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                    <p className="text-slate-600">
-                      We sent a 6-digit code to <strong className="text-slate-900">{email}</strong>
-                    </p>
-                  </div>
-
-                  <div>
-                    <label htmlFor="apply-verification-code" className="block text-sm font-medium text-slate-900 mb-2">
-                      Verification Code
-                    </label>
-                    <input
-                      id="apply-verification-code"
-                      type="text"
-                      value={verificationCode}
-                      onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                      className="w-full px-4 py-4 text-center text-2xl tracking-[0.5em] border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none font-mono"
-                      placeholder="000000"
-                      maxLength={6}
-                      autoFocus
-                      required
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading || verificationCode.length !== 6}
-                    className="w-full px-6 py-4 bg-blue-600 text-white rounded-full font-medium text-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                  >
-                    {loading ? "Verifying..." : "Verify Email"}
-                  </button>
-
-                  <div className="text-center">
-                    <button
-                      type="button"
-                      onClick={handleResend}
-                      disabled={loading || resendCooldown > 0}
-                      className="text-sm text-slate-500 hover:text-slate-900 disabled:text-slate-400 disabled:cursor-not-allowed transition-colors"
-                    >
-                      {resendCooldown > 0
-                        ? `Resend code in ${resendCooldown}s`
-                        : "Didn't receive a code? Resend"}
-                    </button>
-                  </div>
-
-                  <div className="pt-6 border-t border-slate-100">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setStep("story");
-                        setToken(null);
-                        setVerificationCode("");
-                        setError(null);
-                      }}
-                      className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
-                    >
-                      &larr; Go back and edit your info
                     </button>
                   </div>
                 </form>

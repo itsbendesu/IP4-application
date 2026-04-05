@@ -99,6 +99,7 @@ export default function FriendsPage() {
             .map(([platform, value]) => normalizeSocialUrl(platform, value)),
           ticketType: type === "hotel" ? "friends-hotel" : "friends-local",
           amount: value,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         }),
       });
 

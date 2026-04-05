@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { checkRateLimit, getRateLimitIdentifier, RATE_LIMITS } from "@/lib/rate-limit";
-import { createVerificationCode, isEmailVerificationEnabled } from "@/lib/email-verification";
 
 const startApplicationSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),
@@ -19,8 +18,8 @@ const startApplicationSchema = z.object({
   bio: z.string().min(10, "Bio must be at least 10 characters").max(500, "Bio must be under 500 characters"),
   teachSkill: z.string().max(300).optional(),
   links: z.array(z.string().min(1)).max(10).optional(),
-  // Honeypot field - should be empty
-  website: z.string().max(0, "Invalid submission").optional(),
+  // Honeypot field - should be empty for real users, bots will fill it
+  website: z.string().max(500).optional(),
 }).refine(
   (data) => data.ticketType !== "local" || (data.address && data.address.trim().length > 0),
   { message: "Address is required for Local tickets", path: ["address"] }
@@ -30,7 +29,7 @@ export async function POST(request: NextRequest) {
   try {
     // Rate limiting
     const identifier = getRateLimitIdentifier(request);
-    const rateLimit = checkRateLimit(`apply:${identifier}`, RATE_LIMITS.application);
+    const rateLimit = await checkRateLimit(`apply:${identifier}`, RATE_LIMITS.application);
 
     if (!rateLimit.success) {
       return NextResponse.json(
@@ -47,11 +46,12 @@ export async function POST(request: NextRequest) {
 
     // Honeypot check - if website field is filled, it's likely a bot
     if (data.website && data.website.length > 0) {
+      // Random delay to make timing indistinguishable from real responses
+      await new Promise(r => setTimeout(r, 500 + Math.random() * 1000));
       // Silently accept but don't process
       return NextResponse.json({
         success: true,
         token: "fake-token",
-        requiresVerification: false,
       });
     }
 
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
 
     if (existingApplicant) {
       return NextResponse.json(
-        { error: "An application with this email already exists" },
+        { error: "Unable to process your application. Please contact hello@ipevents.co if you need help." },
         { status: 400 }
       );
     }
@@ -83,7 +83,6 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           success: true,
           token: existingPending.token,
-          requiresVerification: isEmailVerificationEnabled() && !existingPending.emailVerified,
         });
       }
     }
@@ -121,20 +120,13 @@ export async function POST(request: NextRequest) {
         teachSkill: data.teachSkill || undefined,
         links: data.links ?? undefined,
         promptId: randomPrompt.id,
-        emailVerified: !isEmailVerificationEnabled(),
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
       },
     });
 
-    // Send verification code if enabled
-    if (isEmailVerificationEnabled()) {
-      await createVerificationCode(data.email);
-    }
-
     return NextResponse.json({
       success: true,
       token: pendingApplication.token,
-      requiresVerification: isEmailVerificationEnabled(),
     });
   } catch (error) {
     if (error instanceof z.ZodError) {

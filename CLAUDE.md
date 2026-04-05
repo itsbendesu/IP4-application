@@ -37,7 +37,6 @@ src/app/
   api/
     apply/start         # POST: create pending application, return upload token
     apply/complete      # POST: finalize submission with video URL
-    apply/verify        # POST: email verification
     apply/[token]       # GET: fetch pending application by token
     upload/             # POST: video upload (local dev)
     upload/presign      # POST: get R2 presigned URL (production)

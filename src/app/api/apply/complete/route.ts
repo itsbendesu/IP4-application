@@ -3,7 +3,6 @@ import { after } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { verifyUpload, deleteUpload, isR2Configured } from "@/lib/r2";
-import { isEmailVerificationEnabled } from "@/lib/email-verification";
 import { sendEmail, applicationConfirmationEmail } from "@/lib/email";
 
 const completeSchema = z.object({
@@ -53,14 +52,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check email verification
-    if (isEmailVerificationEnabled() && !pending.emailVerified) {
-      return NextResponse.json(
-        { error: "Email not verified" },
-        { status: 403 }
-      );
-    }
-
     // Verify video exists in R2 (skip for Vercel Blob URLs)
     const isBlobUrl = data.videoUrl.includes(".vercel-storage.com") || data.videoUrl.includes(".blob.vercel-storage.com");
     if (isR2Configured() && !isBlobUrl) {
@@ -73,24 +64,16 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Check for duplicate email (race condition protection)
-    const existingApplicant = await prisma.applicant.findUnique({
-      where: { email: pending.email },
-    });
-
-    if (existingApplicant) {
-      await prisma.pendingApplication.delete({ where: { id: pending.id } });
-      if (videoKey && isR2Configured()) {
-        await deleteUpload(videoKey).catch(() => {});
-      }
-      return NextResponse.json(
-        { error: "An application with this email already exists" },
-        { status: 400 }
-      );
-    }
-
     // Create applicant and submission in a transaction
     const result = await prisma.$transaction(async (tx) => {
+      // Check for duplicate email INSIDE the transaction (prevents TOCTOU race)
+      const existingApplicant = await tx.applicant.findUnique({
+        where: { email: pending.email },
+      });
+      if (existingApplicant) {
+        throw new Error("DUPLICATE_EMAIL");
+      }
+
       // Create applicant
       const applicant = await tx.applicant.create({
         data: {
@@ -163,9 +146,10 @@ export async function POST(request: NextRequest) {
             source_id: result.submission.id,
             teach_skill: pending.teachSkill || null,
           }),
+          signal: AbortSignal.timeout(5000),
         });
-      } catch {
-        // Silently ignore — IPHQ being down shouldn't block the user
+      } catch (err) {
+        console.warn("IPHQ webhook failed:", err instanceof Error ? err.message : "unknown");
       }
 
       // Send confirmation email to applicant
@@ -186,6 +170,17 @@ export async function POST(request: NextRequest) {
       submissionId: result.submission.id,
     });
   } catch (error) {
+    // Handle duplicate email from inside the transaction
+    if (error instanceof Error && error.message === "DUPLICATE_EMAIL") {
+      if (videoKey && isR2Configured()) {
+        await deleteUpload(videoKey).catch(() => {});
+      }
+      return NextResponse.json(
+        { error: "Unable to process your application. Please contact hello@ipevents.co if you need help." },
+        { status: 400 }
+      );
+    }
+
     // Clean up video on error
     if (videoKey && isR2Configured()) {
       await deleteUpload(videoKey).catch(() => {});
@@ -194,7 +189,7 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       const issue = error.issues[0];
       const field = issue.path.join(".");
-      console.error("Complete validation error:", JSON.stringify(error.issues));
+      console.error("Complete validation error: " + error.issues.length + " issues");
       return NextResponse.json(
         { error: `${field ? field + ": " : ""}${issue.message}` },
         { status: 400 }

@@ -6,7 +6,6 @@ import {
   calculateSubmissionScore,
   sortSubmissions,
   type SortOption,
-  type SortableSubmission,
   type ReviewScores,
 } from "@/lib/scoring";
 
@@ -57,68 +56,7 @@ export async function GET(request: NextRequest) {
       where.reviews = { none: {} };
     }
 
-    // Fetch all submissions with reviews
-    const allSubmissions = await prisma.submission.findMany({
-      where,
-      include: {
-        applicant: true,
-        prompt: { select: { text: true } },
-        reviews: {
-          select: {
-            id: true,
-            curiosityVsEgo: true,
-            participationVsSpectatorship: true,
-            emotionalIntelligence: true,
-            notes: true,
-            createdAt: true,
-            reviewer: { select: { id: true, name: true } },
-          },
-        },
-      },
-    });
-
-    // Calculate scoring for each submission
-    let processedSubmissions = allSubmissions.map((sub) => {
-      const reviewScores: ReviewScores[] = sub.reviews.map((r) => ({
-        curiosityVsEgo: r.curiosityVsEgo,
-        participationVsSpectatorship: r.participationVsSpectatorship,
-        emotionalIntelligence: r.emotionalIntelligence,
-      }));
-
-      const scoring = calculateSubmissionScore(reviewScores);
-
-      return {
-        ...sub,
-        scoring,
-        // Keep for backward compatibility
-        averageScore: scoring.averageScore,
-      };
-    });
-
-    // Apply score filters
-    if (minScore) {
-      const min = parseFloat(minScore);
-      processedSubmissions = processedSubmissions.filter(
-        (s) => s.scoring.averageScore !== null && s.scoring.averageScore >= min
-      );
-    }
-
-    if (maxScore) {
-      const max = parseFloat(maxScore);
-      processedSubmissions = processedSubmissions.filter(
-        (s) => s.scoring.averageScore !== null && s.scoring.averageScore <= max
-      );
-    }
-
-    // Convert to sortable format and sort
-    const sortable: (typeof processedSubmissions[0] & SortableSubmission)[] =
-      processedSubmissions.map((s) => ({
-        ...s,
-        createdAt: s.createdAt,
-        scoring: s.scoring,
-      }));
-
-    // Map sort options to format
+    // Map sort options to a canonical SortOption
     let effectiveSortBy: SortOption;
     const sortByStr = sortBy as string;
     if (sortByStr === "createdAt" || sortByStr === "newest") {
@@ -135,21 +73,109 @@ export async function GET(request: NextRequest) {
       effectiveSortBy = "newest";
     }
 
-    const sorted = sortSubmissions(sortable, effectiveSortBy);
+    // Determine if we need score-based operations (requires in-memory processing)
+    const needsScoreSort = ["highest_score", "lowest_score"].includes(effectiveSortBy);
+    const needsScoreFilter = !!(minScore || maxScore);
+    const needsScoreProcessing = needsScoreSort || needsScoreFilter;
 
-    // Paginate
-    const total = sorted.length;
-    const paginatedSubmissions = sorted.slice((page - 1) * limit, page * limit);
-
-    return NextResponse.json({
-      submissions: paginatedSubmissions,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
+    const includeClause = {
+      applicant: true as const,
+      prompt: { select: { text: true } },
+      reviews: {
+        select: {
+          id: true,
+          curiosityVsEgo: true,
+          participationVsSpectatorship: true,
+          emotionalIntelligence: true,
+          notes: true,
+          createdAt: true,
+          reviewer: { select: { id: true, name: true } },
+        },
       },
-    });
+    };
+
+    if (needsScoreProcessing) {
+      // Score-based sorting/filtering: fetch all, compute scores in memory, then paginate
+      const allSubmissions = await prisma.submission.findMany({
+        where,
+        include: includeClause,
+      });
+
+      let processedSubmissions = allSubmissions.map((sub) => {
+        const reviewScores: ReviewScores[] = sub.reviews.map((r) => ({
+          curiosityVsEgo: r.curiosityVsEgo,
+          participationVsSpectatorship: r.participationVsSpectatorship,
+          emotionalIntelligence: r.emotionalIntelligence,
+        }));
+        const scoring = calculateSubmissionScore(reviewScores);
+        return { ...sub, scoring, averageScore: scoring.averageScore };
+      });
+
+      // Apply score filters
+      if (minScore) {
+        const min = parseFloat(minScore);
+        processedSubmissions = processedSubmissions.filter(
+          (s) => s.scoring.averageScore !== null && s.scoring.averageScore >= min
+        );
+      }
+      if (maxScore) {
+        const max = parseFloat(maxScore);
+        processedSubmissions = processedSubmissions.filter(
+          (s) => s.scoring.averageScore !== null && s.scoring.averageScore <= max
+        );
+      }
+
+      const sorted = sortSubmissions(processedSubmissions, effectiveSortBy);
+      const total = sorted.length;
+      const paginatedSubmissions = sorted.slice((page - 1) * limit, page * limit);
+
+      return NextResponse.json({
+        submissions: paginatedSubmissions,
+        pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+      });
+    } else {
+      // Database-level pagination for non-score sorting (newest, oldest, needs_review)
+      let dbOrderBy: Prisma.SubmissionOrderByWithRelationInput | Prisma.SubmissionOrderByWithRelationInput[];
+      switch (effectiveSortBy) {
+        case "oldest":
+          dbOrderBy = { createdAt: "asc" };
+          break;
+        case "needs_review":
+          dbOrderBy = [{ reviews: { _count: "asc" } }, { createdAt: "desc" }];
+          break;
+        case "newest":
+        default:
+          dbOrderBy = { createdAt: "desc" };
+          break;
+      }
+
+      const [submissions, total] = await Promise.all([
+        prisma.submission.findMany({
+          where,
+          include: includeClause,
+          orderBy: dbOrderBy,
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+        prisma.submission.count({ where }),
+      ]);
+
+      // Compute scores only for the returned page
+      const processedSubmissions = submissions.map((sub) => {
+        const reviewScores: ReviewScores[] = sub.reviews.map((r) => ({
+          curiosityVsEgo: r.curiosityVsEgo,
+          participationVsSpectatorship: r.participationVsSpectatorship,
+          emotionalIntelligence: r.emotionalIntelligence,
+        }));
+        const scoring = calculateSubmissionScore(reviewScores);
+        return { ...sub, scoring, averageScore: scoring.averageScore };
+      });
+
+      return NextResponse.json({
+        submissions: processedSubmissions,
+        pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+      });
+    }
   } catch (error) {
     console.error("Failed to fetch submissions:", error);
     return NextResponse.json({ error: "Failed to fetch submissions" }, { status: 500 });

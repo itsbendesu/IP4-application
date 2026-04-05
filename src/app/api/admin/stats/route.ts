@@ -26,37 +26,13 @@ export async function GET() {
       },
     });
 
-    // Get average scores for reviewed submissions
-    const reviewedSubmissions = await prisma.submission.findMany({
-      where: {
-        reviews: { some: {} },
-      },
-      include: {
-        reviews: {
-          select: {
-            curiosityVsEgo: true,
-            participationVsSpectatorship: true,
-            emotionalIntelligence: true,
-          },
-        },
-      },
-    });
+    // Get average score across all reviews using SQL aggregation
+    const scoreResult = await prisma.$queryRaw<[{ avg_score: number | null }]>`
+      SELECT AVG(("curiosityVsEgo" + "participationVsSpectatorship" + "emotionalIntelligence") / 3.0) as avg_score
+      FROM "Review"
+    `;
 
-    // Calculate overall average score
-    let totalScore = 0;
-    let scoreCount = 0;
-    for (const sub of reviewedSubmissions) {
-      for (const review of sub.reviews) {
-        totalScore +=
-          (review.curiosityVsEgo +
-            review.participationVsSpectatorship +
-            review.emotionalIntelligence) /
-          3;
-        scoreCount++;
-      }
-    }
-
-    const averageScore = scoreCount > 0 ? totalScore / scoreCount : 0;
+    const averageScore = Number(scoreResult[0]?.avg_score ?? 0);
 
     return NextResponse.json({
       counts: {

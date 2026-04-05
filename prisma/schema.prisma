@@ -66,7 +66,6 @@ model PendingApplication {
   links             Json?
   prompt            Prompt   @relation(fields: [promptId], references: [id])
   promptId      String
-  emailVerified Boolean  @default(false)
   expiresAt     DateTime // Application expires if video not uploaded
   createdAt     DateTime @default(now())
 
@@ -155,4 +154,18 @@ model Review {
   @@index([submissionId])
   @@index([reviewerId])
   @@index([createdAt(sort: Desc)])
+}
+
+// ============================================================================
+// RATE LIMITING
+// ============================================================================
+
+model RateLimit {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  count       Int      @default(0)
+  windowStart DateTime @default(now())
+
+  @@index([key])
+  @@index([windowStart])
 }

@@ -1,28 +1,8 @@
-/**
- * Simple in-memory rate limiter
- * In production, use Redis or similar for distributed rate limiting
- */
-
-interface RateLimitEntry {
-  count: number;
-  resetAt: number;
-}
-
-const store = new Map<string, RateLimitEntry>();
-
-// Clean up old entries periodically
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of store.entries()) {
-    if (entry.resetAt < now) {
-      store.delete(key);
-    }
-  }
-}, 60000); // Clean every minute
+import { prisma } from "./prisma";
 
 export interface RateLimitConfig {
-  windowMs: number; // Time window in milliseconds
-  maxRequests: number; // Max requests per window
+  windowMs: number;
+  maxRequests: number;
 }
 
 export interface RateLimitResult {
@@ -31,74 +11,84 @@ export interface RateLimitResult {
   resetAt: Date;
 }
 
-/**
- * Check rate limit for a given identifier
- */
-export function checkRateLimit(
+export async function checkRateLimit(
   identifier: string,
   config: RateLimitConfig
-): RateLimitResult {
-  const now = Date.now();
-  const key = identifier;
+): Promise<RateLimitResult> {
+  const now = new Date();
 
-  let entry = store.get(key);
+  try {
+    // Try to find existing rate limit record
+    const existing = await prisma.rateLimit.findUnique({
+      where: { key: identifier },
+    });
 
-  // Create new entry if none exists or window has expired
-  if (!entry || entry.resetAt < now) {
-    entry = {
-      count: 0,
-      resetAt: now + config.windowMs,
+    if (existing) {
+      const windowEnd = new Date(
+        existing.windowStart.getTime() + config.windowMs
+      );
+
+      if (windowEnd > now) {
+        // Window still active - increment
+        const updated = await prisma.rateLimit.update({
+          where: { key: identifier },
+          data: { count: { increment: 1 } },
+        });
+
+        const remaining = Math.max(0, config.maxRequests - updated.count);
+        return {
+          success: updated.count <= config.maxRequests,
+          remaining,
+          resetAt: windowEnd,
+        };
+      } else {
+        // Window expired - reset
+        await prisma.rateLimit.update({
+          where: { key: identifier },
+          data: { count: 1, windowStart: now },
+        });
+
+        return {
+          success: true,
+          remaining: config.maxRequests - 1,
+          resetAt: new Date(now.getTime() + config.windowMs),
+        };
+      }
+    } else {
+      // New entry
+      await prisma.rateLimit.create({
+        data: { key: identifier, count: 1, windowStart: now },
+      });
+
+      return {
+        success: true,
+        remaining: config.maxRequests - 1,
+        resetAt: new Date(now.getTime() + config.windowMs),
+      };
+    }
+  } catch (error) {
+    // Fail open - if DB is down, allow the request
+    console.warn(
+      "Rate limit check failed, allowing request:",
+      error instanceof Error ? error.message : "unknown"
+    );
+    return {
+      success: true,
+      remaining: config.maxRequests,
+      resetAt: new Date(now.getTime() + config.windowMs),
     };
   }
-
-  entry.count++;
-  store.set(key, entry);
-
-  const remaining = Math.max(0, config.maxRequests - entry.count);
-  const success = entry.count <= config.maxRequests;
-
-  return {
-    success,
-    remaining,
-    resetAt: new Date(entry.resetAt),
-  };
 }
 
-/**
- * Get rate limit identifier from request
- * Uses IP address with fallback
- */
 export function getRateLimitIdentifier(request: Request): string {
-  // Try various headers for the real IP
   const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) {
-    return forwarded.split(",")[0].trim();
-  }
-
+  if (forwarded) return forwarded.split(",")[0].trim();
   const realIp = request.headers.get("x-real-ip");
-  if (realIp) {
-    return realIp;
-  }
-
-  // Fallback (won't work well in production behind a proxy)
+  if (realIp) return realIp;
   return "unknown";
 }
 
-// Preset configurations
 export const RATE_LIMITS = {
-  // Application submission: 10 per hour per IP
-  application: {
-    windowMs: 60 * 60 * 1000, // 1 hour
-    maxRequests: 10,
-  },
-  // Presign requests: 10 per 10 minutes per IP
-  presign: {
-    windowMs: 10 * 60 * 1000, // 10 minutes
-    maxRequests: 10,
-  },
-  // Email verification: 5 per hour per email
-  emailVerification: {
-    windowMs: 60 * 60 * 1000, // 1 hour
-    maxRequests: 5,
-  },
+  application: { windowMs: 60 * 60 * 1000, maxRequests: 10 },
+  presign: { windowMs: 10 * 60 * 1000, maxRequests: 10 },
 } as const;

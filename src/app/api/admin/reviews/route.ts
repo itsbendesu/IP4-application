@@ -81,12 +81,11 @@ export async function POST(request: NextRequest) {
           ) / allReviews.length;
 
         const syncUrl = `${process.env.IP_BRAIN_URL || "https://ipevents.co"}/api/events/ip4/applications/sync-reviews`;
+        const headers: Record<string, string> = { "Content-Type": "application/json" };
+        if (process.env.WEBHOOK_SECRET) headers["x-webhook-secret"] = process.env.WEBHOOK_SECRET;
         await fetch(syncUrl, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-webhook-secret": process.env.WEBHOOK_SECRET || "",
-          },
+          headers,
           body: JSON.stringify({
             email: submissionWithApplicant.applicant.email,
             scores: {
@@ -97,9 +96,10 @@ export async function POST(request: NextRequest) {
             reviewer_name: review.reviewer.name,
             avg_score: Math.round(overallAvg * 100) / 100,
           }),
+          signal: AbortSignal.timeout(5000),
         });
-      } catch {
-        // Silently ignore sync errors
+      } catch (err) {
+        console.warn("IPHQ webhook failed:", err instanceof Error ? err.message : "unknown");
       }
     });
 

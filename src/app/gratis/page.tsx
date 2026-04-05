@@ -104,6 +104,7 @@ export default function GratisPage() {
             .map(([platform, value]) => normalizeSocialUrl(platform, value)),
           ticketType: type === "hotel" ? "gratis-hotel" : "gratis-local",
           amount: value,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         }),
       });
 

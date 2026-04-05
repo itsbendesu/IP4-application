@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { requireAuth } from "@/lib/auth";
+import { requireAdmin } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 import { calculateSubmissionScore, type ReviewScores } from "@/lib/scoring";
 
@@ -24,7 +24,7 @@ function escapeCSV(value: string | number | null | undefined): string {
  * - status: "ACCEPTED" | "WAITLIST" | "all" (default: "ACCEPTED,WAITLIST")
  */
 export async function GET(request: NextRequest) {
-  const auth = await requireAuth();
+  const auth = await requireAdmin();
   if (!auth.authorized) return auth.response;
 
   try {

@@ -1,10 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { NextRequest, NextResponse } from "next/server";
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
-
-const loginAttempts = new Map<string, { count: number; resetAt: number }>();
 
 function getIp(req: NextRequest): string {
   return req.headers.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
@@ -19,15 +18,9 @@ export async function POST(request: NextRequest) {
 
     // Rate limit: 5 attempts per 15 minutes per IP
     const ip = getIp(request);
-    const now = Date.now();
-    const entry = loginAttempts.get(ip);
-    if (entry && entry.resetAt > now && entry.count >= 5) {
+    const rateLimit = await checkRateLimit(`login:${ip}`, { windowMs: 15 * 60 * 1000, maxRequests: 5 });
+    if (!rateLimit.success) {
       return NextResponse.json({ error: "Too many attempts. Try again later." }, { status: 429 });
-    }
-    if (!entry || entry.resetAt < now) {
-      loginAttempts.set(ip, { count: 1, resetAt: now + 15 * 60 * 1000 });
-    } else {
-      entry.count++;
     }
 
     const { email, password } = await request.json();
@@ -47,9 +40,6 @@ export async function POST(request: NextRequest) {
     if (password !== ADMIN_PASSWORD) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
-
-    // Reset attempts on success
-    loginAttempts.delete(ip);
 
     const session = await getSession();
     session.reviewerId = reviewer.id;
