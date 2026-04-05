@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { Pool } from "pg";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -32,24 +32,24 @@ export async function GET() {
     },
   };
 
-  // Check database connectivity
+  // Check database connectivity using direct pg connection (bypasses Prisma adapter)
   try {
     const dbStart = Date.now();
-    await prisma.$queryRaw`SELECT 1`;
+    const pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      max: 1,
+      connectionTimeoutMillis: 10000,
+      ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : undefined,
+    });
+    const result = await pool.query("SELECT 1 as ok");
+    await pool.end();
     health.checks.database.latencyMs = Date.now() - dbStart;
   } catch (error) {
     health.checks.database.status = "error";
-    // Capture full error details for debugging
+    health.status = "unhealthy";
     const errMsg = error instanceof Error ? error.message : String(error);
-    const errName = error instanceof Error ? error.name : "unknown";
-    const errStack = error instanceof Error ? (error.stack || "").split("\n").slice(0, 3).join(" | ") : "";
-    console.error("Health check DB error:", errName, errMsg);
-    // Check for Prisma-specific error properties
-    const cause = (error as Record<string, unknown>)?.cause;
-    const code = (error as Record<string, unknown>)?.code;
-    const meta = (error as Record<string, unknown>)?.meta;
-    const causeStr = cause instanceof Error ? cause.message : cause ? String(cause) : "";
-    health.checks.database.error = `${errName}: ${errMsg}${code ? ` [code=${code}]` : ""}${causeStr ? ` cause=${causeStr}` : ""}${meta ? ` meta=${JSON.stringify(meta)}` : ""}`.slice(0, 500);
+    console.error("Health check DB error:", errMsg);
+    health.checks.database.error = errMsg.slice(0, 500);
   }
 
   // Check storage configuration
