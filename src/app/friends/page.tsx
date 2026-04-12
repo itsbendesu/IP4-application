@@ -633,10 +633,10 @@ export default function FriendsPage() {
                 Privacy
               </Link>
               <a
-                href="mailto:hello@ipevents.co"
+                href="mailto:hello@interestingpeople.com"
                 className="text-stone-500 hover:text-stone-900 transition-colors"
               >
-                hello@ipevents.co
+                hello@interestingpeople.com
               </a>
             </div>
           </div>

@@ -6,7 +6,7 @@ function getResend() {
   return _resend;
 }
 
-const FROM = "IP Events <hello@ipevents.co>";
+const FROM = "Interesting People <hello@interestingpeople.com>";
 
 interface SendOpts {
   to: string;
@@ -20,7 +20,7 @@ export async function sendEmail(opts: SendOpts) {
     to: opts.to,
     subject: opts.subject,
     html: opts.html,
-    replyTo: "hello@ipevents.co",
+    replyTo: "hello@interestingpeople.com",
   });
 
   if (error) {

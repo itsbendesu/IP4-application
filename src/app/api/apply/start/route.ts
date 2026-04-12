@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
 
     if (existingApplicant) {
       return NextResponse.json(
-        { error: "Unable to process your application. Please contact hello@ipevents.co if you need help." },
+        { error: "Unable to process your application. Please contact hello@interestingpeople.com if you need help." },
         { status: 400 }
       );
     }

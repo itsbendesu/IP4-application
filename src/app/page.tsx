@@ -847,8 +847,8 @@ export default function Home() {
               <Link href="#faq" className="text-stone-500 hover:text-stone-900 transition-colors">
                 FAQ
               </Link>
-              <a href="mailto:hello@ipevents.co" className="text-stone-500 hover:text-stone-900 transition-colors">
-                hello@ipevents.co
+              <a href="mailto:hello@interestingpeople.com" className="text-stone-500 hover:text-stone-900 transition-colors">
+                hello@interestingpeople.com
               </a>
             </div>
           </div>
