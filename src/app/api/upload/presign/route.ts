@@ -8,6 +8,7 @@ import {
   MAX_DURATION_SEC,
 } from "@/lib/r2";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit, getRateLimitIdentifier, RATE_LIMITS } from "@/lib/rate-limit";
 
 const presignSchema = z.object({
   contentType: z.string().refine((t) => ALLOWED_TYPES.includes(t), {
@@ -25,6 +26,16 @@ const presignSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting
+    const identifier = getRateLimitIdentifier(request);
+    const rateLimit = await checkRateLimit(`presign:${identifier}`, RATE_LIMITS.presign);
+    if (!rateLimit.success) {
+      return NextResponse.json(
+        { error: "Too many upload attempts. Please try again later.", retryAfter: rateLimit.resetAt.toISOString() },
+        { status: 429 }
+      );
+    }
+
     // Check if R2 is configured - if not, try alternatives
     if (!isR2Configured()) {
       // Vercel Blob configured?
