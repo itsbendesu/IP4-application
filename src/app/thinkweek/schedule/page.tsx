@@ -90,9 +90,9 @@ const schedule: Day[] = [
       },
       {
         time: "9:00 AM",
-        title: "Who's in the Room — Intros",
+        title: "Breakouts",
         description:
-          "60–90 seconds each. Name, what you do, one thing on your mind that has nothing to do with work.",
+          "Break into groups of 4–5 to dig into specific topics. We'll have a few to choose from.",
         emoji: "🌲",
         type: "session",
       },
