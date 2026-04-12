@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { timingSafeEqual } from "crypto";
 
 const STATUS_MAP: Record<string, "SUBMITTED" | "ACCEPTED" | "REJECTED"> = {
   submitted: "SUBMITTED",
@@ -7,9 +8,15 @@ const STATUS_MAP: Record<string, "SUBMITTED" | "ACCEPTED" | "REJECTED"> = {
   rejected: "REJECTED",
 };
 
+function constantTimeCompare(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  return timingSafeEqual(Buffer.from(a), Buffer.from(b));
+}
+
 export async function POST(req: NextRequest) {
   const secret = req.headers.get("x-webhook-secret");
-  if (!secret || secret !== process.env.WEBHOOK_SECRET) {
+  const expected = process.env.WEBHOOK_SECRET;
+  if (!secret || !expected || !constantTimeCompare(secret, expected)) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 

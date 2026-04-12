@@ -1193,6 +1193,7 @@ export default function ApplyPage() {
                             type="text"
                             value={formData.socials[platform.key]}
                             onChange={(e) => updateSocial(platform.key, e.target.value)}
+                            maxLength={200}
                             className="flex-1 px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow bg-white text-sm"
                             placeholder={platform.placeholder}
                           />

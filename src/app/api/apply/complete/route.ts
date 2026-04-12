@@ -22,7 +22,8 @@ export async function POST(request: NextRequest) {
     if (body.videoDurationSec === undefined || body.videoDurationSec === null) {
       body.videoDurationSec = 1;
     } else {
-      body.videoDurationSec = Number(body.videoDurationSec) || 1;
+      const parsed = Number(body.videoDurationSec);
+      body.videoDurationSec = Number.isFinite(parsed) ? parsed : 1;
     }
 
     const data = completeSchema.parse(body);
@@ -89,6 +90,7 @@ export async function POST(request: NextRequest) {
           priorEvents: pending.priorEvents ?? undefined,
           threeWords: pending.threeWords,
           bio: pending.bio,
+          teachSkill: pending.teachSkill ?? undefined,
           links: pending.links ?? undefined,
         },
       });

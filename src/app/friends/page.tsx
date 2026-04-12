@@ -450,6 +450,7 @@ export default function FriendsPage() {
                         setForm((f) => ({ ...f, bio: e.target.value }))
                       }
                       rows={3}
+                      maxLength={500}
                       className="w-full px-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
                       placeholder="What do you do? What are you into? A sentence or two is fine."
                     />
@@ -498,6 +499,7 @@ export default function FriendsPage() {
                             onChange={(e) =>
                               setForm((f) => ({ ...f, socials: { ...f.socials, [platform.key]: e.target.value } }))
                             }
+                            maxLength={200}
                             className="flex-1 px-4 py-2.5 border border-stone-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all text-sm"
                             placeholder={platform.placeholder}
                           />

@@ -99,6 +99,7 @@ model Applicant {
 
   @@index([email])
   @@index([createdAt(sort: Desc)])
+  @@index([ticketType])
 }
 
 // ============================================================================
@@ -121,6 +122,7 @@ model Submission {
   @@index([status])
   @@index([createdAt(sort: Desc)])
   @@index([status, createdAt(sort: Desc)])
+  @@index([promptId, status])
 }
 
 enum SubmissionStatus {
