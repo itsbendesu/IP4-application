@@ -12,7 +12,7 @@ const startApplicationSchema = z.object({
   address: z.string().max(300).optional(),
   timezone: z.string().min(1, "Timezone is required"),
   roleCompany: z.string().max(150).optional(),
-  heardAbout: z.string().min(1, "Please tell us how you heard about IP").max(200),
+  heardAbout: z.string().min(1, "Please tell us how you heard about IP").max(500),
   priorEvents: z.string().max(300).optional(),
   threeWords: z.string().min(1, "Please describe yourself in 3 words").max(100),
   bio: z.string().min(10, "Bio must be at least 10 characters").max(500, "Bio must be under 500 characters"),
