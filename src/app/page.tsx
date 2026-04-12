@@ -186,7 +186,7 @@ export default function Home() {
             </Link>
             <Link
               href="/apply"
-              className="px-5 py-2.5 bg-blue-600 text-white text-sm rounded-full font-medium hover:bg-blue-700 transition-all"
+              className="px-5 py-3 bg-blue-600 text-white text-sm rounded-full font-medium hover:bg-blue-700 transition-all"
             >
               Apply Now
             </Link>
@@ -205,7 +205,7 @@ export default function Home() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
         <div className="relative z-10 max-w-6xl mx-auto px-6 pb-12 md:pb-20 w-full">
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-[1.05] tracking-tight max-w-4xl drop-shadow-lg [text-shadow:_0_4px_30px_rgba(0,0,0,0.8),_0_1px_6px_rgba(0,0,0,0.9)]">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold text-white leading-[1.05] tracking-tight max-w-4xl drop-shadow-lg [text-shadow:_0_4px_30px_rgba(0,0,0,0.8),_0_1px_6px_rgba(0,0,0,0.9)]">
             We hate
             <br />
             conferences.

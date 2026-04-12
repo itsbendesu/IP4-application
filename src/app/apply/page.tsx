@@ -611,7 +611,7 @@ export default function ApplyPage() {
   };
 
   // Modal width based on step
-  const modalMaxWidth = step === "record" ? "52rem" : step === "confirmation" ? "36rem" : "42rem";
+  const modalMaxWidth = step === "record" ? "52rem" : step === "confirmation" ? "36rem" : "40rem";
 
   // Step progress dots
   const allStepsOrder: Step[] = ["basics", "questions", "story", "record", "confirmation"];
@@ -759,7 +759,7 @@ export default function ApplyPage() {
       {/* Modal overlay */}
       {modalOpen && (
         <div
-          className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 sm:p-6"
+          className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-start sm:items-center justify-center p-2 sm:p-6"
         >
           <div
             className="bg-white w-full max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl relative transition-[max-width] duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]"
@@ -876,7 +876,7 @@ export default function ApplyPage() {
                       <label id="apply-ticket-type-label" className="block text-sm font-medium text-slate-900 mb-2">
                         Ticket Type
                       </label>
-                      <div className="grid grid-cols-3 md:grid-cols-5 gap-2 md:gap-3">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 md:gap-3">
                         {([
                           { value: "local", label: "Local", price: "$5,999" },
                           { value: "regular", label: "Regular", price: "$9,999" },
@@ -1185,8 +1185,8 @@ export default function ApplyPage() {
                         { key: "youtube", label: "YouTube", placeholder: "yourchannel" },
                         { key: "website", label: "Personal Website", placeholder: "yoursite.com" },
                       ] as const).map((platform) => (
-                        <div key={platform.key} className="flex items-center gap-3">
-                          <label htmlFor={`apply-social-${platform.key}`} className="text-sm text-slate-500 w-32 flex-shrink-0">{platform.label}</label>
+                        <div key={platform.key} className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                          <label htmlFor={`apply-social-${platform.key}`} className="text-sm text-slate-500 sm:w-32 sm:flex-shrink-0">{platform.label}</label>
                           <input
                             id={`apply-social-${platform.key}`}
                             type="text"

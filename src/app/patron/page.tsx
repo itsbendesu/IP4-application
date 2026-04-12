@@ -378,8 +378,8 @@ export default function PatronPage() {
                         { key: "youtube", label: "YouTube", placeholder: "yourchannel" },
                         { key: "website", label: "Website", placeholder: "yoursite.com" },
                       ] as const).map((platform) => (
-                        <div key={platform.key} className="flex items-center gap-3">
-                          <label htmlFor={`patron-social-${platform.key}`} className="text-sm text-stone-500 w-20 md:w-24 flex-shrink-0">{platform.label}</label>
+                        <div key={platform.key} className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                          <label htmlFor={`patron-social-${platform.key}`} className="text-sm text-stone-500 sm:w-24 sm:flex-shrink-0">{platform.label}</label>
                           <input
                             id={`patron-social-${platform.key}`}
                             type="text"
