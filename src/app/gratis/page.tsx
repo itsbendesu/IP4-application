@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
+const HOTEL_COST = 1500;
 const ACTUAL_COST = { hotel: 4499, local: 2999 };
 
 const PRICING = {
@@ -22,14 +23,24 @@ function getDescription(index: number) {
 }
 
 function getSliderLabel(value: number, type: "hotel" | "local") {
+  if (type === "hotel") {
+    if (value === 0) return "Completely free";
+    if (value < HOTEL_COST) return "Partial hotel contribution";
+    if (value === HOTEL_COST) return "Hotel covered";
+    const extra = value - HOTEL_COST;
+    const cost = ACTUAL_COST.hotel;
+    if (extra < cost * 0.3) return "Hotel + a contribution toward scholarships";
+    if (extra < cost) return "Hotel + a generous scholarship contribution";
+    return "This is seriously generous";
+  }
   if (value === 0) return "Completely free";
   const cost = ACTUAL_COST[type];
   const pct = value / cost;
   if (pct < 0.15) return "A little something";
   if (pct < 0.35) return "A meaningful contribution";
-  if (pct < 0.65) return "Covering a real chunk of your seat";
-  if (pct < 1) return "Nearly covering your seat";
-  if (pct < 1.02) return "Your seat is covered";
+  if (pct < 0.65) return "Covering a real chunk of a scholarship seat";
+  if (pct < 1) return "Nearly funding a full scholarship seat";
+  if (pct < 1.02) return "One scholarship seat funded";
   if (pct < 1.5) return "Someone else gets to be there because of you";
   if (pct < 2.5) return "Filling the room with people who belong here";
   return "This is seriously generous";
@@ -45,7 +56,7 @@ type Step = "pricing" | "form" | "submitted";
 export default function GratisPage() {
   const [type, setType] = useState<"hotel" | "local">("hotel");
   const max = PRICING[type].max;
-  const [hotelValue, setHotelValue] = useState(0);
+  const [hotelValue, setHotelValue] = useState(HOTEL_COST);
   const [localValue, setLocalValue] = useState(0);
   const [step, setStep] = useState<Step>("pricing");
 
@@ -160,14 +171,16 @@ export default function GratisPage() {
           </h1>
           <div className="text-lg md:text-xl text-stone-600 leading-relaxed space-y-4">
             <p>
-              Andrew wants you at IP4, no strings attached. Your ticket is
-              completely covered — you don&apos;t need to pay a thing.
+              Andrew wants you at IP4 — your ticket is completely covered.
             </p>
             <p>
-              That said, each seat costs us {formatPrice(cost)} to produce. If you&apos;re
-              in a position to contribute — any amount at all — it helps us offer
-              more scholarship spots to interesting people who otherwise
-              couldn&apos;t attend.
+              If you need a hotel room, that&apos;s on you (about {formatPrice(HOTEL_COST)} for the weekend).
+              If you&apos;re local or have your own accommodations, just select &ldquo;No hotel&rdquo; below.
+            </p>
+            <p>
+              Beyond the hotel, if you&apos;re in a position to contribute anything at all,
+              it goes straight to scholarship spots for interesting people who
+              otherwise couldn&apos;t attend.
             </p>
           </div>
         </div>
@@ -192,7 +205,7 @@ export default function GratisPage() {
                         : "text-stone-500 hover:text-stone-700"
                     }`}
                   >
-                    I need a hotel
+                    I need a hotel room
                   </button>
                   <button
                     onClick={() => setType("local")}
@@ -202,7 +215,7 @@ export default function GratisPage() {
                         : "text-stone-500 hover:text-stone-700"
                     }`}
                   >
-                    I&apos;m local
+                    No hotel
                   </button>
                 </div>
               </div>
@@ -210,11 +223,13 @@ export default function GratisPage() {
               {/* Slider Section */}
               <div className="bg-white rounded-2xl border border-stone-200 p-5 md:p-8 shadow-sm">
                 <p className="text-xs font-medium tracking-[0.2em] text-stone-400 uppercase mb-2">
-                  Pay what you want
+                  {type === "hotel" ? "Hotel + optional contribution" : "Pay what you want"}
                 </p>
                 <p className="text-sm text-stone-500 mb-8">
-                  Genuinely — $0 is fine. But if you can chip in, it goes straight
-                  to someone else&apos;s seat.
+                  {type === "hotel"
+                    ? `Your ticket is free. The hotel room is ${formatPrice(HOTEL_COST)} for the weekend. Slide higher to contribute toward scholarship spots.`
+                    : "Genuinely — $0 is fine. But if you can chip in, it goes straight to someone else\u2019s seat."
+                  }
                 </p>
 
                 {/* Big Price Display */}
@@ -349,7 +364,9 @@ export default function GratisPage() {
                   >
                     {value === 0
                       ? "Continue — Free"
-                      : `Continue — ${formatPrice(value)}`}
+                      : type === "hotel" && value === HOTEL_COST
+                        ? `Continue — ${formatPrice(value)} (hotel only)`
+                        : `Continue — ${formatPrice(value)}`}
                   </button>
                   <p className="text-xs text-stone-400 text-center mt-3">
                     You&apos;ll fill out a short form next. No video required.
@@ -366,7 +383,7 @@ export default function GratisPage() {
               <div className="bg-blue-50 border border-blue-100 rounded-2xl p-6 mb-8 flex items-center justify-between">
                 <div>
                   <p className="text-sm text-blue-600 font-medium">
-                    {type === "hotel" ? "With Hotel" : "Local (No Hotel)"}
+                    {type === "hotel" ? "Ticket (free) + Hotel" : "Ticket only (free, no hotel)"}
                   </p>
                   <p className="text-2xl font-bold text-stone-900 tabular-nums">
                     {formatPrice(value)}
