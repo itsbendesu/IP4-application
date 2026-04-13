@@ -31,18 +31,11 @@ const schedule: Day[] = [
     color: "from-amber-500 to-orange-600",
     items: [
       {
-        time: "2:45 PM",
-        title: "Arrivals Begin",
+        time: "4:00 – 5:00 PM",
+        title: "Arrivals",
         description: "Welcome packets and a big table of books to browse.",
         emoji: "🏡",
         type: "logistics",
-      },
-      {
-        time: "4:00 PM",
-        title: "Informal Activity",
-        description: "Pickleball, lawn games, or just hang by the dock.",
-        emoji: "🏓",
-        type: "activity",
       },
       {
         time: "5:00 PM",
