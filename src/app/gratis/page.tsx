@@ -22,27 +22,29 @@ function getDescription(index: number) {
   return SCHOLARSHIP_DESCRIPTIONS[index % SCHOLARSHIP_DESCRIPTIONS.length];
 }
 
+const TICKET_COST = ACTUAL_COST.local; // ~$2,999 — the ticket portion
+const FULL_COST_HOTEL = HOTEL_COST + TICKET_COST; // hotel + ticket
+
 function getSliderLabel(value: number, type: "hotel" | "local") {
   if (type === "hotel") {
     if (value === 0) return "Completely free";
-    if (value < HOTEL_COST) return "Partial hotel contribution";
-    if (value === HOTEL_COST) return "Hotel covered";
-    const extra = value - HOTEL_COST;
-    const cost = ACTUAL_COST.hotel;
-    if (extra < cost * 0.3) return "Hotel + a contribution toward scholarships";
-    if (extra < cost) return "Hotel + a generous scholarship contribution";
+    if (value < HOTEL_COST) return "Partially covering your hotel";
+    if (value < HOTEL_COST * 1.02) return "Hotel covered";
+    if (value < FULL_COST_HOTEL * 0.7) return "Hotel covered, contributing toward your ticket";
+    if (value < FULL_COST_HOTEL) return "Hotel covered, nearly covering your ticket too";
+    if (value < FULL_COST_HOTEL * 1.02) return "Hotel and ticket fully covered";
+    if (value < FULL_COST_HOTEL + TICKET_COST) return "Someone else gets to be there because of you";
+    if (value < FULL_COST_HOTEL + TICKET_COST * 2) return "Filling the room with people who belong here";
     return "This is seriously generous";
   }
   if (value === 0) return "Completely free";
-  const cost = ACTUAL_COST[type];
-  const pct = value / cost;
-  if (pct < 0.15) return "A little something";
-  if (pct < 0.35) return "A meaningful contribution";
-  if (pct < 0.65) return "Covering a real chunk of a scholarship seat";
-  if (pct < 1) return "Nearly funding a full scholarship seat";
-  if (pct < 1.02) return "One scholarship seat funded";
-  if (pct < 1.5) return "Someone else gets to be there because of you";
-  if (pct < 2.5) return "Filling the room with people who belong here";
+  if (value < TICKET_COST * 0.15) return "A little something";
+  if (value < TICKET_COST * 0.35) return "A meaningful contribution";
+  if (value < TICKET_COST * 0.65) return "Covering a real chunk of your ticket";
+  if (value < TICKET_COST) return "Nearly covering your ticket";
+  if (value < TICKET_COST * 1.02) return "Your ticket is covered";
+  if (value < TICKET_COST * 1.5) return "Someone else gets to be there because of you";
+  if (value < TICKET_COST * 2.5) return "Filling the room with people who belong here";
   return "This is seriously generous";
 }
 
@@ -227,8 +229,8 @@ export default function GratisPage() {
                 </p>
                 <p className="text-sm text-stone-500 mb-8">
                   {type === "hotel"
-                    ? `Your ticket is free. The hotel room is ${formatPrice(HOTEL_COST)} for the weekend. Slide higher to contribute toward scholarship spots.`
-                    : "Genuinely — $0 is fine. But if you can chip in, it goes straight to someone else\u2019s seat."
+                    ? `Hotel is ${formatPrice(HOTEL_COST)}, your ticket costs us ${formatPrice(TICKET_COST)} to produce. Anything beyond that funds scholarship spots.`
+                    : `Your ticket costs us ${formatPrice(TICKET_COST)} to produce. $0 is genuinely fine — but anything you contribute helps fund scholarship spots.`
                   }
                 </p>
 
@@ -289,29 +291,35 @@ export default function GratisPage() {
                   </div>
                 </div>
 
-                {/* Scholarship impact */}
+                {/* Impact breakdown */}
                 {value > 0 && (() => {
-                  const aboveCost = Math.max(0, value - cost);
-                  const scholarshipsFloat = aboveCost / cost;
+                  const fullCost = type === "hotel" ? FULL_COST_HOTEL : TICKET_COST;
+                  const aboveFullCost = Math.max(0, value - fullCost);
+                  const scholarshipsFloat = aboveFullCost / TICKET_COST;
                   const fullScholarships = Math.floor(scholarshipsFloat);
                   const partialPct = Math.round((scholarshipsFloat - fullScholarships) * 100);
                   const totalPeople = fullScholarships + (partialPct > 0 ? 1 : 0);
+                  const isScholarshipTerritory = value > fullCost;
 
                   return (
                     <div className={`mt-6 rounded-xl px-5 py-5 text-center transition-colors duration-300 ${
-                      value >= cost
+                      isScholarshipTerritory
                         ? "bg-emerald-50 border border-emerald-200"
                         : "bg-stone-50 border border-stone-200"
                     }`}>
-                      {value < cost ? (
+                      {type === "hotel" && value < HOTEL_COST ? (
                         <p className="text-sm text-stone-600">
-                          That covers {Math.round((value / cost) * 100)}% of your seat — every
-                          dollar makes it easier to bring in interesting people
-                          who&apos;d never get this chance otherwise.
+                          That covers {Math.round((value / HOTEL_COST) * 100)}% of your hotel room.
                         </p>
-                      ) : value === cost ? (
-                        <p className="text-sm text-emerald-700">
-                          You&apos;re covering the full cost of your seat.
+                      ) : type === "hotel" && value < FULL_COST_HOTEL ? (
+                        <p className="text-sm text-stone-600">
+                          Hotel covered. That also covers {Math.round(((value - HOTEL_COST) / TICKET_COST) * 100)}% of your ticket —
+                          every dollar makes it easier to bring in more interesting people.
+                        </p>
+                      ) : !isScholarshipTerritory ? (
+                        <p className="text-sm text-stone-600">
+                          That covers {Math.round((value / TICKET_COST) * 100)}% of your ticket —
+                          every dollar makes it easier to bring in more interesting people.
                         </p>
                       ) : (
                         <>
@@ -333,9 +341,9 @@ export default function GratisPage() {
                             ))}
                           </div>
 
-                          {/* Description */}
                           <p className="text-sm text-emerald-800 leading-relaxed">
-                            Your seat is covered. The extra <strong>{formatPrice(aboveCost)}</strong>{" "}
+                            {type === "hotel" ? "Hotel and ticket covered. " : "Ticket covered. "}
+                            The extra <strong>{formatPrice(aboveFullCost)}</strong>{" "}
                             {fullScholarships >= 2
                               ? `puts ${fullScholarships} brilliant people in the room who wouldn't be here without you.`
                               : fullScholarships === 1
@@ -347,7 +355,7 @@ export default function GratisPage() {
                           <p className="text-lg font-bold text-emerald-700 mt-2">
                             {fullScholarships >= 1
                               ? `${fullScholarships} seat${fullScholarships > 1 ? "s" : ""} funded${partialPct > 0 ? ", working on another" : ""}`
-                              : "Working toward a full seat"
+                              : "Working toward a full scholarship seat"
                             }
                           </p>
                         </>
