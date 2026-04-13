@@ -464,7 +464,7 @@ export default function ApplyPage() {
   const uploadRecordedVideo = async (): Promise<{ key: string; url: string } | null> => {
     if (!recordedBlob) return null;
 
-    const contentType = mimeTypeRef.current || "video/webm";
+    const contentType = (mimeTypeRef.current || "video/webm").split(";")[0];
     const ext = getExtensionForMimeType(contentType);
     const filename = `recording.${ext}`;
 

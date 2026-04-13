@@ -49,8 +49,9 @@ export async function createPresignedUpload(
   contentLength: number,
   applicantEmail: string
 ): Promise<PresignedUploadResult> {
-  // Validate content type
-  if (!ALLOWED_TYPES.includes(contentType)) {
+  // Validate content type (strip codec params like ";codecs=vp9,opus")
+  const baseType = contentType.split(";")[0].trim();
+  if (!ALLOWED_TYPES.includes(baseType)) {
     throw new Error(`Invalid file type. Allowed: ${ALLOWED_TYPES.join(", ")}`);
   }
 

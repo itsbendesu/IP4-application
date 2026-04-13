@@ -11,7 +11,7 @@ import { prisma } from "@/lib/prisma";
 import { checkRateLimit, getRateLimitIdentifier, RATE_LIMITS } from "@/lib/rate-limit";
 
 const presignSchema = z.object({
-  contentType: z.string().refine((t) => ALLOWED_TYPES.includes(t), {
+  contentType: z.string().refine((t) => ALLOWED_TYPES.includes(t.split(";")[0].trim()), {
     message: `Invalid file type. Allowed: ${ALLOWED_TYPES.join(", ")}`,
   }).optional().default("video/webm"),
   contentLength: z.number().max(MAX_FILE_SIZE, {

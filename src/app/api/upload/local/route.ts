@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
 
     // Validate file type
     const validTypes = ["video/mp4", "video/quicktime", "video/webm"];
-    if (!validTypes.includes(file.type)) {
+    if (!validTypes.includes(file.type.split(";")[0].trim())) {
       return NextResponse.json(
         { error: "Invalid file type. Allowed: MP4, MOV, WebM" },
         { status: 400 }
