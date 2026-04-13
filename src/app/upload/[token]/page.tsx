@@ -123,7 +123,11 @@ export default function UploadPage() {
       setError(null);
       setHasStarted(true);
     } catch (err) {
-      setError("Could not access camera. Please grant permission and try again.");
+      if (err instanceof DOMException && err.name === "NotAllowedError") {
+        setError("Camera access was denied. Please check your browser's site settings, allow camera and microphone access, then refresh the page.");
+      } else {
+        setError("Could not access camera. Please make sure no other app is using your camera, then try again.");
+      }
       console.error("Camera error:", err);
     }
   }, []);
@@ -339,31 +343,42 @@ export default function UploadPage() {
         return { key: blobResult.pathname, url: blobResult.url };
       }
 
-      // Handle R2 upload via XHR (for progress tracking)
+      // Handle R2 upload via XHR (for progress tracking) with retry
       const { uploadUrl, key, publicUrl } = presignData;
-      const xhr = new XMLHttpRequest();
+      const maxRetries = 3;
 
-      await new Promise<void>((resolve, reject) => {
-        xhr.upload.onprogress = (e) => {
-          if (e.lengthComputable) {
-            setUploadProgress(Math.round((e.loaded / e.total) * 100));
-          }
-        };
+      for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+          await new Promise<void>((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
 
-        xhr.onload = () => {
-          if (xhr.status >= 200 && xhr.status < 300) {
-            resolve();
-          } else {
-            reject(new Error(`R2 upload failed (${xhr.status}): ${xhr.responseText?.slice(0, 300)}`));
-          }
-        };
+            xhr.upload.onprogress = (e) => {
+              if (e.lengthComputable) {
+                setUploadProgress(Math.round((e.loaded / e.total) * 100));
+              }
+            };
 
-        xhr.onerror = () => reject(new Error("Upload failed — network error"));
+            xhr.onload = () => {
+              if (xhr.status >= 200 && xhr.status < 300) {
+                resolve();
+              } else {
+                reject(new Error(`R2 upload failed (${xhr.status}): ${xhr.responseText?.slice(0, 300)}`));
+              }
+            };
 
-        xhr.open("PUT", uploadUrl);
-        xhr.setRequestHeader("Content-Type", contentType);
-        xhr.send(recordedBlob);
-      });
+            xhr.onerror = () => reject(new Error("Upload failed — network error"));
+
+            xhr.open("PUT", uploadUrl);
+            xhr.setRequestHeader("Content-Type", contentType);
+            xhr.send(recordedBlob);
+          });
+          break; // success
+        } catch (err) {
+          if (attempt === maxRetries) throw err;
+          setUploadProgress(0);
+          await new Promise((r) => setTimeout(r, 1000 * attempt));
+        }
+      }
 
       return { key, url: publicUrl };
     } catch (err) {

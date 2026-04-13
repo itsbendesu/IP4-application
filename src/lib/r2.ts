@@ -63,7 +63,7 @@ export async function createPresignedUpload(
   // Generate unique key
   const timestamp = Date.now();
   const sanitizedEmail = applicantEmail.replace(/[^a-zA-Z0-9]/g, "_");
-  const ext = contentType === "video/mp4" ? "mp4" : contentType === "video/quicktime" ? "mov" : "webm";
+  const ext = baseType === "video/mp4" ? "mp4" : baseType === "video/quicktime" ? "mov" : "webm";
   const key = `videos/${sanitizedEmail}/${timestamp}.${ext}`;
 
   // Create presigned PUT URL (valid for 30 minutes)
@@ -75,7 +75,7 @@ export async function createPresignedUpload(
     ContentType: contentType,
   });
 
-  const expiresIn = 30 * 60; // 30 minutes
+  const expiresIn = 2 * 60 * 60; // 2 hours — accommodate slow mobile connections
   const uploadUrl = await getSignedUrl(getR2Client(), command, { expiresIn });
 
   // Public URL for accessing the video after upload
