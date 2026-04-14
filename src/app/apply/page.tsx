@@ -873,91 +873,150 @@ export default function ApplyPage() {
                     </div>
 
                     <div>
-                      <label id="apply-ticket-type-label" className="block text-sm font-medium text-slate-900 mb-2">
+                      <label id="apply-ticket-type-label" className="block text-sm font-medium text-slate-900 mb-3">
                         Ticket Type
                       </label>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 md:gap-3">
-                        {([
-                          { value: "local", label: "Local", price: "$5,999" },
-                          { value: "regular", label: "Regular", price: "$9,999" },
-                          { value: "vip", label: "VIP", price: "$15,999" },
-                          { value: "patron", label: "Patron", price: "$19,999+" },
-                          { value: "scholarship", label: "Scholarship", price: "Flexible" },
-                        ] as const).map((tier) => (
-                          <button
-                            key={tier.value}
-                            type="button"
-                            onClick={() => setFormData((prev) => ({ ...prev, ticketType: tier.value }))}
-                            className={`px-3 md:px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                              formData.ticketType === tier.value
-                                ? tier.value === "scholarship" ? "bg-amber-500 text-white" : tier.value === "patron" ? "bg-stone-900 text-white" : "bg-blue-600 text-white"
-                                : "bg-slate-100 text-slate-500 hover:bg-slate-200"
-                            }`}
-                          >
-                            <span className="block">{tier.label}</span>
-                            <span className={`block text-xs mt-0.5 ${formData.ticketType === tier.value ? tier.value === "scholarship" ? "text-amber-200" : tier.value === "patron" ? "text-stone-400" : "text-blue-200" : "text-slate-400"}`}>{tier.price}</span>
-                          </button>
-                        ))}
-                      </div>
-                      {formData.ticketType === "local" && (
-                        <p className="text-xs text-slate-500 mt-2">All sessions, meals &amp; activities. No hotel — Victoria residents only.</p>
-                      )}
-                      {formData.ticketType === "regular" && (
-                        <p className="text-xs text-slate-500 mt-2">All sessions, meals, activities &amp; 3 nights luxury accommodation.</p>
-                      )}
-                      {formData.ticketType === "vip" && (
-                        <p className="text-xs text-slate-500 mt-2">Everything in Regular + upgraded room, black car, private dinner with speakers. <span className="font-bold text-slate-700">Limited to 20.</span></p>
-                      )}
-                      {formData.ticketType === "patron" && (
-                        <div className="mt-3 p-4 bg-blue-50 border border-blue-100 rounded-xl space-y-4">
-                          <p className="text-sm text-slate-700">
-                            <span className="font-bold text-slate-900">💛 Thank you.</span> You get the full VIP experience. Every dollar above our costs funds scholarships for people who&apos;d make the room better but can&apos;t afford the ticket.
-                          </p>
-                          <div>
-                            <label className="block text-sm font-medium text-slate-900 mb-2">
-                              Choose your level
-                            </label>
-                            <div className="grid grid-cols-2 gap-2">
-                              {([
-                                { amt: 19999, label: "1 scholarship" },
-                                { amt: 24999, label: "1–2 scholarships" },
-                                { amt: 34999, label: "2–3 scholarships" },
-                                { amt: 49999, label: "4+ scholarships" },
-                              ] as const).map(({ amt, label }) => (
-                                <button
-                                  key={amt}
-                                  type="button"
-                                  onClick={() => setFormData((prev) => ({ ...prev, patronAmount: amt }))}
-                                  className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all border flex flex-col items-center ${
-                                    formData.patronAmount === amt
-                                      ? "bg-stone-900 text-white border-stone-900"
-                                      : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
-                                  }`}
-                                >
-                                  <span>${amt.toLocaleString("en-US")}</span>
-                                  <span className={`text-xs ${formData.patronAmount === amt ? "text-stone-400" : "text-slate-400"}`}>{label}</span>
-                                </button>
-                              ))}
+                      <div className="space-y-3">
+                        {/* Local */}
+                        <button
+                          type="button"
+                          onClick={() => setFormData((prev) => ({ ...prev, ticketType: "local" }))}
+                          className={`w-full text-left px-5 py-4 rounded-xl border-2 transition-all ${
+                            formData.ticketType === "local"
+                              ? "border-blue-600 bg-blue-600 text-white"
+                              : "border-slate-200 bg-white hover:border-slate-300"
+                          }`}
+                        >
+                          <div className="flex items-baseline justify-between">
+                            <span className={`font-semibold ${formData.ticketType === "local" ? "text-white" : "text-slate-900"}`}>🏠 Local</span>
+                            <span className={`font-semibold ${formData.ticketType === "local" ? "text-white" : "text-slate-900"}`}>$5,999</span>
+                          </div>
+                          <p className={`text-sm mt-1 ${formData.ticketType === "local" ? "text-blue-100" : "text-slate-500"}`}>All sessions, meals &amp; activities. No hotel &mdash; Victoria residents only.</p>
+                        </button>
+
+                        {/* Regular */}
+                        <button
+                          type="button"
+                          onClick={() => setFormData((prev) => ({ ...prev, ticketType: "regular" }))}
+                          className={`w-full text-left px-5 py-4 rounded-xl border-2 transition-all ${
+                            formData.ticketType === "regular"
+                              ? "border-blue-600 bg-blue-600 text-white"
+                              : "border-slate-200 bg-white hover:border-slate-300"
+                          }`}
+                        >
+                          <div className="flex items-baseline justify-between">
+                            <span className={`font-semibold ${formData.ticketType === "regular" ? "text-white" : "text-slate-900"}`}>🎟️ Regular</span>
+                            <span className={`font-semibold ${formData.ticketType === "regular" ? "text-white" : "text-slate-900"}`}>$9,999</span>
+                          </div>
+                          <p className={`text-sm mt-1 ${formData.ticketType === "regular" ? "text-blue-100" : "text-slate-500"}`}>All sessions, meals, activities &amp; 3 nights luxury accommodation.</p>
+                        </button>
+
+                        {/* VIP — Most Popular */}
+                        <button
+                          type="button"
+                          onClick={() => setFormData((prev) => ({ ...prev, ticketType: "vip" }))}
+                          className={`w-full text-left px-5 py-4 rounded-xl border-2 transition-all ${
+                            formData.ticketType === "vip"
+                              ? "border-blue-600 bg-blue-600 text-white"
+                              : "border-slate-200 bg-white hover:border-slate-300"
+                          }`}
+                        >
+                          <div className="flex items-baseline justify-between">
+                            <span className={`font-semibold ${formData.ticketType === "vip" ? "text-white" : "text-slate-900"}`}>⭐ VIP</span>
+                            <span className={`font-semibold ${formData.ticketType === "vip" ? "text-white" : "text-slate-900"}`}>$14,999</span>
+                          </div>
+                          <p className={`text-sm mt-1 ${formData.ticketType === "vip" ? "text-blue-100" : "text-slate-500"}`}>Upgraded suite, black car service, and a private dinner with the speakers.</p>
+                          <p className={`text-xs font-semibold mt-1.5 ${formData.ticketType === "vip" ? "text-blue-200" : "text-blue-700"}`}>Limited to 20 spots</p>
+                        </button>
+
+                        {/* Patron */}
+                        <button
+                          type="button"
+                          onClick={() => setFormData((prev) => ({ ...prev, ticketType: "patron" }))}
+                          className={`w-full text-left px-5 py-4 rounded-xl border-2 transition-all ${
+                            formData.ticketType === "patron"
+                              ? "border-blue-600 bg-blue-600 text-white"
+                              : "border-slate-200 bg-white hover:border-slate-300"
+                          }`}
+                        >
+                          <div className="flex items-baseline justify-between">
+                            <span className={`font-semibold ${formData.ticketType === "patron" ? "text-white" : "text-slate-900"}`}>💛 Patron</span>
+                            <span className={`font-semibold ${formData.ticketType === "patron" ? "text-white" : "text-slate-900"}`}>$19,999+</span>
+                          </div>
+                          <p className={`text-sm mt-1 ${formData.ticketType === "patron" ? "text-blue-100" : "text-slate-500"}`}>The full VIP experience. Every dollar above cost puts someone in the room who couldn&apos;t otherwise be there.</p>
+                        </button>
+
+                        {/* Patron expanded options */}
+                        {formData.ticketType === "patron" && (
+                          <div className="p-4 bg-stone-50 border border-stone-200 rounded-xl space-y-4 -mt-1">
+                            <p className="text-sm text-slate-700">
+                              <span className="font-bold text-slate-900">Thank you.</span> Every dollar above our costs puts someone in the room &mdash; an artist, a researcher, a founder &mdash; who&apos;d make the weekend better for everyone but can&apos;t afford the ticket.
+                            </p>
+                            <div>
+                              <label className="block text-sm font-medium text-slate-900 mb-2">
+                                Choose your level
+                              </label>
+                              <div className="grid grid-cols-2 gap-2">
+                                {([
+                                  { amt: 19999, label: "1 seat funded" },
+                                  { amt: 24999, label: "1\u20132 seats funded" },
+                                  { amt: 34999, label: "2\u20133 seats funded" },
+                                  { amt: 49999, label: "4+ seats funded" },
+                                ] as const).map(({ amt, label }) => (
+                                  <button
+                                    key={amt}
+                                    type="button"
+                                    onClick={() => setFormData((prev) => ({ ...prev, patronAmount: amt }))}
+                                    className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-all border flex flex-col items-center ${
+                                      formData.patronAmount === amt
+                                        ? "bg-stone-900 text-white border-stone-900"
+                                        : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
+                                    }`}
+                                  >
+                                    <span>${amt.toLocaleString("en-US")}</span>
+                                    <span className={`text-xs ${formData.patronAmount === amt ? "text-stone-400" : "text-slate-400"}`}>{label}</span>
+                                  </button>
+                                ))}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      )}
-                      {formData.ticketType === "scholarship" && (
-                        <div className="mt-3 p-4 bg-amber-50 border border-amber-200 rounded-xl">
-                          <label htmlFor="apply-scholarship-amount" className="block text-sm font-medium text-slate-900 mb-2">
-                            How much can you afford to pay?
-                          </label>
-                          <input
-                            id="apply-scholarship-amount"
-                            type="text"
-                            value={formData.scholarshipAmount}
-                            onChange={(e) => updateField("scholarshipAmount", e.target.value)}
-                            className="w-full px-4 py-3.5 border border-amber-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-shadow bg-white"
-                            placeholder="e.g. $500, $1,000, whatever I can"
-                          />
-                          <p className="text-xs text-slate-500 mt-2">No judgment. We set aside spots for brilliant people who&apos;d make the event better but can&apos;t swing the full price.</p>
-                        </div>
-                      )}
+                        )}
+
+                        {/* Pay What You Can */}
+                        <button
+                          type="button"
+                          onClick={() => setFormData((prev) => ({ ...prev, ticketType: "scholarship" }))}
+                          className={`w-full text-left px-5 py-4 rounded-xl border-2 transition-all ${
+                            formData.ticketType === "scholarship"
+                              ? "border-amber-500 bg-amber-500 text-white"
+                              : "border-slate-200 bg-white hover:border-slate-300"
+                          }`}
+                        >
+                          <div className="flex items-baseline justify-between">
+                            <span className={`font-semibold ${formData.ticketType === "scholarship" ? "text-white" : "text-slate-900"}`}>🤝 Pay What You Can</span>
+                            <span className={`font-semibold ${formData.ticketType === "scholarship" ? "text-white" : "text-slate-500"}`}>Flexible</span>
+                          </div>
+                          <p className={`text-sm mt-1 ${formData.ticketType === "scholarship" ? "text-amber-100" : "text-slate-500"}`}>For artists, teachers, nonprofit folks, founders in the early days, and anyone whose work is more interesting than their bank account. Funded by our Patrons.</p>
+                        </button>
+
+                        {/* Pay What You Can expanded input */}
+                        {formData.ticketType === "scholarship" && (
+                          <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl -mt-1 space-y-3">
+                            <p className="text-sm text-slate-700">This is for people who genuinely can&apos;t swing the ticket price &mdash; not a discount code. If your company would expense it or you&apos;d spend this on a nice vacation, please choose another tier. But if you&apos;re a freelance artist, a teacher, a nonprofit lifer, or doing work that doesn&apos;t pay what it&apos;s worth? This is exactly who it&apos;s for.</p>
+                            <label htmlFor="apply-scholarship-amount" className="block text-sm font-medium text-slate-900">
+                              What can you put toward a ticket?
+                            </label>
+                            <input
+                              id="apply-scholarship-amount"
+                              type="text"
+                              value={formData.scholarshipAmount}
+                              onChange={(e) => updateField("scholarshipAmount", e.target.value)}
+                              className="w-full px-4 py-3.5 border border-amber-200 rounded-xl focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-shadow bg-white"
+                              placeholder="e.g. $500, $2,000, whatever works"
+                            />
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     {formData.ticketType === "local" && (

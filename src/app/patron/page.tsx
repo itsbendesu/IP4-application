@@ -131,7 +131,7 @@ export default function PatronPage() {
               Some of the most interesting people we know are artists, writers, teachers, and founders who can&apos;t drop $10k on a conference. As a patron, every dollar above our costs goes directly toward bringing those people into the room.
             </p>
             <p>
-              Last year, patron-funded scholarships brought in a Moth champion storyteller, an Antarctic researcher, and a 22-year-old who&apos;d built a school in rural Kenya. They made the event better for everyone — including the patrons who funded them.
+              Last year, patron-funded seats brought in a Moth champion storyteller, an Antarctic researcher, and a 22-year-old who&apos;d built a school in rural Kenya. They made the event better for everyone &mdash; including the patrons who funded them.
             </p>
             <p>
               You&apos;ll still go through the application process — we want to get to know you. Choose your level below, then apply.
@@ -159,10 +159,10 @@ export default function PatronPage() {
                 {/* Suggested amounts */}
                 <div className="grid grid-cols-2 gap-3 mb-6">
                   {([
-                    { amt: 19999, label: "1 scholarship" },
-                    { amt: 24999, label: "1–2 scholarships" },
-                    { amt: 34999, label: "2–3 scholarships" },
-                    { amt: 49999, label: "4+ scholarships" },
+                    { amt: 19999, label: "1 seat funded" },
+                    { amt: 24999, label: "1–2 seats funded" },
+                    { amt: 34999, label: "2–3 seats funded" },
+                    { amt: 49999, label: "4+ seats funded" },
                   ] as const).map(({ amt, label }) => (
                     <button
                       key={amt}
@@ -203,12 +203,12 @@ export default function PatronPage() {
                 <div className="text-center mb-8 bg-green-50 border border-green-100 rounded-xl px-6 py-4">
                   <p className="text-sm font-medium text-green-800">
                     {value >= 49999
-                      ? "🎓 Funds 4+ full scholarships — you're filling a dinner table with people who wouldn't be here without you."
+                      ? "🤝 Funds 4+ seats — you're filling a dinner table with people who wouldn't be here without you."
                       : value >= 34999
-                      ? "🎓 Funds 2–3 full scholarships — that's a filmmaker, a scientist, and a founder who'll remember this forever."
+                      ? "🤝 Funds 2–3 seats — that's a filmmaker, a scientist, and a founder who'll remember this forever."
                       : value >= 24999
-                      ? "🎓 Funds 1–2 full scholarships — enough to change someone's trajectory."
-                      : "🎓 Funds 1 full scholarship — one person gets to be in the room because of you."}
+                      ? "🤝 Funds 1–2 seats — enough to change someone's trajectory."
+                      : "🤝 Funds 1 seat — one person gets to be in the room because of you."}
                   </p>
                 </div>
 

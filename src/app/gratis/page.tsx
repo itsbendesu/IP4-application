@@ -181,8 +181,8 @@ export default function GratisPage() {
             </p>
             <p>
               Beyond the hotel, if you&apos;re in a position to contribute anything at all,
-              it goes straight to scholarship spots for interesting people who
-              otherwise couldn&apos;t attend.
+              it goes straight to seats for interesting people who
+              otherwise couldn&apos;t afford to be there.
             </p>
           </div>
         </div>

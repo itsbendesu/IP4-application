@@ -160,8 +160,8 @@ export default function FriendsPage() {
             </p>
             <p>
               Pick what feels right for you — whether that&apos;s covering our
-              cost or chipping in extra so we can offer more scholarship spots
-              to brilliant people who couldn&apos;t otherwise attend. All
+              cost or chipping in extra so we can bring more people into the room
+              who couldn&apos;t otherwise afford to be there. All
               prices are in US dollars.
             </p>
           </div>

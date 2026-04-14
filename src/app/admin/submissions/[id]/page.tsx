@@ -357,7 +357,7 @@ export default function SubmissionDetailPage({ params }: { params: Promise<{ id:
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Ticket Type</p>
-                    <p className="text-gray-900 capitalize">{submission.applicant.ticketType}</p>
+                    <p className="text-gray-900 capitalize">{submission.applicant.ticketType === "scholarship" ? "Pay What You Can" : submission.applicant.ticketType}</p>
                   </div>
                 </div>
 

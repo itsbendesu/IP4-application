@@ -720,7 +720,7 @@ export default function Home() {
                 The Full Treatment
               </span>
               <p className="text-sm font-medium tracking-[0.2em] text-blue-600 uppercase mb-2"><span className="mr-1.5">✨</span>VIP</p>
-              <p className="text-4xl font-bold text-stone-900 mb-2">$15,999</p>
+              <p className="text-4xl font-bold text-stone-900 mb-2">$14,999</p>
               <p className="text-xs text-stone-400 mb-6">Limited to 20 guests</p>
               <p className="text-stone-500 leading-relaxed mb-6 flex-grow text-sm">
                 Everything in Regular, elevated. Best room, black car, front-row seats, a private dinner with speakers, and a personal concierge you can text anytime to handle whatever you need.
@@ -756,7 +756,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Patron & Scholarship */}
+          {/* Patron & Pay What You Can */}
           <div className="mt-8 grid md:grid-cols-2 gap-4">
             <div className="bg-blue-50/50 border border-blue-100 rounded-2xl px-8 py-6 flex flex-col justify-between">
               <div>
@@ -764,7 +764,7 @@ export default function Home() {
                   <span className="mr-1.5">💛</span>Become a Patron &mdash; $19k+
                 </p>
                 <p className="text-sm text-stone-500 mt-1">
-                  Get the full VIP experience. Every dollar above cost funds seats for artists, writers, and builders who&apos;d make the room better but can&apos;t afford it.
+                  Get the full VIP experience. Every dollar above cost puts someone in the room &mdash; an artist, a researcher, a builder &mdash; who&apos;d make the weekend better for everyone.
                 </p>
               </div>
               <Link
@@ -777,17 +777,17 @@ export default function Home() {
             <div className="bg-amber-50/50 border border-amber-100 rounded-2xl px-8 py-6 flex flex-col justify-between">
               <div>
                 <p className="font-semibold text-stone-900">
-                  <span className="mr-1.5">🎓</span>Money tight? We still want you here.
+                  <span className="mr-1.5">🤝</span>Pay What You Can
                 </p>
                 <p className="text-sm text-stone-500 mt-1">
-                  We set aside spots for people who&apos;d make the event better but can&apos;t swing the price tag. No shame, just a different application.
+                  You&apos;re doing work that&apos;s more interesting than it is lucrative. We set aside seats for people like you. Name your price and tell us why you&apos;d make the room better.
                 </p>
               </div>
               <Link
                 href="/apply"
                 className="inline-flex items-center justify-center px-6 py-3 bg-stone-900 text-white rounded-full font-medium text-sm hover:bg-stone-800 transition-all mt-5 w-full"
               >
-                Apply for a Scholarship
+                Apply
               </Link>
             </div>
           </div>
