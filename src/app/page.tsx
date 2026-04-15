@@ -80,6 +80,10 @@ const faqs = [
     q: "What do I pack?",
     a: "Whatever makes you feel like you. The weekend covers a lot of ground \u2014 a casual cocktail party the first night, a sauna and swimming, dinner and an evening of entertainment, a day on the lake and sand, and watersports. Think one or two things you can get wet in, something you\u2019d wear to a nice dinner, and layers for the evenings \u2014 we\u2019re on an island on the Pacific Coast, and it cools down once the sun drops. No dress code. No one\u2019s checking.",
   },
+  {
+    q: "What is your refund policy?",
+    a: "We do not offer refunds on IP4 tickets. However, if you\u2019re unable to attend, you\u2019re welcome to transfer your ticket to someone else. Please email hello@interestingpeople.com with the name and email of the person you\u2019d like to transfer your ticket to, and we\u2019ll update the registration accordingly. Transfer requests must be submitted at least 14 days before the event.",
+  },
 ];
 
 function TestimonialBlock({
