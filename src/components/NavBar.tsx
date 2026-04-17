@@ -1,23 +1,30 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function NavBar() {
   const [scrolled, setScrolled] = useState(false);
+  const rafId = useRef<number>(0);
 
   useEffect(() => {
     function onScroll() {
-      setScrolled(window.scrollY > 80);
+      cancelAnimationFrame(rafId.current);
+      rafId.current = requestAnimationFrame(() => {
+        setScrolled(window.scrollY > 80);
+      });
     }
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(rafId.current);
+    };
   }, []);
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-300 ${
         scrolled
           ? "bg-white/90 backdrop-blur-lg border-b border-stone-100"
           : "bg-transparent border-b border-transparent"

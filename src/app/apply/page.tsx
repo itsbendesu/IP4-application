@@ -705,7 +705,7 @@ export default function ApplyPage() {
           <h2 className="font-serif text-xl font-bold text-slate-900 mb-4 text-center">
             Here&apos;s how it works
           </h2>
-          <div className="grid sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             {[
               {
                 num: 1,

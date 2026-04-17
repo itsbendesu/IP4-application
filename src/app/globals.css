@@ -56,3 +56,29 @@ html {
 .animate-hero-delay-2 {
   animation: fadeInUp 0.8s ease-out 0.4s both;
 }
+
+/* Hero Ken Burns — slow cinematic zoom */
+@keyframes kenBurns {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.06);
+  }
+}
+
+.animate-ken-burns {
+  animation: kenBurns 25s ease-in-out both;
+}
+
+/* Scroll progress bar */
+#scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: #2563eb;
+  z-index: 100;
+  pointer-events: none;
+  will-change: width, opacity;
+}

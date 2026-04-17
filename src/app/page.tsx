@@ -4,6 +4,9 @@ import PhotoGallery from "@/components/PhotoGallery";
 import NavBar from "@/components/NavBar";
 import FadeIn from "@/components/FadeIn";
 import CountUp from "@/components/CountUp";
+import QuoteReveal from "@/components/QuoteReveal";
+import ScrollProgress from "@/components/ScrollProgress";
+import HeroParallax from "@/components/HeroParallax";
 
 const notablePeople = [
   { name: "Hannibal Buress", role: "Comedian", image: "/images/speakers/hannibal-buress.jpg" },
@@ -106,7 +109,7 @@ function TestimonialBlock({
     <section className={`py-10 md:py-14 ${bg}`}>
       <div className="max-w-4xl mx-auto px-6 text-center">
         <p className="text-2xl md:text-3xl lg:text-4xl text-stone-800 leading-relaxed font-serif italic text-balance">
-          &ldquo;{quote}&rdquo;
+          &ldquo;<QuoteReveal text={quote} />&rdquo;
         </p>
         <div className="mt-5 flex flex-col items-center gap-2">
           {image && (
@@ -162,6 +165,7 @@ export default function Home() {
     <main className="min-h-screen bg-white">
       {/* Navigation */}
       <NavBar />
+      <ScrollProgress />
 
       {/* Hero */}
       <section className="relative w-full h-screen flex flex-col justify-end overflow-hidden">
@@ -169,11 +173,11 @@ export default function Home() {
           src="/images/ip3/lakefront-sunset.jpeg"
           alt="Lakefront sunset at IP3"
           fill
-          className="object-cover"
+          className="object-cover animate-ken-burns"
           priority
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-        <div className="relative z-10 max-w-6xl mx-auto px-6 w-full pb-16 md:pb-24">
+        <HeroParallax className="relative z-10 max-w-6xl mx-auto px-6 w-full pb-16 md:pb-24">
           <h1 className="animate-hero text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] font-bold text-white leading-[1.05] tracking-tight drop-shadow-lg [text-shadow:_0_4px_30px_rgba(0,0,0,0.8),_0_1px_6px_rgba(0,0,0,0.9)]">
             Make interesting friends.
           </h1>
@@ -193,7 +197,7 @@ export default function Home() {
               July 27&ndash;29, 2026 &middot; Victoria, Canada
             </p>
           </div>
-        </div>
+        </HeroParallax>
       </section>
 
       {/* Testimonial — Shaan Puri */}
@@ -211,11 +215,11 @@ export default function Home() {
             </p>
           </FadeIn>
 
-          <FadeIn delay={150}>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 md:gap-8">
-            {notablePeople.map((person) => (
-              <div key={person.name} className="text-center">
-                <div className="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden mx-auto mb-3 relative bg-stone-200">
+            {notablePeople.map((person, i) => (
+              <FadeIn key={person.name} delay={i * 40}>
+              <div className="text-center group">
+                <div className="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden mx-auto mb-3 relative bg-stone-200 transition-all duration-300 group-hover:shadow-lg group-hover:scale-105">
                   <Image
                     src={person.image}
                     alt={person.name}
@@ -227,9 +231,9 @@ export default function Home() {
                 <p className="font-semibold text-stone-900 text-sm">{person.name}</p>
                 <p className="text-xs text-stone-400">{person.role}</p>
               </div>
+              </FadeIn>
             ))}
           </div>
-          </FadeIn>
         </div>
       </section>
 
@@ -322,7 +326,7 @@ export default function Home() {
           <FadeIn>
           <div className="text-center mb-16">
             <p className="text-3xl md:text-4xl lg:text-5xl font-serif italic text-white/70 leading-snug max-w-3xl mx-auto text-balance">
-              &ldquo;I usually find events a waste of time, but Interesting People was the opposite.&rdquo;
+              &ldquo;<QuoteReveal text="I usually find events a waste of time, but Interesting People was the opposite." />&rdquo;
             </p>
             <p className="text-white/40 text-sm mt-6">
               &mdash; Greg Isenberg, CEO, Late Checkout
@@ -385,7 +389,7 @@ export default function Home() {
       <div className="bg-blue-600 py-6">
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-center gap-4 text-center">
           <p className="text-white font-medium text-lg md:text-xl">
-            Only 150 spots. Over 6,000 applications last year.
+            Only <CountUp target={150} duration={1000} /> spots. Over <CountUp target={6000} duration={2000} suffix="+" /> applications last year.
           </p>
           <Link
             href="/apply"
@@ -426,22 +430,20 @@ export default function Home() {
               { theirs: "Fluorescent-lit convention centers with no windows", ours: "Beautiful venues surrounded by nature in Victoria, BC" },
               { theirs: "Optimized for sponsors and optics", ours: "Optimized for genuine human connection" },
             ].map((row, i) => (
-              <FadeIn key={i} delay={i * 80}>
-              <div className="grid md:grid-cols-2 gap-1 md:gap-0 py-4 md:py-0">
-                <div className="md:py-6 md:pr-8 md:border-r md:border-stone-200 flex items-center gap-3">
+              <div key={i} className="grid md:grid-cols-2 gap-1 md:gap-0 py-4 md:py-0">
+                <FadeIn direction="left" delay={i * 100} className="md:py-6 md:pr-8 md:border-r md:border-stone-200 flex items-center gap-3">
                   <svg className="w-5 h-5 text-red-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                   <p className="text-red-400 line-through decoration-red-300 text-sm md:text-base">{row.theirs}</p>
-                </div>
-                <div className="md:py-6 md:pl-8 flex items-center gap-3">
+                </FadeIn>
+                <FadeIn direction="right" delay={i * 100 + 100} className="md:py-6 md:pl-8 flex items-center gap-3">
                   <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
                   <p className="text-stone-900 font-medium text-sm md:text-base">{row.ours}</p>
-                </div>
+                </FadeIn>
               </div>
-              </FadeIn>
             ))}
           </div>
         </div>
@@ -452,7 +454,7 @@ export default function Home() {
         <FadeIn>
         <div className="max-w-5xl mx-auto px-6 text-center">
           <p className="text-2xl md:text-3xl lg:text-4xl text-stone-800 leading-relaxed font-serif italic">
-            &ldquo;Met a roomful of people who were genuinely incredible human beings: Smart. Kind. Generous. Curious. Open minded. A collection of damn unicorns.&rdquo;
+            &ldquo;<QuoteReveal text="Met a roomful of people who were genuinely incredible human beings: Smart. Kind. Generous. Curious. Open minded. A collection of damn unicorns." />&rdquo;
           </p>
           <div className="mt-5 flex flex-col items-center gap-2">
             <div className="w-12 h-12 rounded-full overflow-hidden relative bg-stone-200 flex-shrink-0">
@@ -488,38 +490,32 @@ export default function Home() {
 
           <FadeIn delay={100}>
           <div className="grid md:grid-cols-3 gap-8 md:gap-12">
-            <div className="relative">
-              <span className="text-6xl md:text-7xl font-bold text-blue-200 absolute -top-4 -left-2">1</span>
-              <div className="relative pt-12">
-                <h3 className="text-xl font-semibold text-stone-900 mb-3">Tell us who you are</h3>
-                <p className="text-stone-500 leading-relaxed">
-                  Your name, where you&apos;re from, and a short bio. No resume. No LinkedIn.
-                  We want to know what makes you tick, not what makes you look good on paper.
-                </p>
-              </div>
+            <div>
+              <span className="text-5xl font-bold text-blue-600/20 leading-none">01</span>
+              <h3 className="text-xl font-semibold text-stone-900 mt-3 mb-3">Tell us who you are</h3>
+              <p className="text-stone-500 leading-relaxed">
+                Your name, where you&apos;re from, and a short bio. No resume. No LinkedIn.
+                We want to know what makes you tick, not what makes you look good on paper.
+              </p>
             </div>
 
-            <div className="relative">
-              <span className="text-6xl md:text-7xl font-bold text-blue-200 absolute -top-4 -left-2">2</span>
-              <div className="relative pt-12">
-                <h3 className="text-xl font-semibold text-stone-900 mb-3">Record a 90-second video</h3>
-                <p className="text-stone-500 leading-relaxed">
-                  Two questions. 45 seconds each. One take. No do-overs. We want to
-                  see the real you &mdash; how you think on your feet, not how well you
-                  rehearse.
-                </p>
-              </div>
+            <div>
+              <span className="text-5xl font-bold text-blue-600/20 leading-none">02</span>
+              <h3 className="text-xl font-semibold text-stone-900 mt-3 mb-3">Record a 90-second video</h3>
+              <p className="text-stone-500 leading-relaxed">
+                Two questions. 45 seconds each. One take. No do-overs. We want to
+                see the real you &mdash; how you think on your feet, not how well you
+                rehearse.
+              </p>
             </div>
 
-            <div className="relative">
-              <span className="text-6xl md:text-7xl font-bold text-blue-200 absolute -top-4 -left-2">3</span>
-              <div className="relative pt-12">
-                <h3 className="text-xl font-semibold text-stone-900 mb-3">We watch. We respond.</h3>
-                <p className="text-stone-500 leading-relaxed">
-                  A real human watches every single video. No AI screening. No keyword filters.
-                  We&apos;ll email you either way &mdash; yes, no, or waitlist.
-                </p>
-              </div>
+            <div>
+              <span className="text-5xl font-bold text-blue-600/20 leading-none">03</span>
+              <h3 className="text-xl font-semibold text-stone-900 mt-3 mb-3">We watch. We respond.</h3>
+              <p className="text-stone-500 leading-relaxed">
+                A real human watches every single video. No AI screening. No keyword filters.
+                We&apos;ll email you either way &mdash; yes, no, or waitlist.
+              </p>
             </div>
           </div>
           </FadeIn>

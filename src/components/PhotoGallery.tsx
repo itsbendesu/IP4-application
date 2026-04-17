@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 const photos = [
   { src: "/images/ip3/comedy-stage.jpeg", alt: "Comedy night on stage with a packed audience at IP3", pos: "object-bottom" },
@@ -17,6 +17,28 @@ const photos = [
 
 export default function PhotoGallery() {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [visiblePhotos, setVisiblePhotos] = useState<Set<number>>(new Set());
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = gridRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          photos.forEach((_, i) => {
+            setTimeout(() => {
+              setVisiblePhotos((prev) => new Set(prev).add(i));
+            }, i * 60);
+          });
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const openLightbox = (index: number) => {
     setLightboxIndex(index);
@@ -45,7 +67,7 @@ export default function PhotoGallery() {
 
   return (
     <>
-      <div className="grid grid-cols-2 md:grid-cols-3 auto-rows-[140px] md:auto-rows-[200px] gap-2.5 md:gap-3">
+      <div ref={gridRef} className="grid grid-cols-2 md:grid-cols-3 auto-rows-[140px] md:auto-rows-[200px] gap-2.5 md:gap-3">
         {photos.map((photo, i) => (
           <button
             key={photo.src}
@@ -53,6 +75,11 @@ export default function PhotoGallery() {
             className={`relative rounded-xl md:rounded-2xl overflow-hidden cursor-pointer group ${
               i === 0 ? "col-span-2 row-span-2" : ""
             }`}
+            style={{
+              opacity: visiblePhotos.has(i) ? 1 : 0,
+              transform: visiblePhotos.has(i) ? "scale(1)" : "scale(0.95)",
+              transition: "opacity 0.5s ease-out, transform 0.5s ease-out",
+            }}
           >
             <Image
               src={photo.src}
