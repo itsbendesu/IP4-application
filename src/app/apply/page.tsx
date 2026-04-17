@@ -689,7 +689,7 @@ export default function ApplyPage() {
       </nav>
 
       {/* Landing page content */}
-      <div className="max-w-3xl mx-auto px-6 py-8 md:py-10">
+      <div className="max-w-4xl mx-auto px-6 py-8 md:py-10">
         {/* Hero */}
         <div className="text-center mb-6 md:mb-8">
           <h1 className="font-serif text-4xl md:text-5xl font-bold text-slate-900 tracking-tight mb-2">
@@ -714,7 +714,7 @@ export default function ApplyPage() {
               },
               {
                 num: 2,
-                title: "Record a 90-second video",
+                title: "Record a video",
                 desc: "Two questions, 45 seconds each. No prep needed\u2014just be yourself.",
               },
               {
@@ -723,7 +723,7 @@ export default function ApplyPage() {
                 desc: "Our team watches every video. We\u2019ll get back to you within a few weeks.",
               },
             ].map((item) => (
-              <div key={item.num} className="flex gap-3 p-4 rounded-2xl bg-slate-50">
+              <div key={item.num} className="flex gap-3 p-5 rounded-2xl bg-slate-50">
                 <span className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-semibold">
                   {item.num}
                 </span>
@@ -742,10 +742,10 @@ export default function ApplyPage() {
           <button
             onClick={() => { setStep(findFirstIncompleteStep()); setModalOpen(true); }}
             disabled={hasSubmitted}
-            className={`px-10 py-3.5 rounded-full font-medium text-lg transition-all shadow-lg ${
+            className={`px-10 py-3.5 rounded-full font-medium text-lg transition-all ${
               hasSubmitted
                 ? "bg-slate-300 text-slate-500 cursor-not-allowed shadow-none"
-                : "bg-blue-600 text-white hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98] shadow-blue-600/25"
+                : "bg-blue-600 text-white hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98] shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.5)] animate-cta-glow"
             }`}
           >
             {hasSubmitted ? "Application Submitted" : "Get Started"}

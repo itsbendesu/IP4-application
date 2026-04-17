@@ -71,6 +71,20 @@ html {
   animation: kenBurns 25s ease-in-out both;
 }
 
+/* CTA pulse glow */
+@keyframes ctaGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 35px rgba(37, 99, 235, 0.45);
+  }
+}
+
+.animate-cta-glow {
+  animation: ctaGlow 3s ease-in-out infinite;
+}
+
 /* Scroll progress bar */
 #scroll-progress {
   position: fixed;
