@@ -32,3 +32,27 @@ html {
   font-weight: 700;
   color: #2563eb; /* blue-600 */
 }
+
+/* Hero entrance animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-hero {
+  animation: fadeInUp 0.8s ease-out both;
+}
+
+.animate-hero-delay-1 {
+  animation: fadeInUp 0.8s ease-out 0.2s both;
+}
+
+.animate-hero-delay-2 {
+  animation: fadeInUp 0.8s ease-out 0.4s both;
+}

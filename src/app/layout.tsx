@@ -22,7 +22,29 @@ const lora = Lora({
 export const metadata: Metadata = {
   title: "Interesting People 4 — Victoria, July 2026",
   description:
-    "Not a conference. Not a networking event. A curated gathering of 150 people selected for curiosity, depth, and emotional intelligence. Apply now.",
+    "150 people selected for curiosity and warmth, hanging out in one of the world's most beautiful places. July 27-29, 2026. Victoria, Canada.",
+  openGraph: {
+    title: "Interesting People 4 — Victoria, July 2026",
+    description:
+      "150 people selected for curiosity and warmth, hanging out in one of the world's most beautiful places.",
+    images: [
+      {
+        url: "/images/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Interesting People — July 27-29, 2026, Victoria, Canada",
+      },
+    ],
+    siteName: "Interesting People",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Interesting People 4 — Victoria, July 2026",
+    description:
+      "150 people selected for curiosity and warmth, hanging out in one of the world's most beautiful places.",
+    images: ["/images/og-image.png"],
+  },
 };
 
 export const viewport = {
